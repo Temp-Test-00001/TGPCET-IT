@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Overview - TGPCET IT</title>
+    <link rel="stylesheet" href="../../css/new-dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Error Banner Style */
+        #error-banner {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: #dc2626;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            z-index: 10000;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Modal Styles */
+        .custom-modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            z-index: 9999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .custom-modal-backdrop.active {
+            display: flex !important;
+            opacity: 1;
+        }
+
+        .custom-modal-content {
+            background: #1e1e1e;
+            color: #ffffff;
+            padding: 2rem;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+        }
+
+        .custom-modal-backdrop.active .custom-modal-content {
+            transform: scale(1);
+        }
+
+        .detail-section {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .detail-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .detail-item label {
+            color: #9ca3af;
+            font-size: 0.75rem;
+            display: block;
+            margin-bottom: 0.25rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .detail-item span {
+            font-size: 0.95rem;
+            color: #f3f4f6;
+            font-weight: 500;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 1rem;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            font-size: 1.5rem;
+            transition: color 0.2s;
+        }
+
+        .close-btn:hover {
+            color: white;
+        }
+
+        .badge-pending {
+            background: rgba(234, 179, 8, 0.2);
+            color: #facc15;
+        }
+
+        .badge-approved {
+            background: rgba(34, 197, 94, 0.2);
+            color: #4ade80;
+        }
+
+        .badge-rejected {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Error Banner -->
+    <div id="error-banner"></div>
+
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="brand">
+                <h2>TGPCET IT</h2>
+            </div>
+
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-link active">
+                    <i class="fas fa-home"></i>
+                    <span>Overview</span>
+                </a>
+                <a href="users.html" class="nav-link">
+                    <i class="fas fa-users"></i>
+                    <span>Users</span>
+                </a>
+                <a href="events.html" class="nav-link">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Events</span>
+                </a>
+                <a href="approvals.html" class="nav-link">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Approvals</span>
+                </a>
+            </nav>
+
+            <div class="user-profile">
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+                    <div
+                        style="width: 32px; height: 32px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
+                        A
+                    </div>
+                    <div style="overflow: hidden;">
+                        <div style="font-size: 0.875rem; font-weight: 600;">Admin</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);" id="user-email">Loading...</div>
+                    </div>
+                </div>
+                <button id="logout-btn" class="btn btn-outline"
+                    style="width: 100%; justify-content: flex-start; gap: 0.5rem; border: none; padding: 0.5rem;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <button class="mobile-toggle" id="mobile-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 style="font-size: 1.25rem; font-weight: 600;">Dashboard Overview</h1>
+            </header>
+
+            <div class="page-content">
+                <!-- Stats Grid -->
+                <div
+                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                    <div class="card">
+                        <h3 style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 0.5rem;">Total Users
+                        </h3>
+                        <div class="value" id="total-users" style="font-size: 2rem; font-weight: 700;">Loading...</div>
+                    </div>
+                    <div class="card">
+                        <h3 style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 0.5rem;">Active Events
+                        </h3>
+                        <div class="value" id="active-events" style="font-size: 2rem; font-weight: 700;">Loading...
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3 style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 0.5rem;">Pending
+                            Approvals</h3>
+                        <div class="value" id="pending-approvals"
+                            style="font-size: 2rem; font-weight: 700; color: var(--warning);">Loading...</div>
+                    </div>
+                </div>
+
+                <!-- Recent Applications Table -->
+                <div class="card">
+                    <h3 style="margin-bottom: 1.5rem;">Recent Applications</h3>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>App #</th>
+                                    <th>Event</th>
+                                    <th>User</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recent-apps">
+                                <tr>
+                                    <td colspan="4" style="text-align: center; color: var(--text-muted);">Loading...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Review Modal -->
+    <div id="reviewModal" class="custom-modal-backdrop">
+        <div class="custom-modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Application Details</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="modalDetails">
+                <div style="text-align: center; padding: 2rem; color: #aaa;">Loading...</div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // --- 1. Global Error Handler ---
+        function showError(msg) {
+            const banner = document.getElementById('error-banner');
+            banner.textContent = "Error: " + msg;
+            banner.style.display = 'block';
+            console.error(msg);
+            setTimeout(() => { banner.style.display = 'none'; }, 5000);
+        }
+
+        window.onerror = function (msg, url, line) {
+            showError(`${msg} (Line ${line})`);
+            return false;
+        };
+
+        // --- 2. Firebase Imports (CDN) ---
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, collection, getDocs, doc, getDoc, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // --- 3. Firebase Configuration ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyAbpCJRXBwORZC1_MVaqTVlMOqVoA0CT5w",
+            authDomain: "tgpcet-5ef68.firebaseapp.com",
+            projectId: "tgpcet-5ef68",
+            storageBucket: "tgpcet-5ef68.firebasestorage.app",
+            messagingSenderId: "63942237118",
+            appId: "1:63942237118:web:16fc9f531ba84a7ce237ef"
+        };
+
+        // --- 4. Initialize App ---
+        try {
+            const app = initializeApp(firebaseConfig);
+            const auth = getAuth(app);
+            const db = getFirestore(app);
+            console.log("Firebase Initialized Successfully");
+
+            // --- 5. Auth Listener & Data Loading ---
+            onAuthStateChanged(auth, async (user) => {
+                if (!user) {
+                    window.location.href = '../../login.html';
+                    return;
+                }
+                document.getElementById('user-email').textContent = user.email;
+
+                try {
+                    // Load Stats
+                    const usersSnap = await getDocs(collection(db, "users"));
+                    document.getElementById('total-users').textContent = usersSnap.size;
+
+                    const eventsSnap = await getDocs(collection(db, "events"));
+                    document.getElementById('active-events').textContent = eventsSnap.size;
+
+                    const appsSnap = await getDocs(collection(db, "applications"));
+                    const pendingCount = appsSnap.docs.filter(doc => doc.data().status === 'pending').length;
+                    document.getElementById('pending-approvals').textContent = pendingCount;
+
+                    // Load Recent Apps Table
+                    loadRecentApps(appsSnap);
+
+                } catch (err) {
+                    showError("Failed to load data: " + err.message);
+                }
+            });
+
+            // --- 6. Helper Functions ---
+            function loadRecentApps(snapshot) {
+                const tbody = document.getElementById('recent-apps');
+                tbody.innerHTML = '';
+
+                if (snapshot.empty) {
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">No applications found</td></tr>';
+                    return;
+                }
+
+                const apps = [];
+                snapshot.forEach(doc => apps.push({ id: doc.id, ...doc.data() }));
+
+                apps.sort((a, b) => {
+                    const dateA = a.appliedAt ? new Date(a.appliedAt) : new Date(0);
+                    const dateB = b.appliedAt ? new Date(b.appliedAt) : new Date(0);
+                    return dateB - dateA;
+                });
+
+                apps.slice(0, 10).forEach(app => {
+                    let badgeClass = 'badge-warning';
+                    if (app.status === 'approved') badgeClass = 'badge-success';
+                    if (app.status === 'rejected') badgeClass = 'badge-danger';
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td onclick="openReviewModal('${app.id}')" style="font-family: monospace; color: var(--primary); cursor: pointer; text-decoration: underline;">
+                            ${app.applicationNumber || app.id.substring(0, 8)}
+                        </td>
+                        <td>${app.eventTitle || 'Untitled Event'}</td>
+                        <td style="color: var(--text-muted);">${app.teamLeader?.email || 'Unknown'}</td>
+                        <td><span class="badge ${badgeClass}">${app.status || 'pending'}</span></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+
+            // --- 7. Modal Logic ---
+            window.openReviewModal = async (appId) => {
+                const modal = document.getElementById('reviewModal');
+                const details = document.getElementById('modalDetails');
+
+                details.innerHTML = '<div style="text-align: center; padding: 2rem; color: #aaa;">Loading details...</div>';
+                modal.classList.add('active');
+
+                try {
+                    const docSnap = await getDoc(doc(db, "applications", appId));
+                    if (!docSnap.exists()) {
+                        details.innerHTML = '<div style="color: var(--danger); text-align: center;">Application not found</div>';
+                        return;
+                    }
+                    const app = docSnap.data();
+                    const profile = app.teamLeader?.profile || {};
+
+                    let html = `
+                        <div class="detail-section">
+                            <h4 style="color: var(--primary); margin-bottom: 0.75rem; font-size: 0.9rem; text-transform: uppercase;">Applicant Details</h4>
+                            <div class="detail-row">
+                                <div class="detail-item"><label>Name</label><span>${profile.fullName || 'N/A'}</span></div>
+                                <div class="detail-item"><label>Email</label><span>${app.teamLeader?.email || 'N/A'}</span></div>
+                                <div class="detail-item"><label>Mobile</label><span>${profile.mobile || 'N/A'}</span></div>
+                                <div class="detail-item"><label>PRN</label><span>${profile.prn || 'N/A'}</span></div>
+                            </div>
+                        </div>
+
+                        <div class="detail-section">
+                            <h4 style="color: var(--primary); margin-bottom: 0.75rem; font-size: 0.9rem; text-transform: uppercase;">Event Details</h4>
+                            <div class="detail-row">
+                                <div class="detail-item"><label>Event</label><span>${app.eventTitle}</span></div>
+                                <div class="detail-item"><label>Fee</label><span>₹${app.fee || 0}</span></div>
+                                <div class="detail-item"><label>Status</label><span class="badge-${app.status || 'pending'}">${app.status || 'pending'}</span></div>
+                                <div class="detail-item"><label>Applied On</label><span>${app.appliedAt ? new Date(app.appliedAt).toLocaleDateString() : 'N/A'}</span></div>
+                            </div>
+                        </div>
+                    `;
+
+                    if (app.payment) {
+                        html += `
+                            <div class="detail-section">
+                                <h4 style="color: var(--primary); margin-bottom: 0.75rem; font-size: 0.9rem; text-transform: uppercase;">Payment Details</h4>
+                                <div class="detail-row">
+                                    <div class="detail-item"><label>UTR / Trans ID</label><span>${app.payment.utr || app.transactionId || 'N/A'}</span></div>
+                                    <div class="detail-item"><label>Amount</label><span>₹${app.payment.amount || app.fee || 0}</span></div>
+                                </div>
+                            </div>
+                        `;
+                    }
+
+                    if (app.teamMembers && app.teamMembers.length > 0) {
+                        html += `
+                            <div class="detail-section">
+                                <h4 style="color: var(--primary); margin-bottom: 0.75rem; font-size: 0.9rem; text-transform: uppercase;">Team Members</h4>
+                                <div style="display: grid; gap: 0.5rem;">
+                                    ${app.teamMembers.map(m => `
+                                        <div style="background: rgba(0,0,0,0.2); padding: 0.5rem; border-radius: 4px; display: flex; justify-content: space-between;">
+                                            <span style="font-weight: 500;">${m.name}</span>
+                                            <span style="color: #aaa; font-size: 0.85rem;">${m.email}</span>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `;
+                    }
+
+                    details.innerHTML = html;
+
+                } catch (err) {
+                    details.innerHTML = '<div style="color: var(--danger);">Error: ' + err.message + '</div>';
+                }
+            };
+
+            window.closeModal = () => {
+                document.getElementById('reviewModal').classList.remove('active');
+            };
+
+            // --- 8. UI Event Listeners ---
+            document.getElementById('logout-btn').addEventListener('click', () => {
+                signOut(auth).then(() => window.location.href = '../../index.html');
+            });
+
+            // Mobile Sidebar
+            const sidebar = document.getElementById('sidebar');
+            const mobileToggle = document.getElementById('mobile-toggle');
+            mobileToggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                sidebar.classList.toggle('open');
+            });
+            document.addEventListener('click', (e) => {
+                if (window.innerWidth <= 768 && sidebar.classList.contains('open') && !sidebar.contains(e.target) && e.target !== mobileToggle) {
+                    sidebar.classList.remove('open');
+                }
+            });
+
+        } catch (initErr) {
+            showError("Firebase Initialization Failed: " + initErr.message);
+        }
+    </script>
+</body>
+
+</html>

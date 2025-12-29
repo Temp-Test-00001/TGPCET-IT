@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOD Overview - TGPCET IT</title>
+    <link rel="stylesheet" href="../../css/new-dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="brand">
+                <h2>TGPCET IT</h2>
+            </div>
+
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-link active">
+                    <i class="fas fa-home"></i>
+                    <span>Overview</span>
+                </a>
+                <a href="staff.html" class="nav-link">
+                    <i class="fas fa-users"></i>
+                    <span>Staff</span>
+                </a>
+                <a href="events.html" class="nav-link">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Events</span>
+                </a>
+                <a href="approvals.html" class="nav-link">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Approvals</span>
+                </a>
+            </nav>
+
+            <div class="user-profile">
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+                    <div
+                        style="width: 32px; height: 32px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
+                        H
+                    </div>
+                    <div style="overflow: hidden;">
+                        <div
+                            style="font-size: 0.875rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            HOD</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);" id="user-email">
+                            Loading...</div>
+                    </div>
+                </div>
+                <button id="logout-btn" class="btn btn-outline"
+                    style="width: 100%; justify-content: flex-start; gap: 0.5rem; border: none; padding: 0.5rem;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <button class="mobile-toggle" id="mobile-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 style="font-size: 1.25rem; font-weight: 600;">HOD Overview</h1>
+            </header>
+
+            <div class="page-content">
+                <!-- Stats Grid -->
+                <div
+                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                    <div class="card"
+                        style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.05)); border-color: rgba(59, 130, 246, 0.2);">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <h3 style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 0.5rem;">Total
+                                    Staff</h3>
+                                <div class="value" id="total-staff"
+                                    style="font-size: 2.5rem; font-weight: 700; color: #60a5fa;">0</div>
+                            </div>
+                            <div
+                                style="padding: 0.75rem; background: rgba(59, 130, 246, 0.2); border-radius: 12px; color: #60a5fa;">
+                                <i class="fas fa-users fa-lg"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card"
+                        style="background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(168, 85, 247, 0.05)); border-color: rgba(168, 85, 247, 0.2);">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <h3 style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 0.5rem;">Active
+                                    Events</h3>
+                                <div class="value" id="active-events"
+                                    style="font-size: 2.5rem; font-weight: 700; color: #c084fc;">0</div>
+                            </div>
+                            <div
+                                style="padding: 0.75rem; background: rgba(168, 85, 247, 0.2); border-radius: 12px; color: #c084fc;">
+                                <i class="fas fa-calendar-check fa-lg"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card"
+                        style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(245, 158, 11, 0.05)); border-color: rgba(245, 158, 11, 0.2);">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <h3 style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 0.5rem;">
+                                    Pending Approvals</h3>
+                                <div class="value" id="pending-approvals"
+                                    style="font-size: 2.5rem; font-weight: 700; color: #fbbf24;">0</div>
+                            </div>
+                            <div
+                                style="padding: 0.75rem; background: rgba(245, 158, 11, 0.2); border-radius: 12px; color: #fbbf24;">
+                                <i class="fas fa-clock fa-lg"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <h3 style="margin-bottom: 1rem; color: var(--text-light);">Quick Actions</h3>
+                <div
+                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                    <a href="staff.html" class="card"
+                        style="text-decoration: none; transition: transform 0.2s; display: flex; align-items: center; gap: 1rem; padding: 1.5rem;">
+                        <div
+                            style="width: 48px; height: 48px; background: rgba(59, 130, 246, 0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #60a5fa;">
+                            <i class="fas fa-user-plus fa-lg"></i>
+                        </div>
+                        <div>
+                            <h4 style="color: white; margin: 0 0 0.25rem 0;">Add Staff</h4>
+                            <p style="color: var(--text-muted); font-size: 0.8rem; margin: 0;">Manage department staff
+                            </p>
+                        </div>
+                    </a>
+
+                    <a href="events.html" class="card"
+                        style="text-decoration: none; transition: transform 0.2s; display: flex; align-items: center; gap: 1rem; padding: 1.5rem;">
+                        <div
+                            style="width: 48px; height: 48px; background: rgba(168, 85, 247, 0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #c084fc;">
+                            <i class="fas fa-plus-circle fa-lg"></i>
+                        </div>
+                        <div>
+                            <h4 style="color: white; margin: 0 0 0.25rem 0;">Create Event</h4>
+                            <p style="color: var(--text-muted); font-size: 0.8rem; margin: 0;">Schedule new activities
+                            </p>
+                        </div>
+                    </a>
+
+                    <a href="approvals.html" class="card"
+                        style="text-decoration: none; transition: transform 0.2s; display: flex; align-items: center; gap: 1rem; padding: 1.5rem;">
+                        <div
+                            style="width: 48px; height: 48px; background: rgba(245, 158, 11, 0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #fbbf24;">
+                            <i class="fas fa-clipboard-check fa-lg"></i>
+                        </div>
+                        <div>
+                            <h4 style="color: white; margin: 0 0 0.25rem 0;">Review Approvals</h4>
+                            <p style="color: var(--text-muted); font-size: 0.8rem; margin: 0;">Pending requests</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        import { auth, signOut, db } from '../../js/auth.js';
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // Sidebar Toggle Logic
+        const sidebar = document.getElementById('sidebar');
+        const mobileToggle = document.getElementById('mobile-toggle');
+        mobileToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            sidebar.classList.toggle('open');
+        });
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 768 && sidebar.classList.contains('open') && !sidebar.contains(e.target) && e.target !== mobileToggle) {
+                sidebar.classList.remove('open');
+            }
+        });
+
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = '../../login.html';
+                return;
+            }
+            document.getElementById('user-email').textContent = user.email;
+
+            // Fetch Stats
+            try {
+                const staffSnap = await getDocs(collection(db, "staff"));
+                document.getElementById('total-staff').textContent = staffSnap.size;
+
+                const eventsSnap = await getDocs(collection(db, "events"));
+                document.getElementById('active-events').textContent = eventsSnap.size;
+
+                const appsSnap = await getDocs(query(collection(db, "applications"), where("status", "==", "pending")));
+                document.getElementById('pending-approvals').textContent = appsSnap.size;
+            } catch (err) {
+                console.error(err);
+            }
+        });
+
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            signOut(auth).then(() => window.location.href = '../../index.html');
+        });
+    </script>
+</body>
+
+</html>

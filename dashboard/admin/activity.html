@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity Logs - TGPCET IT</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="glass-card">
+                <div class="sidebar-header">
+                    <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--primary-color);">TGPCET IT</h2>
+                    <p style="font-size: 0.75rem; color: var(--text-muted);">Admin Dashboard</p>
+                </div>
+                <nav class="sidebar-nav">
+                    <a href="index.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="14" width="7" height="7"></rect>
+                            <rect x="3" y="14" width="7" height="7"></rect>
+                        </svg>
+                        Overview
+                    </a>
+                    <a href="users.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                        Users
+                    </a>
+                    <a href="approvals.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                        Approvals
+                    </a>
+
+                    <!-- Superuser Links -->
+                    <div style="margin: 1rem 0; border-top: 1px solid var(--glass-border);"></div>
+                    <p style="padding: 0 1rem; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+                        MANAGEMENT</p>
+
+                    <a href="../hod/staff.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                        </svg>
+                        Staff
+                    </a>
+                    <a href="../hod/events.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        Events
+                    </a>
+                    <a href="../coordinator/notifications.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                        Notifications
+                    </a>
+                    <a href="activity.html" class="nav-item active">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                        </svg>
+                        Activity Log
+                    </a>
+                </nav>
+                <div class="sidebar-footer">
+                    <button id="logout-btn" class="nav-item"
+                        style="width: 100%; background: none; border: none; cursor: pointer; color: #fca5a5;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <button class="mobile-toggle" id="mobile-toggle">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+                <h1 style="font-size: 1.5rem; font-weight: 700;">Activity Logs</h1>
+            </header>
+
+            <div class="glass-card">
+                <div style="overflow-x: auto;">
+                    <table class="user-table" style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr>
+                                <th
+                                    style="padding: 1rem; text-align: left; border-bottom: 1px solid var(--glass-border); color: var(--text-muted);">
+                                    Action</th>
+                                <th
+                                    style="padding: 1rem; text-align: left; border-bottom: 1px solid var(--glass-border); color: var(--text-muted);">
+                                    Details</th>
+                                <th
+                                    style="padding: 1rem; text-align: left; border-bottom: 1px solid var(--glass-border); color: var(--text-muted);">
+                                    Performed By</th>
+                                <th
+                                    style="padding: 1rem; text-align: left; border-bottom: 1px solid var(--glass-border); color: var(--text-muted);">
+                                    Time</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logs-list">
+                            <tr>
+                                <td colspan="4" style="text-align: center; padding: 1rem; color: var(--text-muted);">
+                                    Loading logs...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        import { auth, signOut, db, collection, getDocs, query, orderBy } from '../../js/auth.js';
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = '../../login.html';
+                return;
+            }
+            loadLogs();
+        });
+
+        async function loadLogs() {
+            const tbody = document.getElementById('logs-list');
+            try {
+                const q = query(collection(db, "activity_logs"), orderBy("timestamp", "desc"));
+                const querySnapshot = await getDocs(q);
+                tbody.innerHTML = '';
+
+                if (querySnapshot.empty) {
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 1rem; color: var(--text-muted);">No activity logs found.</td></tr>';
+                    return;
+                }
+
+                querySnapshot.forEach((docSnap) => {
+                    const log = docSnap.data();
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td style="padding: 1rem; border-bottom: 1px solid var(--glass-border); color: var(--primary-color); font-weight: 600;">${log.action}</td>
+                        <td style="padding: 1rem; border-bottom: 1px solid var(--glass-border); color: white;">${log.details}</td>
+                        <td style="padding: 1rem; border-bottom: 1px solid var(--glass-border); color: var(--text-muted);">${log.performedBy}</td>
+                        <td style="padding: 1rem; border-bottom: 1px solid var(--glass-border); color: var(--text-muted); font-size: 0.875rem;">${new Date(log.timestamp).toLocaleString()}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            } catch (err) {
+                console.error(err);
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #fca5a5;">Failed to load logs.</td></tr>';
+            }
+        }
+
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            signOut(auth).then(() => window.location.href = '../../index.html');
+        });
+
+        const sidebar = document.getElementById('sidebar');
+        document.getElementById('mobile-toggle').addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Approvals - TGPCET IT</title>
+    <link rel="stylesheet" href="../../css/new-dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Load jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="brand">
+                <h2>TGPCET IT</h2>
+            </div>
+
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>Overview</span>
+                </a>
+                <a href="staff.html" class="nav-link">
+                    <i class="fas fa-users"></i>
+                    <span>Staff</span>
+                </a>
+                <a href="events.html" class="nav-link">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Events</span>
+                </a>
+                <a href="approvals.html" class="nav-link active">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Approvals</span>
+                </a>
+            </nav>
+
+            <div class="user-profile">
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+                    <div
+                        style="width: 32px; height: 32px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
+                        H
+                    </div>
+                    <div style="overflow: hidden;">
+                        <div
+                            style="font-size: 0.875rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            HOD</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);" id="user-email">Loading...</div>
+                    </div>
+                </div>
+                <button id="logout-btn" class="btn btn-outline"
+                    style="width: 100%; justify-content: flex-start; gap: 0.5rem; border: none; padding: 0.5rem;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <button class="mobile-toggle" id="mobile-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 style="font-size: 1.25rem; font-weight: 600;">Pending Approvals</h1>
+            </header>
+
+            <div class="page-content">
+                <div class="card">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Applicant</th>
+                                    <th>Event</th>
+                                    <th>Date</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="approvals-list">
+                                <tr>
+                                    <td colspan="4" style="text-align: center; color: var(--text-muted);">Loading...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Review Modal -->
+    <div id="reviewModal" class="modal-backdrop">
+        <div class="modal-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2 style="font-size: 1.25rem; color: var(--primary);">Review Application</h2>
+                <button onclick="closeModal()"
+                    style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.25rem;">&times;</button>
+            </div>
+
+            <div id="modalDetails" style="margin-bottom: 2rem;">
+                <!-- Details injected here -->
+            </div>
+
+            <div style="display: flex; gap: 1rem;">
+                <button id="modalApproveBtn" class="btn btn-primary"
+                    style="flex: 1; background: var(--success);">Approve</button>
+                <button id="modalRejectBtn" class="btn btn-danger" style="flex: 1;">Reject</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { auth, signOut, db } from '../../js/auth.js';
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { collection, getDocs, doc, getDoc, updateDoc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { logActivity } from '../../js/logger.js';
+
+        // Sidebar Toggle
+        const sidebar = document.getElementById('sidebar');
+        const mobileToggle = document.getElementById('mobile-toggle');
+        mobileToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            sidebar.classList.toggle('open');
+        });
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 768 && sidebar.classList.contains('open') && !sidebar.contains(e.target) && e.target !== mobileToggle) {
+                sidebar.classList.remove('open');
+            }
+        });
+
+        let currentUser = null;
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                document.getElementById('user-email').textContent = user.email;
+                loadApprovals();
+            } else {
+                window.location.href = '../../login.html';
+            }
+        });
+
+        async function loadApprovals() {
+            const tbody = document.getElementById('approvals-list');
+            try {
+                const q = query(collection(db, "applications"), where("status", "==", "pending"), orderBy("appliedAt", "desc"));
+                const querySnapshot = await getDocs(q);
+                tbody.innerHTML = '';
+
+                if (querySnapshot.empty) {
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">No pending approvals.</td></tr>';
+                    return;
+                }
+
+                querySnapshot.forEach((docSnap) => {
+                    const app = docSnap.data();
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td style="font-weight: 500;">${app.userData.profile.fullName}</td>
+                        <td style="color: var(--text-muted);">${app.eventTitle}</td>
+                        <td style="color: var(--text-muted);">${new Date(app.appliedAt).toLocaleDateString()}</td>
+                        <td>
+                            <button onclick="openReviewModal('${docSnap.id}')" class="btn btn-outline" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">Review</button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            } catch (err) {
+                console.error(err);
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--danger);">Failed to load approvals.</td></tr>';
+            }
+        }
+
+        window.openReviewModal = async (appId) => {
+            const modal = document.getElementById('reviewModal');
+            const detailsDiv = document.getElementById('modalDetails');
+            const approveBtn = document.getElementById('modalApproveBtn');
+            const rejectBtn = document.getElementById('modalRejectBtn');
+
+            try {
+                const docSnap = await getDoc(doc(db, "applications", appId));
+                if (!docSnap.exists()) return;
+                const app = docSnap.data();
+
+                detailsDiv.innerHTML = `
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div>
+                            <p style="color: var(--text-muted); font-size: 0.75rem;">Applicant</p>
+                            <p>${app.userData.profile.fullName}</p>
+                        </div>
+                        <div>
+                            <p style="color: var(--text-muted); font-size: 0.75rem;">PRN</p>
+                            <p>${app.userData.profile.prn}</p>
+                        </div>
+                        <div>
+                            <p style="color: var(--text-muted); font-size: 0.75rem;">Email</p>
+                            <p>${app.userData.email}</p>
+                        </div>
+                        <div>
+                            <p style="color: var(--text-muted); font-size: 0.75rem;">Phone</p>
+                            <p>${app.userData.profile.phone}</p>
+                        </div>
+                        <div>
+                            <p style="color: var(--text-muted); font-size: 0.75rem;">Event</p>
+                            <p>${app.eventTitle}</p>
+                        </div>
+                        <div>
+                            <p style="color: var(--text-muted); font-size: 0.75rem;">Fee</p>
+                            <p>₹${app.fee || 0}</p>
+                        </div>
+                    </div>
+                    ${app.payment ? `
+                    <div style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px;">
+                        <p style="color: var(--text-muted); font-size: 0.75rem; margin-bottom: 0.5rem;">Payment Details</p>
+                        <p><strong>UTR:</strong> ${app.payment.utr}</p>
+                        <p><strong>Date:</strong> ${new Date(app.payment.date).toLocaleDateString()}</p>
+                    </div>
+                    ` : ''}
+                    ${app.teamMembers ? `
+                    <div style="margin-top: 1rem;">
+                        <p style="color: var(--text-muted); font-size: 0.75rem; margin-bottom: 0.5rem;">Team Members</p>
+                        <ul style="list-style: none; padding: 0;">
+                            ${app.teamMembers.map(m => `<li style="padding: 0.25rem 0; border-bottom: 1px solid var(--border-glass);">${m.name} (${m.email})</li>`).join('')}
+                        </ul>
+                    </div>
+                    ` : ''}
+                `;
+
+                approveBtn.onclick = () => processApplication(appId, 'approved');
+                rejectBtn.onclick = () => processApplication(appId, 'rejected');
+
+                modal.classList.add('active');
+            } catch (err) {
+                console.error(err);
+                alert('Failed to load application details.');
+            }
+        };
+
+        window.closeModal = () => {
+            document.getElementById('reviewModal').classList.remove('active');
+        };
+
+        async function processApplication(appId, status) {
+            if (!confirm(`Are you sure you want to ${status} this application?`)) return;
+            try {
+                await updateDoc(doc(db, "applications", appId), {
+                    status: status,
+                    processedAt: new Date().toISOString(),
+                    processedBy: currentUser.email
+                });
+                await logActivity("Process Application", `${status.charAt(0).toUpperCase() + status.slice(1)} application ${appId}`, currentUser);
+                closeModal();
+                loadApprovals();
+            } catch (err) {
+                alert('Failed to process application: ' + err.message);
+            }
+        }
+
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            signOut(auth).then(() => window.location.href = '../../index.html');
+        });
+    </script>
+</body>
+
+</html>

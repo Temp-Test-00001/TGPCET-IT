@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Events - TGPCET IT</title>
+    <link rel="stylesheet" href="../../css/new-dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="brand">
+                <h2>TGPCET IT</h2>
+            </div>
+
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>Overview</span>
+                </a>
+                <a href="staff.html" class="nav-link">
+                    <i class="fas fa-users"></i>
+                    <span>Staff</span>
+                </a>
+                <a href="events.html" class="nav-link active">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Events</span>
+                </a>
+                <a href="approvals.html" class="nav-link">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Approvals</span>
+                </a>
+            </nav>
+
+            <div class="user-profile">
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+                    <div
+                        style="width: 32px; height: 32px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
+                        H
+                    </div>
+                    <div style="overflow: hidden;">
+                        <div
+                            style="font-size: 0.875rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            HOD</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);" id="user-email">Loading...</div>
+                    </div>
+                </div>
+                <button id="logout-btn" class="btn btn-outline"
+                    style="width: 100%; justify-content: flex-start; gap: 0.5rem; border: none; padding: 0.5rem;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <button class="mobile-toggle" id="mobile-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 style="font-size: 1.25rem; font-weight: 600;">Manage Events</h1>
+            </header>
+
+            <div class="page-content">
+                <!-- Create Event Form -->
+                <div class="card" style="margin-bottom: 2rem;">
+                    <h3 style="margin-bottom: 1.5rem; color: var(--primary);">Create New Event</h3>
+                    <form id="create-event-form"
+                        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                        <div style="grid-column: 1 / -1;">
+                            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Event
+                                Title</label>
+                            <input type="text" id="eventTitle" required
+                                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.2); color: white;">
+                        </div>
+
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Event
+                                Date</label>
+                            <input type="date" id="eventDate" required
+                                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.2); color: white;">
+                        </div>
+
+                        <div>
+                            <label
+                                style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Venue</label>
+                            <input type="text" id="eventVenue" required
+                                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.2); color: white;">
+                        </div>
+
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Event
+                                Type</label>
+                            <select id="eventType" required
+                                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: #1e293b; color: white;">
+                                <option value="individual">Individual</option>
+                                <option value="team">Team</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Max
+                                Participants/Teams</label>
+                            <input type="number" id="maxParticipants" required min="1" value="50"
+                                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.2); color: white;">
+                        </div>
+
+                        <div id="minTeamSizeDiv" style="display: none;">
+                            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Min Team
+                                Size</label>
+                            <input type="number" id="minTeamSize" min="1" value="2"
+                                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.2); color: white;">
+                        </div>
+
+                        <div id="maxTeamSizeDiv" style="display: none;">
+                            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Max Team
+                                Size</label>
+                            <input type="number" id="maxTeamSize" min="1" value="4"
+                                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.2); color: white;">
+                        </div>
+
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Fee
+                                Type</label>
+                            <select id="feeType" required
+                                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: #1e293b; color: white;">
+                                <option value="free">Free</option>
+                                <option value="paid">Paid</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Event Fee
+                                (₹)</label>
+                            <input type="number" id="eventFee" min="0" value="0"
+                                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.2); color: white;">
+                        </div>
+
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Registration
+                                Deadline</label>
+                            <input type="date" id="registrationDeadline" required
+                                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.2); color: white;">
+                        </div>
+
+                        <div style="grid-column: 1 / -1;">
+                            <label
+                                style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Description</label>
+                            <textarea id="eventDescription" rows="3" required
+                                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.2); color: white;"></textarea>
+                        </div>
+
+                        <div style="grid-column: 1 / -1;">
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Create Event</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Active Events List -->
+                <div class="card">
+                    <h3 style="margin-bottom: 1.5rem;">Active Events</h3>
+                    <div id="events-list"
+                        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                        <div style="text-align: center; color: var(--text-muted);">Loading events...</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        import { auth, signOut, db, collection, getDocs, addDoc, deleteDoc, doc, query, orderBy } from '../../js/auth.js';
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { logActivity } from '../../js/logger.js';
+
+        // Sidebar Toggle
+        const sidebar = document.getElementById('sidebar');
+        const mobileToggle = document.getElementById('mobile-toggle');
+        mobileToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            sidebar.classList.toggle('open');
+        });
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 768 && sidebar.classList.contains('open') && !sidebar.contains(e.target) && e.target !== mobileToggle) {
+                sidebar.classList.remove('open');
+            }
+        });
+
+        let currentUser = null;
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                document.getElementById('user-email').textContent = user.email;
+                toggleTeamSizeFields();
+                loadEvents();
+            } else {
+                window.location.href = '../../index.html';
+            }
+        });
+
+        function toggleTeamSizeFields() {
+            const eventType = document.getElementById('eventType').value;
+            const minDiv = document.getElementById('minTeamSizeDiv');
+            const maxDiv = document.getElementById('maxTeamSizeDiv');
+
+            if (eventType === 'team') {
+                minDiv.style.display = 'block';
+                maxDiv.style.display = 'block';
+                document.getElementById('minTeamSize').required = true;
+                document.getElementById('maxTeamSize').required = true;
+            } else {
+                minDiv.style.display = 'none';
+                maxDiv.style.display = 'none';
+                document.getElementById('minTeamSize').required = false;
+                document.getElementById('maxTeamSize').required = false;
+            }
+        }
+
+        document.getElementById('eventType').addEventListener('change', toggleTeamSizeFields);
+
+        async function loadEvents() {
+            const container = document.getElementById('events-list');
+            try {
+                const q = query(collection(db, "events"), orderBy("date", "desc"));
+                const querySnapshot = await getDocs(q);
+                container.innerHTML = '';
+
+                if (querySnapshot.empty) {
+                    container.innerHTML = '<div style="text-align: center; color: var(--text-muted);">No events found.</div>';
+                    return;
+                }
+
+                querySnapshot.forEach((docSnap) => {
+                    const event = docSnap.data();
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.style.background = 'rgba(255,255,255,0.02)';
+                    card.innerHTML = `
+                        <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem;">${event.title}</h3>
+                        <p style="color: var(--text-muted); margin-bottom: 0.5rem; font-size: 0.875rem;">${event.date} | ${event.venue}</p>
+                        <p style="color: var(--text-muted); margin-bottom: 0.5rem; font-size: 0.875rem;">${event.description}</p>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <span style="color: var(--primary); font-weight: 600;">₹${event.fee || 0}</span>
+                            <span class="badge badge-warning">${event.eventType}</span>
+                        </div>
+                        <button onclick="deleteEvent('${docSnap.id}')" class="btn btn-danger" style="width: 100%; padding: 0.5rem;">Delete Event</button>
+                    `;
+                    container.appendChild(card);
+                });
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = '<div style="text-align: center; color: var(--danger);">Failed to load events.</div>';
+            }
+        }
+
+        document.getElementById('create-event-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const eventData = {
+                title: document.getElementById('eventTitle').value,
+                date: document.getElementById('eventDate').value,
+                venue: document.getElementById('eventVenue').value,
+                description: document.getElementById('eventDescription').value,
+                eventType: document.getElementById('eventType').value,
+                maxParticipants: parseInt(document.getElementById('maxParticipants').value),
+                fee: parseFloat(document.getElementById('eventFee').value) || 0,
+                feeType: document.getElementById('feeType').value,
+                registrationDeadline: document.getElementById('registrationDeadline').value,
+                createdAt: new Date().toISOString(),
+                createdBy: currentUser.email
+            };
+
+            if (eventData.eventType === 'team') {
+                eventData.minTeamSize = parseInt(document.getElementById('minTeamSize').value);
+                eventData.maxTeamSize = parseInt(document.getElementById('maxTeamSize').value);
+            }
+
+            try {
+                await addDoc(collection(db, "events"), eventData);
+                await logActivity("Create Event", `Created event: ${eventData.title}`, currentUser);
+                alert('Event created successfully!');
+                document.getElementById('create-event-form').reset();
+                toggleTeamSizeFields();
+                loadEvents();
+            } catch (err) {
+                alert('Failed to create event: ' + err.message);
+            }
+        });
+
+        window.deleteEvent = async (id) => {
+            if (!confirm('Are you sure you want to delete this event?')) return;
+            try {
+                await deleteDoc(doc(db, "events", id));
+                await logActivity("Delete Event", `Deleted event ID: ${id}`, currentUser);
+                loadEvents();
+            } catch (err) {
+                alert('Failed to delete event: ' + err.message);
+            }
+        };
+
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            signOut(auth).then(() => window.location.href = '../../index.html');
+        });
+    </script>
+</body>
+
+</html>

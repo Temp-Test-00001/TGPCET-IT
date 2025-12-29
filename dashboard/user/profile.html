@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - TGPCET IT</title>
+    <link rel="stylesheet" href="../../css/new-dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="brand">
+                <h2>TGPCET IT</h2>
+            </div>
+
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>Overview</span>
+                </a>
+                <a href="profile.html" class="nav-link active">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+                <a href="events.html" class="nav-link">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>My Events</span>
+                </a>
+            </nav>
+
+            <div class="user-profile">
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+                    <div id="user-initial"
+                        style="width: 32px; height: 32px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
+                        U
+                    </div>
+                    <div style="overflow: hidden;">
+                        <div id="user-name"
+                            style="font-size: 0.875rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            Loading...</div>
+                        <div id="user-email" style="font-size: 0.75rem; color: var(--text-muted);">Loading...</div>
+                    </div>
+                </div>
+                <button id="logout-btn" class="btn btn-outline"
+                    style="width: 100%; justify-content: flex-start; gap: 0.5rem; border: none; padding: 0.5rem;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <button class="mobile-toggle" id="mobile-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 style="font-size: 1.25rem; font-weight: 600;">Complete Profile</h1>
+            </header>
+
+            <div class="page-content">
+                <div class="card" style="max-width: 900px;">
+                    <form id="profile-form"
+                        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+
+                        <!-- Personal Details -->
+                        <div style="grid-column: 1 / -1;">
+                            <h3
+                                style="color: var(--primary); border-bottom: 1px solid var(--border-glass); padding-bottom: 0.5rem; margin-bottom: 1rem;">
+                                Personal Details</h3>
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Full
+                                Name</label>
+                            <input type="text" id="fullName" required
+                                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.2); color: white;">
+                        </div>
+                        <div>
+                            <label
+                                style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Email</label>
+                            <input type="email" id="email" disabled
+                                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.2); color: var(--text-muted); opacity: 0.7;">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Date of
+                                Birth</label>
+                            <input type="date" id="dob" required
+                                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.2); color: white;">
+                        </div>
+                        <div>
+                            <label
+                                style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Gender</label>
+                            <select id="gender" required
+                                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: #1e293b; color: white;">
+                                <option value="">Select Gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Blood
+                                Group</label>
+                            <select id="bloodGroup"
+                                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: #1e293b; color: white;">
+                                <option value="">Select</option>
+                                <option value="A+">A+</option>
+                                <option value="A-">A-</option>
+                                <option value="B+">B+</option>
+                                <option value="B-">B-</option>
+                                <option value="O+">O+</option>
+                                <option value="O-">O-</option>
+                                <option value="AB+">AB+</option>
+                                <option value="AB-">AB-</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label
+                                style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Caste/Category</label>
+                            <input type="text" id="category" placeholder="e.g. OPEN, OBC, SC"
+                                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.2); color: white;">
+                        </div>
+
+                        <!-- Contact Details -->
+                        <div style="grid-column: 1 / -1; margin-top: 1rem;">
+                            <h3
+                                style="color: var(--primary); border-bottom: 1px solid var(--border-glass); padding-bottom: 0.5rem; margin-bottom: 1rem;">
+                                Contact Details</h3>
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Mobile
+                                Number</label>
+                            <input type="tel" id="mobile" required
+                                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.2); color: white;">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Parent's
+                                Mobile</label>
+                            <input type="tel" id="parentMobile" required
+                                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.2); color: white;">
+                        </div>
+                        <div style="grid-column: 1 / -1;">
+                            <label
+                                style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Address</label>
+                            <textarea id="address" rows="2" required
+                                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.2); color: white;"></textarea>
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">City</label>
+                            <input type="text" id="city" required
+                                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.2); color: white;">
+                        </div>
+                        <div>
+                            <label
+                                style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">State</label>
+                            <input type="text" id="state" required
+                                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.2); color: white;">
+                        </div>
+
+                        <!-- Academic Details -->
+                        <div style="grid-column: 1 / -1; margin-top: 1rem;">
+                            <h3
+                                style="color: var(--primary); border-bottom: 1px solid var(--border-glass); padding-bottom: 0.5rem; margin-bottom: 1rem;">
+                                Academic Details</h3>
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">PRN
+                                Number</label>
+                            <input type="text" id="prn" required
+                                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.2); color: white;">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Year</label>
+                            <select id="year" required
+                                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: #1e293b; color: white;">
+                                <option value="">Select Year</option>
+                                <option value="1">1st Year</option>
+                                <option value="2">2nd Year</option>
+                                <option value="3">3rd Year</option>
+                                <option value="4">4th Year</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label
+                                style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Section</label>
+                            <input type="text" id="section" required
+                                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.2); color: white;">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Roll
+                                Number</label>
+                            <input type="text" id="rollNumber" required
+                                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.2); color: white;">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">10th
+                                Percentage</label>
+                            <input type="number" step="0.01" id="tenth"
+                                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.2); color: white;">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">12th/Diploma
+                                %</label>
+                            <input type="number" step="0.01" id="twelfth"
+                                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.2); color: white;">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Current
+                                CGPA</label>
+                            <input type="number" step="0.01" id="cgpa"
+                                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.2); color: white;">
+                        </div>
+
+                        <div style="grid-column: 1 / -1; margin-top: 1.5rem;">
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Save Profile</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        import { auth, signOut, db, doc, getDoc, setDoc } from '../../js/auth.js';
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        // Sidebar Toggle
+        const sidebar = document.getElementById('sidebar');
+        const mobileToggle = document.getElementById('mobile-toggle');
+        mobileToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            sidebar.classList.toggle('open');
+        });
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 768 && sidebar.classList.contains('open') && !sidebar.contains(e.target) && e.target !== mobileToggle) {
+                sidebar.classList.remove('open');
+            }
+        });
+
+        let currentUser = null;
+
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = '../../login.html';
+                return;
+            }
+            currentUser = user;
+            document.getElementById('user-email').textContent = user.email;
+
+            // Load Existing Data
+            const userDoc = await getDoc(doc(db, "users", user.uid));
+            if (userDoc.exists()) {
+                const data = userDoc.data();
+                const name = data.profile?.fullName || user.email.split('@')[0];
+                document.getElementById('user-name').textContent = name;
+                document.getElementById('user-initial').textContent = name[0].toUpperCase();
+                document.getElementById('email').value = user.email;
+
+                if (data.profile) {
+                    const p = data.profile;
+                    document.getElementById('fullName').value = p.fullName || '';
+                    document.getElementById('dob').value = p.dob || '';
+                    document.getElementById('gender').value = p.gender || '';
+                    document.getElementById('bloodGroup').value = p.bloodGroup || '';
+                    document.getElementById('category').value = p.category || '';
+
+                    document.getElementById('mobile').value = p.mobile || '';
+                    document.getElementById('parentMobile').value = p.parentMobile || '';
+                    document.getElementById('address').value = p.address || '';
+                    document.getElementById('city').value = p.city || '';
+                    document.getElementById('state').value = p.state || '';
+
+                    document.getElementById('prn').value = p.prn || '';
+                    document.getElementById('year').value = p.year || '';
+                    document.getElementById('section').value = p.section || '';
+                    document.getElementById('rollNumber').value = p.rollNumber || '';
+                    document.getElementById('tenth').value = p.tenth || '';
+                    document.getElementById('twelfth').value = p.twelfth || '';
+                    document.getElementById('cgpa').value = p.cgpa || '';
+                }
+            }
+        });
+
+        document.getElementById('profile-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!currentUser) return;
+
+            const profileData = {
+                fullName: document.getElementById('fullName').value,
+                dob: document.getElementById('dob').value,
+                gender: document.getElementById('gender').value,
+                bloodGroup: document.getElementById('bloodGroup').value,
+                category: document.getElementById('category').value,
+
+                mobile: document.getElementById('mobile').value,
+                parentMobile: document.getElementById('parentMobile').value,
+                address: document.getElementById('address').value,
+                city: document.getElementById('city').value,
+                state: document.getElementById('state').value,
+
+                prn: document.getElementById('prn').value,
+                year: document.getElementById('year').value,
+                section: document.getElementById('section').value,
+                rollNumber: document.getElementById('rollNumber').value,
+                tenth: document.getElementById('tenth').value,
+                twelfth: document.getElementById('twelfth').value,
+                cgpa: document.getElementById('cgpa').value,
+            };
+
+            try {
+                await setDoc(doc(db, "users", currentUser.uid), {
+                    profile: profileData,
+                    profileCompleted: true,
+                    updatedAt: new Date().toISOString()
+                }, { merge: true });
+
+                alert('Profile updated successfully!');
+                window.location.href = 'index.html';
+            } catch (error) {
+                console.error(error);
+                alert('Failed to update profile.');
+            }
+        });
+
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            signOut(auth).then(() => window.location.href = '../../index.html');
+        });
+    </script>
+</body>
+
+</html>

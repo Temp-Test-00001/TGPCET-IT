@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard - TGPCET IT</title>
+    <link rel="stylesheet" href="../../css/new-dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Error Banner */
+        #error-banner {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: #dc2626;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            z-index: 10000;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .welcome-card {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(37, 99, 235, 0.05) 100%);
+            border: 1px solid rgba(37, 99, 235, 0.2);
+        }
+    </style>
+</head>
+
+<body>
+    <div id="error-banner"></div>
+
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="brand">
+                <h2>TGPCET IT</h2>
+            </div>
+
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-link active">
+                    <i class="fas fa-home"></i>
+                    <span>Overview</span>
+                </a>
+                <a href="profile.html" class="nav-link">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+                <a href="events.html" class="nav-link">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>My Events</span>
+                </a>
+            </nav>
+
+            <div class="user-profile">
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+                    <div id="user-initial"
+                        style="width: 32px; height: 32px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
+                        U
+                    </div>
+                    <div style="overflow: hidden;">
+                        <div id="user-name"
+                            style="font-size: 0.875rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            Loading...</div>
+                        <div id="user-email" style="font-size: 0.75rem; color: var(--text-muted);">Loading...</div>
+                    </div>
+                </div>
+                <button id="logout-btn" class="btn btn-outline"
+                    style="width: 100%; justify-content: flex-start; gap: 0.5rem; border: none; padding: 0.5rem;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <button class="mobile-toggle" id="mobile-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 style="font-size: 1.25rem; font-weight: 600;">Dashboard Overview</h1>
+            </header>
+
+            <div class="page-content">
+                <!-- Welcome Section -->
+                <div class="card welcome-card" style="margin-bottom: 2rem;">
+                    <h2 style="margin-bottom: 0.5rem; color: var(--primary);">Welcome back, <span
+                            id="welcome-name">Student</span>!</h2>
+                    <p style="color: var(--text-muted); line-height: 1.6; max-width: 800px;">
+                        This is your central hub for managing event applications. Ensure your profile is up-to-date
+                        before applying to new events.
+                    </p>
+                    <div style="margin-top: 1.5rem; display: flex; gap: 1rem;">
+                        <a href="events.html" class="btn btn-primary"><i class="fas fa-search"
+                                style="margin-right: 0.5rem;"></i> Browse Events</a>
+                        <a href="profile.html" class="btn btn-outline"><i class="fas fa-user-edit"
+                                style="margin-right: 0.5rem;"></i> Edit Profile</a>
+                    </div>
+                </div>
+
+                <!-- Stats Grid -->
+                <div
+                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                    <div class="card">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <h3 style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 0.5rem;">
+                                    Profile Status</h3>
+                                <div class="value" id="profile-status"
+                                    style="font-size: 1.25rem; font-weight: 700; color: var(--warning);">Pending</div>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.05); padding: 0.75rem; border-radius: 8px;">
+                                <i class="fas fa-id-card" style="color: var(--primary); font-size: 1.25rem;"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <h3 style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 0.5rem;">My
+                                    Applications</h3>
+                                <div class="value" id="registered-events-count"
+                                    style="font-size: 2rem; font-weight: 700;">0</div>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.05); padding: 0.75rem; border-radius: 8px;">
+                                <i class="fas fa-file-alt" style="color: var(--success); font-size: 1.25rem;"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <h3 style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 0.5rem;">
+                                    Pending Review</h3>
+                                <div class="value" id="pending-count" style="font-size: 2rem; font-weight: 700;">0</div>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.05); padding: 0.75rem; border-radius: 8px;">
+                                <i class="fas fa-clock" style="color: var(--warning); font-size: 1.25rem;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="card">
+                    <h3 style="margin-bottom: 1.5rem; font-size: 1.1rem;">Recent Applications</h3>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Event</th>
+                                    <th>Date Applied</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recent-activity">
+                                <tr>
+                                    <td colspan="3" style="text-align: center; color: var(--text-muted);">Loading...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        // --- 1. Error Handler ---
+        function showError(msg) {
+            const banner = document.getElementById('error-banner');
+            banner.textContent = "Error: " + msg;
+            banner.style.display = 'block';
+            console.error(msg);
+            setTimeout(() => { banner.style.display = 'none'; }, 5000);
+        }
+        window.onerror = function (msg, url, line) {
+            showError(`${msg} (Line ${line})`);
+            return false;
+        };
+
+        // --- 2. Imports ---
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, collection, getDocs, doc, getDoc, query, where, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // --- 3. Config ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyAbpCJRXBwORZC1_MVaqTVlMOqVoA0CT5w",
+            authDomain: "tgpcet-5ef68.firebaseapp.com",
+            projectId: "tgpcet-5ef68",
+            storageBucket: "tgpcet-5ef68.firebasestorage.app",
+            messagingSenderId: "63942237118",
+            appId: "1:63942237118:web:16fc9f531ba84a7ce237ef"
+        };
+
+        // --- 4. Init ---
+        try {
+            const app = initializeApp(firebaseConfig);
+            const auth = getAuth(app);
+            const db = getFirestore(app);
+            console.log("User Overview Initialized");
+
+            // --- 5. Auth & Load ---
+            onAuthStateChanged(auth, async (user) => {
+                if (!user) {
+                    window.location.href = '../../login.html';
+                    return;
+                }
+
+                // Load User Info
+                try {
+                    const userDoc = await getDoc(doc(db, "users", user.uid));
+                    if (userDoc.exists()) {
+                        const data = userDoc.data();
+                        const name = data.profile?.fullName || user.email.split('@')[0];
+
+                        // Update UI
+                        document.getElementById('user-name').textContent = name;
+                        document.getElementById('welcome-name').textContent = name.split(' ')[0];
+                        document.getElementById('user-email').textContent = user.email;
+                        document.getElementById('user-initial').textContent = name[0].toUpperCase();
+
+                        if (data.profileCompleted) {
+                            const statusEl = document.getElementById('profile-status');
+                            statusEl.textContent = "Completed";
+                            statusEl.style.color = "var(--success)";
+                        }
+                    }
+                } catch (e) { console.error("Profile Load Error", e); }
+
+                // Load Stats & Recent Activity
+                try {
+                    const q = query(collection(db, "applications"), where("userId", "==", user.uid));
+                    const snap = await getDocs(q);
+
+                    document.getElementById('registered-events-count').textContent = snap.size;
+
+                    const pending = snap.docs.filter(d => d.data().status === 'pending').length;
+                    document.getElementById('pending-count').textContent = pending;
+
+                    // Recent Activity Table
+                    const tbody = document.getElementById('recent-activity');
+                    tbody.innerHTML = '';
+
+                    if (snap.empty) {
+                        tbody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: var(--text-muted);">No applications yet. <a href="events.html" style="color: var(--primary);">Apply now</a></td></tr>';
+                    } else {
+                        const apps = [];
+                        snap.forEach(doc => apps.push({ id: doc.id, ...doc.data() }));
+
+                        // Sort by date desc
+                        apps.sort((a, b) => new Date(b.appliedAt || 0) - new Date(a.appliedAt || 0));
+
+                        apps.slice(0, 5).forEach(app => {
+                            let badgeClass = 'badge-warning';
+                            if (app.status === 'approved') badgeClass = 'badge-success';
+                            if (app.status === 'rejected') badgeClass = 'badge-danger';
+
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = `
+                                <td>${app.eventTitle || 'Unknown Event'}</td>
+                                <td style="color: var(--text-muted);">${app.appliedAt ? new Date(app.appliedAt).toLocaleDateString() : 'N/A'}</td>
+                                <td><span class="badge ${badgeClass}">${app.status}</span></td>
+                            `;
+                            tbody.appendChild(tr);
+                        });
+                    }
+
+                } catch (e) {
+                    showError("Stats Load Error: " + e.message);
+                }
+            });
+
+            // --- 6. UI Listeners ---
+            document.getElementById('logout-btn').addEventListener('click', () => {
+                signOut(auth).then(() => window.location.href = '../../index.html');
+            });
+
+            // Mobile Sidebar
+            const sidebar = document.getElementById('sidebar');
+            const mobileToggle = document.getElementById('mobile-toggle');
+            mobileToggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                sidebar.classList.toggle('open');
+            });
+            document.addEventListener('click', (e) => {
+                if (window.innerWidth <= 768 && sidebar.classList.contains('open') && !sidebar.contains(e.target) && e.target !== mobileToggle) {
+                    sidebar.classList.remove('open');
+                }
+            });
+
+        } catch (initErr) {
+            showError("Init Failed: " + initErr.message);
+        }
+    </script>
+</body>
+
+</html>

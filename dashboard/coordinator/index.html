@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coordinator Dashboard - TGPCET IT</title>
+    <link rel="stylesheet" href="../../css/new-dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="brand">
+                <h2>TGPCET IT</h2>
+            </div>
+
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-link active">
+                    <i class="fas fa-home"></i>
+                    <span>Overview</span>
+                </a>
+                <a href="notifications.html" class="nav-link">
+                    <i class="fas fa-bell"></i>
+                    <span>Notifications</span>
+                </a>
+                <a href="events.html" class="nav-link">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Events</span>
+                </a>
+                <a href="approvals.html" class="nav-link">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Approvals</span>
+                </a>
+            </nav>
+
+            <div class="user-profile">
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+                    <div
+                        style="width: 32px; height: 32px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
+                        C
+                    </div>
+                    <div style="overflow: hidden;">
+                        <div
+                            style="font-size: 0.875rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            Coordinator</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);" id="user-email">Loading...</div>
+                    </div>
+                </div>
+                <button id="logout-btn" class="btn btn-outline"
+                    style="width: 100%; justify-content: flex-start; gap: 0.5rem; border: none; padding: 0.5rem;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <button class="mobile-toggle" id="mobile-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 style="font-size: 1.25rem; font-weight: 600;">Coordinator Overview</h1>
+            </header>
+
+            <div class="page-content">
+                <div class="stats-grid">
+                    <div class="card stat-card">
+                        <div class="stat-icon" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Active Notifications</h3>
+                            <div class="value" id="active-notifs">0</div>
+                        </div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="stat-icon" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Active Events</h3>
+                            <div class="value" id="active-events">0</div>
+                        </div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="stat-icon" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Pending Approvals</h3>
+                            <div class="value" id="pending-approvals">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        import { auth, signOut, db } from '../../js/auth.js';
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // Sidebar Toggle
+        const sidebar = document.getElementById('sidebar');
+        const mobileToggle = document.getElementById('mobile-toggle');
+        mobileToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            sidebar.classList.toggle('open');
+        });
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 768 && sidebar.classList.contains('open') && !sidebar.contains(e.target) && e.target !== mobileToggle) {
+                sidebar.classList.remove('open');
+            }
+        });
+
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = '../../login.html';
+                return;
+            }
+            document.getElementById('user-email').textContent = user.email;
+
+            // Fetch Stats
+            try {
+                const notifsSnap = await getDocs(collection(db, "notifications"));
+                document.getElementById('active-notifs').textContent = notifsSnap.size;
+
+                const eventsSnap = await getDocs(collection(db, "events"));
+                document.getElementById('active-events').textContent = eventsSnap.size;
+
+                const appsSnap = await getDocs(query(collection(db, "applications"), where("status", "==", "pending")));
+                document.getElementById('pending-approvals').textContent = appsSnap.size;
+            } catch (err) {
+                console.error(err);
+            }
+        });
+
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            signOut(auth).then(() => window.location.href = '../../index.html');
+        });
+    </script>
+</body>
+
+</html>

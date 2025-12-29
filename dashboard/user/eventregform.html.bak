@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Registration - TGPCET IT</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+            padding: 1rem;
+        }
+
+        .step::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.1);
+            z-index: 0;
+        }
+
+        .step:first-child::before {
+            left: 50%;
+        }
+
+        .step:last-child::before {
+            right: 50%;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            color: #94a3b8;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            position: relative;
+            z-index: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .step.active .step-number {
+            background: linear-gradient(135deg, #60a5fa, #a855f7);
+            color: white;
+        }
+
+        .step.completed .step-number {
+            background: #4ade80;
+            color: white;
+        }
+
+        .step-label {
+            font-size: 0.875rem;
+            color: #94a3b8;
+        }
+
+        .step.active .step-label {
+            color: white;
+        }
+
+        .form-step {
+            display: none;
+        }
+
+        .form-step.active {
+            display: block;
+        }
+
+        .team-member-input {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .member-details {
+            background: rgba(96, 165, 250, 0.1);
+            padding: 0.75rem;
+            border-radius: 6px;
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .tc-container {
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            border: 1px solid var(--glass-border);
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="glass-card">
+                <div class="sidebar-header">
+                    <h2 style="font-size: 1.25rem; font-weight: 700; color: white;">TGPCET IT</h2>
+                    <p style="font-size: 0.75rem; color: #94a3b8;">Event Registration</p>
+                </div>
+                <nav class="sidebar-nav">
+                    <a href="events.html" class="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 12H5M12 19l-7-7 7-7"></path>
+                        </svg>
+                        Back to Events
+                    </a>
+                </nav>
+                <div class="sidebar-footer">
+                    <button id="logout-btn" class="nav-item"
+                        style="width: 100%; background: none; border: none; cursor: pointer; color: #fca5a5;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <button class="mobile-toggle" id="mobile-toggle">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+                <h1 style="font-size: 1.5rem; font-weight: 700;" id="event-title">Event Registration</h1>
+            </header>
+
+            <!-- Event Info Card -->
+            <div class="glass-card" style="margin-bottom: 2rem;" id="event-info">
+                <div style="display: flex; justify-content: space-between; align-items: start;">
+                    <div>
+                        <h2 style="color: #60a5fa; margin-bottom: 0.5rem;" id="event-name">Loading...</h2>
+                        <p style="color: #94a3b8;" id="event-details"></p>
+                    </div>
+                    <div style="text-align: right;">
+                        <p style="color: #a855f7; font-weight: 600; font-size: 1.25rem;" id="event-fee"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step Indicator -->
+            <div class="step-indicator">
+                <div class="step active" data-step="1">
+                    <div class="step-number">1</div>
+                    <div class="step-label">Details</div>
+                </div>
+                <div class="step" data-step="2">
+                    <div class="step-number">2</div>
+                    <div class="step-label">Terms</div>
+                </div>
+                <div class="step" data-step="3" id="payment-step">
+                    <div class="step-number">3</div>
+                    <div class="step-label">Payment</div>
+                </div>
+                <div class="step" data-step="4">
+                    <div class="step-number">4</div>
+                    <div class="step-label">Confirm</div>
+                </div>
+            </div>
+
+            <!-- Registration Form -->
+            <div class="glass-card">
+                <form id="registration-form">
+                    <!-- Step 1: Details -->
+                    <div class="form-step active" data-step="1">
+                        <h3 style="margin-bottom: 1rem; color: #60a5fa;">Registration Details</h3>
+
+                        <div style="margin-bottom: 1.5rem;">
+                            <label style="display: block; margin-bottom: 0.5rem; color: #94a3b8;">Your Details</label>
+                            <div class="member-details" id="leader-details">
+                                <p>Loading...</p>
+                            </div>
+                        </div>
+
+                        <div id="team-name-div" style="display: none; margin-bottom: 1.5rem;">
+                            <label style="display: block; margin-bottom: 0.5rem; color: #94a3b8;">Team Name</label>
+                            <input type="text" id="team-name" placeholder="Enter team name"
+                                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); color: white;">
+                        </div>
+
+                        <div id="team-members-div" style="display: none;">
+                            <label style="display: block; margin-bottom: 0.5rem; color: #94a3b8;">Team Members</label>
+                            <div id="team-members-container"></div>
+                        </div>
+
+                        <button type="button" class="btn btn-primary" onclick="nextStep()"
+                            style="width: 100%;">Next</button>
+                    </div>
+
+                    <!-- Step 2: Terms -->
+                    <div class="form-step" data-step="2">
+                        <h3 style="margin-bottom: 1rem; color: #60a5fa;">Terms & Conditions</h3>
+
+                        <div class="tc-container">
+                            <p style="color: #cbd5e1; line-height: 1.6;">
+                                1. All participants must be registered students<br>
+                                2. Fees are non-refundable<br>
+                                3. Follow all event rules<br>
+                                4. Bring college ID and admit card<br>
+                                5. Organizers' decision is final
+                            </p>
+                        </div>
+
+                        <div style="margin-bottom: 1.5rem;">
+                            <label style="display: flex; align-items: center; color: white; cursor: pointer;">
+                                <input type="checkbox" id="tc-checkbox" required
+                                    style="margin-right: 0.5rem; width: 20px; height: 20px;">
+                                I agree to the terms and conditions
+                            </label>
+                        </div>
+
+                        <div style="display: flex; gap: 1rem;">
+                            <button type="button" class="btn" onclick="prevStep()"
+                                style="flex: 1; background: rgba(255,255,255,0.1);">Previous</button>
+                            <button type="button" class="btn btn-primary" onclick="nextStep()"
+                                style="flex: 1;">Next</button>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Payment -->
+                    <div class="form-step" data-step="3">
+                        <h3 style="margin-bottom: 1rem; color: #60a5fa;">Payment</h3>
+
+                        <div style="text-align: center; margin-bottom: 1.5rem;">
+                            <p style="color: #cbd5e1; margin-bottom: 1rem;">Total Amount:</p>
+                            <p style="color: #4ade80; font-size: 2rem; font-weight: 700;" id="total-fee">₹0</p>
+                        </div>
+
+                        <div style="text-align: center; margin-bottom: 1.5rem;">
+                            <img src="../../Images/Payment QR.jpg" alt="Payment QR"
+                                style="max-width: 250px; border-radius: 8px; border: 2px solid white;">
+                        </div>
+
+                        <div style="margin-bottom: 1.5rem;">
+                            <label style="display: block; margin-bottom: 0.5rem; color: #94a3b8;">Transaction ID</label>
+                            <input type="text" id="transaction-id" required placeholder="Enter Transaction ID"
+                                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); color: white;">
+                        </div>
+
+                        <div style="display: flex; gap: 1rem;">
+                            <button type="button" class="btn" onclick="prevStep()"
+                                style="flex: 1; background: rgba(255,255,255,0.1);">Previous</button>
+                            <button type="button" class="btn btn-primary" onclick="nextStep()"
+                                style="flex: 1;">Next</button>
+                        </div>
+                    </div>
+
+                    <!-- Step 4: Confirm -->
+                    <div class="form-step" data-step="4">
+                        <h3 style="margin-bottom: 1rem; color: #60a5fa;">Confirm & Submit</h3>
+
+                        <div id="confirmation-summary"
+                            style="background: rgba(0,0,0,0.2); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--glass-border); margin-bottom: 1.5rem;">
+                            <!-- Summary injected here -->
+                        </div>
+
+                        <div style="display: flex; gap: 1rem;">
+                            <button type="button" class="btn" onclick="prevStep()"
+                                style="flex: 1; background: rgba(255,255,255,0.1);">Previous</button>
+                            <button type="submit" class="btn btn-primary" style="flex: 1;">Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    try {
+    const userDoc = await getDoc(doc(db, "users", user.uid));
+    if (userDoc.exists()) {
+    userProfile = userDoc.data();
+    console.log('[PROFILE] Loaded:', userProfile);
+    }
+
+    // Check profile - support both structures
+    const profileData = userProfile?.profile || userProfile;
+    const hasName = profileData?.fullName;
+
+    console.log('[PROFILE CHECK] Profile data:', profileData);
+    console.log('[PROFILE CHECK] Has fullName:', hasName);
+
+    if (!hasName) {
+    alert('Please complete your profile first!');
+    window.location.href = 'profile.html';
+    return;
+    }
+
+    await loadEvent();
+    } catch (error) {
+    console.error('[ERROR]', error);
+    alert('Error loading profile: ' + error.message);
+    }
+    });
+
+    async function loadEvent() {
+    try {
+    const eventDoc = await getDoc(doc(db, "events", eventId));
+    if (!eventDoc.exists()) {
+    alert('Event not found');
+    window.location.href = 'events.html';
+    return;
+    }
+
+    currentEvent = { id: eventDoc.id, ...eventDoc.data() };
+    console.log('[EVENT] Loaded:', currentEvent);
+
+    document.getElementById('event-title').textContent = currentEvent.title;
+    document.getElementById('event-name').textContent = currentEvent.title;
+    document.getElementById('event-details').textContent = `${currentEvent.date} | ${currentEvent.venue}`;
+    document.getElementById('event-fee').textContent = currentEvent.fee > 0 ? `₹${currentEvent.fee}` : 'Free';
+
+    if (currentEvent.fee === 0) {
+    document.getElementById('payment-step').style.display = 'none';
+    }
+
+    if (currentEvent.eventType === 'team') {
+    document.getElementById('team-name-div').style.display = 'block';
+    document.getElementById('team-members-div').style.display = 'block';
+    document.getElementById('team-name').required = true;
+
+    const container = document.getElementById('team-members-container');
+    for (let i = 0; i < (currentEvent.maxTeamSize || 4) - 1; i++) { container.innerHTML +=`<div
+        class="team-member-input">
+        <input type="email" class="member-email" placeholder="Member ${i + 1} email"
+            style="width: 100%; padding: 0.75rem; border-radius: 8px; background: rgba(0,0,0,0.2); color: white; border: 1px solid var(--glass-border);">
+        </div>`;
+        }
+        }
+
+        displayLeaderInfo();
+        } catch (err) {
+        console.error('[ERROR]', err);
+        alert('Failed to load event');
+        }
+        }
+
+        function displayLeaderInfo() {
+        const profile = userProfile?.profile || userProfile;
+        document.getElementById('leader-details').innerHTML = `
+        <p style="color: white; font-weight: 600;">${profile?.fullName || 'No name'}</p>
+        <p style="color: #94a3b8;">Email: ${currentUser.email}</p>
+        `;
+        }
+
+        window.nextStep = () => {
+        if (currentStep === 1 && currentEvent?.eventType === 'team') {
+        if (!document.getElementById('team-name').value.trim()) {
+        alert('Please enter team name');
+        return;
+        }
+        }
+
+        if (currentStep === 2 && !document.getElementById('tc-checkbox').checked) {
+        alert('Please accept terms');
+        return;
+        }
+
+        if (currentStep === 3 && !document.getElementById('transaction-id').value.trim()) {
+        alert('Please enter transaction ID');
+        return;
+        }
+
+        if (currentStep === 2 && currentEvent?.fee === 0) {
+        currentStep = 4;
+        showStep(4);
+        generateSummary();
+        return;
+        }
+
+        if (currentStep === 3) {
+        generateSummary();
+        }
+
+        if (currentStep < 4) { currentStep++; showStep(currentStep); } }; window.prevStep=()=> {
+            if (currentStep === 4 && currentEvent?.fee === 0) {
+            currentStep = 2;
+            } else if (currentStep > 1) {
+            currentStep--;
+            }
+            showStep(currentStep);
+            };
+
+            function showStep(step) {
+            document.querySelectorAll('.step').forEach(s => {
+            const num = parseInt(s.dataset.step);
+            s.classList.remove('active', 'completed');
+            if (num === step) s.classList.add('active');
+            else if (num < step) s.classList.add('completed'); }); document.querySelectorAll('.form-step').forEach(s=> {
+                s.classList.remove('active');
+                if (parseInt(s.dataset.step) === step) s.classList.add('active');
+                });
+                }
+
+                function generateSummary() {
+                const profile = userProfile?.profile || userProfile;
+                let summary = `<h4 style="color: white; margin-bottom: 1rem;">Summary</h4>
+                <p style="color: #94a3b8;"><strong style="color: white;">Event:</strong> ${currentEvent.title}</p>
+                <p style="color: #94a3b8;"><strong style="color: white;">Name:</strong> ${profile?.fullName}</p>`;
+
+                if (currentEvent?.eventType === 'team') {
+                summary += `<p style="color: #94a3b8;"><strong style="color: white;">Team:</strong>
+                    ${document.getElementById('team-name').value}</p>`;
+                }
+
+                if (currentEvent?.fee > 0) {
+                summary += `<p style="color: #94a3b8;"><strong style="color: white;">Fee:</strong> ₹${currentEvent.fee}
+                </p>
+                <p style="color: #94a3b8;"><strong style="color: white;">Transaction ID:</strong>
+                    ${document.getElementById('transaction-id').value}</p>`;
+                }
+
+                document.getElementById('confirmation-summary').innerHTML = summary;
+                }
+
+                document.getElementById('registration-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                try {
+                const appNumber = `APP-${Date.now()}-${Math.random().toString(36).substr(2, 5).toUpperCase()}`;
+                const profile = userProfile?.profile || userProfile;
+
+                const applicationData = {
+                applicationNumber: appNumber,
+                eventId: currentEvent.id,
+                eventTitle: currentEvent.title,
+                eventDate: currentEvent.date,
+                eventVenue: currentEvent.venue,
+                userId: currentUser.uid,
+                teamLeader: {
+                email: currentUser.email,
+                profile: profile
+                },
+                agreedToTerms: true,
+                agreedAt: new Date().toISOString(),
+                status: 'pending',
+                appliedAt: new Date().toISOString()
+                };
+
+                if (currentEvent.eventType === 'team') {
+                applicationData.teamName = document.getElementById('team-name').value;
+                }
+
+                if (currentEvent.fee > 0) {
+                applicationData.fee = currentEvent.fee;
+                applicationData.transactionId = document.getElementById('transaction-id').value;
+                }
+
+                await addDoc(collection(db, "applications"), applicationData);
+
+                alert(`Success! Your Application Number: ${appNumber}`);
+                window.location.href = 'events.html';
+                } catch (err) {
+                console.error('[ERROR]', err);
+                alert('Failed to submit: ' + err.message);
+                }
+                });
+
+                document.getElementById('logout-btn').addEventListener('click', () => {
+                signOut(auth).then(() => window.location.href = '../../index.html');
+                });
+
+                document.getElementById('mobile-toggle').addEventListener('click', () => {
+                document.getElementById('sidebar').classList.toggle('open');
+                });
+                </script>
+</body>
+
+</html>
