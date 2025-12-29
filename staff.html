@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff - TGPCET IT</title>
+    <link rel="stylesheet" href="css/new-dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script type="module" src="js/auth.js"></script>
+    <style>
+        :root {
+            --bg-gradient: radial-gradient(circle at top right, #1e293b, #0f172a);
+            --text-light: #f8fafc;
+            --text-muted: #94a3b8;
+            --glass-bg: rgba(30, 41, 59, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --primary-glow: 0 0 20px rgba(168, 85, 247, 0.5);
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-light);
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem 2rem;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--glass-border);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            box-sizing: border-box;
+        }
+
+        .logo h1 {
+            background: linear-gradient(to right, #3b82f6, #a855f7, #ec4899);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+            font-size: 1.75rem;
+            margin: 0;
+            letter-spacing: -0.025em;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:not(.btn):hover,
+        .nav-links a.active {
+            color: #fff;
+        }
+
+        .nav-links a:not(.btn)::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background: linear-gradient(to right, #3b82f6, #a855f7);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:not(.btn):hover::after,
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        /* Login Icon Style */
+        .login-icon-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #a855f7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: none;
+            font-size: 1.1rem;
+        }
+
+        .login-icon-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.5);
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 8rem 2rem 4rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .page-title {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, #fff, #94a3b8);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .page-subtitle {
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        /* Staff Grid */
+        .staff-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .staff-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            text-align: center;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+
+        .staff-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(168, 85, 247, 0.5);
+        }
+
+        .staff-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #a855f7);
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: white;
+            box-shadow: 0 10px 20px -5px rgba(168, 85, 247, 0.4);
+        }
+
+        .staff-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #fff;
+        }
+
+        .staff-designation {
+            color: #a855f7;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .staff-role {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                padding: 1rem;
+                background: rgba(15, 23, 42, 0.95);
+            }
+
+            .nav-links {
+                margin-top: 1rem;
+                gap: 1.5rem;
+                flex-wrap: wrap;
+                justify-content: center;
+                width: 100%;
+            }
+
+            .container {
+                padding: 6rem 1rem 2rem;
+            }
+
+            .page-title {
+                font-size: 2.5rem;
+            }
+
+            .staff-grid {
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .page-subtitle {
+                font-size: 1rem;
+            }
+
+            .staff-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <h1>TGPCET IT</h1>
+        </div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="events.html">Events</a>
+            <a href="staff.html" class="active">Staff</a>
+            <a href="notifications.html">Notifications</a>
+            <span id="auth-links">
+                <a href="login.html" class="login-icon-btn" title="Login">
+                    <i class="fas fa-user"></i>
+                </a>
+            </span>
+        </div>
+    </nav>
+
+    <main class="container">
+        <header>
+            <h1 class="page-title">Our Faculty</h1>
+            <p class="page-subtitle">Meet the dedicated team of professors and mentors shaping the future of technology.
+            </p>
+        </header>
+
+        <div id="staff-grid" class="staff-grid">
+            <div class="staff-card" style="grid-column: 1/-1; background: transparent; border: none;">
+                <p style="color: var(--text-muted);">Loading staff members...</p>
+            </div>
+        </div>
+    </main>
+
+    <script type="module">
+        import { db, collection, getDocs } from './js/auth.js';
+
+        async function loadStaff() {
+            const container = document.getElementById('staff-grid');
+            try {
+                const querySnapshot = await getDocs(collection(db, "staff"));
+                container.innerHTML = '';
+
+                if (querySnapshot.empty) {
+                    container.innerHTML = '<div class="staff-card" style="grid-column: 1/-1; text-align: center;">No staff members found.</div>';
+                    return;
+                }
+
+                querySnapshot.forEach((doc) => {
+                    const staff = doc.data();
+                    const card = document.createElement('div');
+                    card.className = 'staff-card';
+                    card.innerHTML = `
+                        <div class="staff-avatar">
+                            ${staff.name.charAt(0)}
+                        </div>
+                        <h3 class="staff-name">${staff.name}</h3>
+                        <p class="staff-designation">${staff.designation}</p>
+                        <p class="staff-role">${staff.role}</p>
+                    `;
+                    container.appendChild(card);
+                });
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = '<div class="staff-card" style="grid-column: 1/-1; text-align: center; color: #ef4444;">Failed to load staff members.</div>';
+            }
+        }
+
+        loadStaff();
+    </script>
+</body>
+
+</html>

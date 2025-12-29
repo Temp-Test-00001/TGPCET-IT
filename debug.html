@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Debugger</title>
+    <style>
+        body {
+            background: #1a1a1a;
+            color: #fff;
+            font-family: monospace;
+            padding: 2rem;
+        }
+
+        .log {
+            padding: 0.5rem;
+            border-bottom: 1px solid #333;
+        }
+
+        .success {
+            color: #4ade80;
+        }
+
+        .error {
+            color: #f87171;
+        }
+
+        .info {
+            color: #60a5fa;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Firebase Debugger</h1>
+    <div id="status">Initializing...</div>
+    <div id="logs"></div>
+
+    <script type="module">
+        const logDiv = document.getElementById('logs');
+        function log(msg, type = 'info') {
+            const div = document.createElement('div');
+            div.className = `log ${type}`;
+            div.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+            logDiv.appendChild(div);
+            console.log(msg);
+        }
+
+        log("Starting Debug Script...");
+
+        try {
+            log("Importing Firebase SDKs...");
+            const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js");
+            const { getAuth, onAuthStateChanged } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js");
+            const { getFirestore, collection, getDocs, limit, query } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js");
+
+            log("SDKs Imported Successfully.", "success");
+
+            const firebaseConfig = {
+                apiKey: "AIzaSyAbpCJRXBwORZC1_MVaqTVlMOqVoA0CT5w",
+                authDomain: "tgpcet-5ef68.firebaseapp.com",
+                projectId: "tgpcet-5ef68",
+                storageBucket: "tgpcet-5ef68.firebasestorage.app",
+                messagingSenderId: "63942237118",
+                appId: "1:63942237118:web:16fc9f531ba84a7ce237ef"
+            };
+
+            log("Initializing App...");
+            const app = initializeApp(firebaseConfig);
+            const auth = getAuth(app);
+            const db = getFirestore(app);
+            log("App Initialized.", "success");
+
+            log("Checking Auth State...");
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    log(`User Logged In: ${user.email} (${user.uid})`, "success");
+
+                    // Test Firestore Read
+                    try {
+                        log("Attempting to read 'events' collection...");
+                        const q = query(collection(db, "events"), limit(1));
+                        const snapshot = await getDocs(q);
+                        log(`Firestore Read Success. Found ${snapshot.size} documents.`, "success");
+
+                        if (!snapshot.empty) {
+                            log(`Sample Doc ID: ${snapshot.docs[0].id}`, "info");
+                        }
+                    } catch (err) {
+                        log(`Firestore Read Failed: ${err.message}`, "error");
+                        if (err.code === 'permission-denied') {
+                            log("Check Firestore Security Rules.", "error");
+                        }
+                    }
+
+                } else {
+                    log("User is Signed Out. Please log in to test Firestore.", "info");
+                    log("Redirecting to login in 5 seconds...", "info");
+                    setTimeout(() => {
+                        // window.location.href = 'login.html';
+                    }, 5000);
+                }
+            });
+
+        } catch (err) {
+            log(`CRITICAL ERROR: ${err.message}`, "error");
+            document.getElementById('status').textContent = "CRITICAL FAILURE";
+            document.getElementById('status').style.color = "red";
+        }
+    </script>
+</body>
+
+</html>

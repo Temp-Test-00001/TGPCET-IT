@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Remix Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="css/auth-custom.css">
+
+    <title>Login - TGPCET IT</title>
+    <style>
+        /* Back to Home Button */
+        .back-home {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            z-index: 100;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+
+        .back-home:hover {
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="index.html" class="back-home">
+        <i class="ri-arrow-left-line"></i> Back to Home
+    </a>
+
+    <div class="login">
+        <form id="login-form" class="login__form">
+            <h1 class="login__title">Login</h1>
+
+            <div class="login__content">
+                <div class="login__box">
+                    <i class="ri-user-3-line login__icon"></i>
+                    <div class="login__box-input">
+                        <input type="email" required class="login__input" id="login-email" placeholder=" ">
+                        <label for="login-email" class="login__label">Email</label>
+                    </div>
+                </div>
+
+                <div class="login__box">
+                    <i class="ri-lock-2-line login__icon"></i>
+                    <div class="login__box-input">
+                        <input type="password" required class="login__input" id="login-pass" placeholder=" ">
+                        <label for="login-pass" class="login__label">Password</label>
+                        <i class="ri-eye-off-line login__eye" id="login-eye"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="login__check">
+                <div class="login__check-group">
+                    <input type="checkbox" class="login__check-input" id="login-check">
+                    <label for="login-check" class="login__check-label">Remember me</label>
+                </div>
+                <a href="#" class="login__forgot">Forgot Password?</a>
+            </div>
+
+            <button type="submit" class="login__button" id="login-btn">Login</button>
+
+            <button type="button" class="google__button" id="google-btn">
+                <span class="google__icon">
+                    <span class="google__g">G</span>
+                </span>
+                <span class="google__text">Sign up with Google</span>
+            </button>
+
+            <p class="login__register">
+                Don't have an account? <a href="register.html">Register</a>
+            </p>
+        </form>
+    </div>
+
+    <!-- UI Script -->
+    <script src="js/auth-ui.js"></script>
+
+    <!-- Firebase Auth Logic -->
+    <script type="module">
+        import { auth, signInWithEmailAndPassword, signInWithPopup, googleProvider, doc, getDoc, db, setDoc } from './js/auth.js';
+
+        const loginForm = document.getElementById('login-form');
+        const googleBtn = document.getElementById('google-btn');
+        const loginBtn = document.getElementById('login-btn');
+
+        // Helper to determine dashboard URL
+        async function getDashboardUrl(uid, email) {
+            try {
+                const userDoc = await getDoc(doc(db, "users", uid));
+                let role = 'user';
+
+                if (userDoc.exists()) {
+                    role = userDoc.data().role || 'user';
+                }
+
+                if (email === 'bhushanmallick2006@gmail.com') role = 'admin';
+
+                return `dashboard/${role}/index.html`;
+            } catch (error) {
+                console.error("Error fetching role:", error);
+                return 'dashboard/user/index.html';
+            }
+        }
+
+        // Email/Password Login
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-pass').value;
+
+            loginBtn.textContent = 'Logging in...';
+            loginBtn.disabled = true;
+
+            try {
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                console.log("Logged in:", userCredential.user.uid);
+
+                const url = await getDashboardUrl(userCredential.user.uid, email);
+                window.location.href = url;
+            } catch (error) {
+                console.error("Login Error:", error);
+                alert("Login Failed: " + error.message);
+                loginBtn.textContent = 'Login';
+                loginBtn.disabled = false;
+            }
+        });
+
+        // Google Login
+        googleBtn.addEventListener('click', async () => {
+            try {
+                const result = await signInWithPopup(auth, googleProvider);
+                const user = result.user;
+
+                // Check if user exists in Firestore, if not create basic profile
+                const userRef = doc(db, "users", user.uid);
+                const userSnap = await getDoc(userRef);
+
+                if (!userSnap.exists()) {
+                    await setDoc(userRef, {
+                        uid: user.uid,
+                        email: user.email,
+                        role: 'user', // Default role
+                        createdAt: new Date().toISOString(),
+                        profile: {
+                            fullName: user.displayName,
+                            photoURL: user.photoURL
+                        }
+                    });
+                }
+
+                const url = await getDashboardUrl(user.uid, user.email);
+                window.location.href = url;
+            } catch (error) {
+                console.error("Google Login Error:", error);
+                alert("Google Login Failed: " + error.message);
+            }
+        });
+    </script>
+</body>
+
+</html>
