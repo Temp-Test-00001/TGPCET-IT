@@ -32,11 +32,12 @@ const loadImage = (url, opacity = 1.0) => {
     });
 };
 
-// Helper to format date DD/MM/YYYY
+// Helper to format date DD/MM/YY
 const formatDate = (isoString) => {
     if (!isoString) return 'N/A';
     const d = new Date(isoString);
-    return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
+    const year = d.getFullYear().toString().slice(-2);
+    return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}/${year}`;
 };
 
 window.PDFGenerator.generateApplicationPDF = async (user, event, application) => {
@@ -161,6 +162,21 @@ window.PDFGenerator.generateApplicationPDF = async (user, event, application) =>
         doc.text(`Transaction ID:`, 20, yPos);
         doc.text(application.transactionId || 'N/A', 60, yPos);
 
+        // Team Name (if team event)
+        if (application.teamName) {
+            yPos += 15;
+            doc.setFontSize(12);
+            doc.text("Team Information", 20, yPos);
+            doc.line(20, yPos + 3, 190, yPos + 3);
+
+            doc.setFontSize(10);
+            yPos += 13;
+            doc.text(`Team Name:`, 20, yPos);
+            doc.setFont(undefined, 'bold');
+            doc.text(application.teamName, 60, yPos);
+            doc.setFont(undefined, 'normal');
+        }
+
         // Team Members
         if (application.teamMembers && application.teamMembers.length > 0) {
             yPos += 20;
@@ -271,7 +287,12 @@ window.PDFGenerator.generateStampedPDF = async (user, event, application) => {
 
         doc.setFontSize(10);
         doc.text(`Date: ${event.date} | Venue: ${event.venue}`, 105, 70, null, null, "center");
-        doc.text(`Application No: ${application.applicationNumber}`, 105, 80, null, null, "center");
+        let appNoY = 78;
+        if (application.teamName) {
+            doc.text(`Team: ${application.teamName}`, 105, 78, null, null, "center");
+            appNoY = 86;
+        }
+        doc.text(`Application No: ${application.applicationNumber}`, 105, appNoY, null, null, "center");
 
         // Applicant Details
         doc.setFontSize(12);

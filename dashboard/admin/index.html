@@ -170,6 +170,14 @@
                     <i class="fas fa-check-circle"></i>
                     <span>Approvals</span>
                 </a>
+                <a href="notifications.html" class="nav-link">
+                    <i class="fas fa-bell"></i>
+                    <span>Notifications</span>
+                </a>
+                <a href="support.html" class="nav-link">
+                    <i class="fas fa-headset"></i>
+                    <span>Support</span>
+                </a>
             </nav>
 
             <div class="user-profile">
@@ -289,7 +297,7 @@
             projectId: "tgpcet-5ef68",
             storageBucket: "tgpcet-5ef68.firebasestorage.app",
             messagingSenderId: "63942237118",
-            appId: "1:63942237118:web:16fc9f531ba84a7ce237ef"
+            appId: "1:63942237118:web:d5a181bd04ba0e8ce237ef"
         };
 
         // --- 4. Initialize App ---
@@ -300,15 +308,27 @@
             console.log("Firebase Initialized Successfully");
 
             // --- 5. Auth Listener & Data Loading ---
-            onAuthStateChanged(auth, async (user) => {
-                if (!user) {
-                    window.location.href = '../../login.html';
-                    return;
-                }
-                document.getElementById('user-email').textContent = user.email;
+            let currentUser = null;
+
+            // Helper function for DD/MM/YY date format
+            function formatDateDDMMYY(dateString) {
+                if (!dateString) return 'N/A';
+                const d = new Date(dateString);
+                const day = d.getDate().toString().padStart(2, '0');
+                const month = (d.getMonth() + 1).toString().padStart(2, '0');
+                const year = d.getFullYear().toString().slice(-2);
+                return `${day}/${month}/${year}`;
+            }
+
+            async function loadDashboardData() {
+                // Show loading state
+                document.getElementById('total-users').innerHTML = '<span style="font-size: 0.9rem; color: var(--text-muted);">Loading...</span>';
+                document.getElementById('active-events').innerHTML = '<span style="font-size: 0.9rem; color: var(--text-muted);">Loading...</span>';
+                document.getElementById('pending-approvals').innerHTML = '<span style="font-size: 0.9rem; color: var(--text-muted);">Loading...</span>';
+                document.getElementById('recent-apps').innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Loading...</td></tr>';
 
                 try {
-                    // Load Stats
+                    // Load Stats with retry
                     const usersSnap = await getDocs(collection(db, "users"));
                     document.getElementById('total-users').textContent = usersSnap.size;
 
@@ -323,8 +343,57 @@
                     loadRecentApps(appsSnap);
 
                 } catch (err) {
+                    console.error("Data load error:", err);
                     showError("Failed to load data: " + err.message);
+
+                    // Show retry option in stats
+                    const retryHtml = `<button onclick="window.refreshDashboard()" style="
+                        background: linear-gradient(135deg, #3b82f6, #a855f7);
+                        color: white;
+                        padding: 0.5rem 1rem;
+                        border: none;
+                        border-radius: 6px;
+                        cursor: pointer;
+                        font-size: 0.75rem;
+                        font-weight: 600;
+                    ">Retry</button>`;
+
+                    document.getElementById('total-users').innerHTML = retryHtml;
+                    document.getElementById('active-events').innerHTML = '<span style="color: var(--danger);">Error</span>';
+                    document.getElementById('pending-approvals').innerHTML = '<span style="color: var(--danger);">Error</span>';
+                    document.getElementById('recent-apps').innerHTML = `
+                        <tr><td colspan="4" style="text-align: center; padding: 2rem;">
+                            <i class="fas fa-exclamation-triangle" style="color: #ef4444; font-size: 1.5rem; margin-bottom: 0.5rem;"></i>
+                            <p style="color: var(--text-muted); margin: 0.5rem 0;">Failed to load applications</p>
+                            <button onclick="window.refreshDashboard()" style="
+                                background: linear-gradient(135deg, #3b82f6, #a855f7);
+                                color: white;
+                                padding: 0.5rem 1rem;
+                                border: none;
+                                border-radius: 6px;
+                                cursor: pointer;
+                                font-size: 0.85rem;
+                                font-weight: 600;
+                                margin-top: 0.5rem;
+                            "><i class="fas fa-redo" style="margin-right: 0.5rem;"></i>Try Again</button>
+                        </td></tr>
+                    `;
                 }
+            }
+
+            // Make refresh function available globally
+            window.refreshDashboard = loadDashboardData;
+
+            onAuthStateChanged(auth, async (user) => {
+                if (!user) {
+                    window.location.href = '../../login.html';
+                    return;
+                }
+                currentUser = user;
+                document.getElementById('user-email').textContent = user.email;
+
+                // Load dashboard data
+                await loadDashboardData();
             });
 
             // --- 6. Helper Functions ---

@@ -222,7 +222,7 @@
             projectId: "tgpcet-5ef68",
             storageBucket: "tgpcet-5ef68.firebasestorage.app",
             messagingSenderId: "63942237118",
-            appId: "1:63942237118:web:16fc9f531ba84a7ce237ef"
+            appId: "1:63942237118:web:d5a181bd04ba0e8ce237ef"
         };
 
         // --- 5. Init ---
@@ -233,6 +233,16 @@
             console.log("User Events Page Initialized");
 
             let currentUser = null;
+
+            // Helper function for DD/MM/YY date format
+            function formatDateDDMMYY(dateString) {
+                if (!dateString) return 'N/A';
+                const d = new Date(dateString);
+                const day = d.getDate().toString().padStart(2, '0');
+                const month = (d.getMonth() + 1).toString().padStart(2, '0');
+                const year = d.getFullYear().toString().slice(-2);
+                return `${day}/${month}/${year}`;
+            }
 
             // --- 6. Auth & Load ---
             onAuthStateChanged(auth, async (user) => {
@@ -358,8 +368,11 @@
 
                         row.innerHTML = `
                             <td style="color: var(--primary); font-family: monospace;">${app.applicationNumber || app.id.substring(0, 8)}</td>
-                            <td>${app.eventTitle}</td>
-                            <td style="color: var(--text-muted);">${new Date(app.appliedAt).toLocaleDateString()}</td>
+                            <td>
+                                ${app.eventTitle}
+                                ${app.teamName ? `<br><span style="font-size: 0.75rem; color: var(--accent);">Team: ${app.teamName}</span>` : ''}
+                            </td>
+                            <td style="color: var(--text-muted);">${formatDateDDMMYY(app.appliedAt)}</td>
                             <td><span class="badge ${badgeClass}">${app.status}</span></td>
                             <td>${actions}</td>
                         `;

@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications - Admin - TGPCET IT</title>
+    <link rel="stylesheet" href="../../css/new-dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        #error-banner {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: #dc2626;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            z-index: 10000;
+            font-weight: bold;
+        }
+
+        .notif-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            transition: all 0.2s;
+        }
+
+        .notif-card:hover {
+            border-color: var(--primary);
+        }
+
+        .notif-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+
+        .notif-title {
+            font-size: 1rem;
+            color: white;
+            font-weight: 600;
+        }
+
+        .notif-date {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .notif-message {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+
+        .notif-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.2);
+            color: white;
+            border: 1px solid var(--border-glass);
+            font-family: inherit;
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="error-banner"></div>
+
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="brand">
+                <h2>TGPCET IT</h2>
+            </div>
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-link"><i class="fas fa-home"></i><span>Overview</span></a>
+                <a href="users.html" class="nav-link"><i class="fas fa-users"></i><span>Users</span></a>
+                <a href="events.html" class="nav-link"><i class="fas fa-calendar-alt"></i><span>Events</span></a>
+                <a href="approvals.html" class="nav-link"><i class="fas fa-check-circle"></i><span>Approvals</span></a>
+                <a href="notifications.html" class="nav-link active"><i
+                        class="fas fa-bell"></i><span>Notifications</span></a>
+                <a href="support.html" class="nav-link"><i class="fas fa-headset"></i><span>Support</span></a>
+            </nav>
+            <div class="user-profile">
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+                    <div
+                        style="width: 32px; height: 32px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
+                        A</div>
+                    <div style="overflow: hidden;">
+                        <div style="font-size: 0.875rem; font-weight: 600;">Admin</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);" id="user-email">Loading...</div>
+                    </div>
+                </div>
+                <button id="logout-btn" class="btn btn-outline"
+                    style="width: 100%; justify-content: flex-start; gap: 0.5rem; border: none; padding: 0.5rem;">
+                    <i class="fas fa-sign-out-alt"></i><span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <button class="mobile-toggle" id="mobile-toggle"><i class="fas fa-bars"></i></button>
+                <h1 style="font-size: 1.25rem; font-weight: 600;">Notifications Management</h1>
+            </header>
+
+            <div class="page-content">
+                <!-- Post New Notification -->
+                <div class="card" style="margin-bottom: 2rem;">
+                    <h3 style="color: var(--primary); margin-bottom: 1.5rem; font-size: 1.1rem;">
+                        <i class="fas fa-plus-circle" style="margin-right: 0.5rem;"></i>Post New Notification
+                    </h3>
+                    <form id="notif-form">
+                        <div class="form-group">
+                            <label for="notif-title">Title *</label>
+                            <input type="text" id="notif-title" placeholder="Enter notification title" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="notif-message">Message *</label>
+                            <textarea id="notif-message" placeholder="Enter notification message..."
+                                required></textarea>
+                        </div>
+                        <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                            <button type="button" class="btn btn-outline"
+                                onclick="document.getElementById('notif-form').reset();">Clear</button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane" style="margin-right: 0.5rem;"></i>Post Notification
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Existing Notifications -->
+                <div class="card">
+                    <h3 style="color: var(--text-main); margin-bottom: 1.5rem; font-size: 1.1rem;">
+                        <i class="fas fa-list" style="margin-right: 0.5rem;"></i>Posted Notifications
+                    </h3>
+                    <div id="notifications-list">
+                        <div style="text-align: center; padding: 2rem; color: var(--text-muted);">Loading...</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        function showError(msg) {
+            const banner = document.getElementById('error-banner');
+            banner.textContent = "Error: " + msg;
+            banner.style.display = 'block';
+            setTimeout(() => { banner.style.display = 'none'; }, 5000);
+        }
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAbpCJRXBwORZC1_MVaqTVlMOqVoA0CT5w",
+            authDomain: "tgpcet-5ef68.firebaseapp.com",
+            projectId: "tgpcet-5ef68",
+            storageBucket: "tgpcet-5ef68.firebasestorage.app",
+            messagingSenderId: "63942237118",
+            appId: "1:63942237118:web:d5a181bd04ba0e8ce237ef"
+        };
+
+        try {
+            const app = initializeApp(firebaseConfig);
+            const auth = getAuth(app);
+            const db = getFirestore(app);
+            console.log("Admin Notifications Page Initialized");
+
+            // Helper function for DD/MM/YY date format
+            function formatDateDDMMYY(dateString) {
+                if (!dateString) return 'N/A';
+                const d = new Date(dateString);
+                const day = d.getDate().toString().padStart(2, '0');
+                const month = (d.getMonth() + 1).toString().padStart(2, '0');
+                const year = d.getFullYear().toString().slice(-2);
+                return `${day}/${month}/${year}`;
+            }
+
+            onAuthStateChanged(auth, async (user) => {
+                if (!user) {
+                    window.location.href = '../../login.html';
+                    return;
+                }
+                document.getElementById('user-email').textContent = user.email;
+                loadNotifications();
+            });
+
+            async function loadNotifications() {
+                const container = document.getElementById('notifications-list');
+                container.innerHTML = '<div style="text-align: center; padding: 2rem;"><div style="display: inline-block; width: 40px; height: 40px; border: 3px solid rgba(168, 85, 247, 0.2); border-top-color: #a855f7; border-radius: 50%; animation: spin 0.8s linear infinite;"></div><p style="color: var(--text-muted); margin-top: 1rem;">Loading notifications...</p></div>';
+
+                try {
+                    const q = query(collection(db, "notifications"), orderBy("createdAt", "desc"));
+                    const snap = await getDocs(q);
+                    container.innerHTML = '';
+
+                    if (snap.empty) {
+                        container.innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--text-muted);"><i class="fas fa-bell-slash" style="font-size: 2rem; margin-bottom: 1rem;"></i><p>No notifications posted yet.</p></div>';
+                        return;
+                    }
+
+                    snap.forEach(docSnap => {
+                        const notif = docSnap.data();
+                        const card = document.createElement('div');
+                        card.className = 'notif-card';
+                        card.innerHTML = `
+                            <div class="notif-header">
+                                <h4 class="notif-title">${notif.title}</h4>
+                                <span class="notif-date">${formatDateDDMMYY(notif.createdAt)}</span>
+                            </div>
+                            <p class="notif-message">${notif.message}</p>
+                            <div class="notif-actions">
+                                <button class="btn btn-danger btn-delete" data-id="${docSnap.id}" style="padding: 0.4rem 0.8rem; font-size: 0.75rem;">
+                                    <i class="fas fa-trash" style="margin-right: 0.5rem;"></i>Delete
+                                </button>
+                            </div>
+                        `;
+                        container.appendChild(card);
+                    });
+
+                    // Bind delete buttons
+                    document.querySelectorAll('.btn-delete').forEach(btn => {
+                        btn.onclick = () => deleteNotification(btn.dataset.id);
+                    });
+                } catch (err) {
+                    console.error(err);
+                    container.innerHTML = `<div style="text-align: center; padding: 2rem; color: var(--danger);"><i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 1rem;"></i><p>Failed to load notifications</p><button onclick="location.reload()" class="btn btn-outline" style="margin-top: 1rem;">Retry</button></div>`;
+                }
+            }
+
+            async function deleteNotification(id) {
+                if (!confirm("Are you sure you want to delete this notification?")) return;
+
+                try {
+                    await deleteDoc(doc(db, "notifications", id));
+                    loadNotifications();
+                } catch (err) {
+                    alert("Delete failed: " + err.message);
+                }
+            }
+
+            // Form submission
+            document.getElementById('notif-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right: 0.5rem;"></i>Posting...';
+
+                const title = document.getElementById('notif-title').value.trim();
+                const message = document.getElementById('notif-message').value.trim();
+
+                if (!title || !message) {
+                    alert("Please fill in all fields");
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-paper-plane" style="margin-right: 0.5rem;"></i>Post Notification';
+                    return;
+                }
+
+                try {
+                    await addDoc(collection(db, "notifications"), {
+                        title: title,
+                        message: message,
+                        createdAt: new Date().toISOString()
+                    });
+
+                    document.getElementById('notif-form').reset();
+                    loadNotifications();
+                } catch (err) {
+                    alert("Failed to post notification: " + err.message);
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-paper-plane" style="margin-right: 0.5rem;"></i>Post Notification';
+                }
+            });
+
+            // Logout
+            document.getElementById('logout-btn').addEventListener('click', () => {
+                signOut(auth).then(() => window.location.href = '../../index.html');
+            });
+
+            // Mobile Sidebar
+            const sidebar = document.getElementById('sidebar');
+            const mobileToggle = document.getElementById('mobile-toggle');
+            mobileToggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                sidebar.classList.toggle('open');
+            });
+            document.addEventListener('click', (e) => {
+                if (window.innerWidth <= 768 && sidebar.classList.contains('open') && !sidebar.contains(e.target) && e.target !== mobileToggle) {
+                    sidebar.classList.remove('open');
+                }
+            });
+
+        } catch (initErr) {
+            showError("Init Failed: " + initErr.message);
+        }
+    </script>
+</body>
+
+</html>

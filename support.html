@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support - TGPCET IT Department</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/new-dashboard.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --accent: #a855f7;
+            --text-main: #ffffff;
+            --text-muted: #9ca3af;
+            --bg-dark: #0f0f1a;
+            --surface-glass: rgba(255, 255, 255, 0.03);
+            --border-glass: rgba(255, 255, 255, 0.06);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            color: var(--text-main);
+        }
+
+        /* Navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem 2rem;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-glass);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            box-sizing: border-box;
+        }
+
+        .logo h1 {
+            background: linear-gradient(to right, #3b82f6, #a855f7, #ec4899);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--text-main);
+        }
+
+        .login-icon-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Hero */
+        .hero {
+            text-align: center;
+            padding: 8rem 2rem 4rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #ffffff, #a5b4fc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        /* Support Grid */
+        .support-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .support-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .support-card {
+            background: var(--surface-glass);
+            border: 1px solid var(--border-glass);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .support-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(135deg, #3b82f6, #a855f7);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .support-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+        }
+
+        .support-card:hover::before {
+            opacity: 1;
+        }
+
+        .support-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #a855f7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .support-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 0.25rem;
+        }
+
+        .support-designation {
+            color: var(--accent);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .support-contact {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .support-contact a {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+
+        .support-contact a:hover {
+            color: var(--primary);
+        }
+
+        .support-contact i {
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-muted);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            color: var(--text-main);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(168, 85, 247, 0.2);
+            border-top-color: #a855f7;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            border-top: 1px solid var(--border-glass);
+            margin-top: 4rem;
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                padding: 7rem 1rem 3rem;
+            }
+
+            .hero h1 {
+                font-size: 1.75rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+            }
+
+            .navbar {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">
+            <h1>TGPCET IT</h1>
+        </div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="events.html">Events</a>
+            <a href="staff.html">Staff</a>
+            <a href="notifications.html">Notifications</a>
+            <a href="support.html" class="active">Support</a>
+            <span id="auth-links">
+                <a href="login.html" class="login-icon-btn" title="Login">
+                    <i class="fas fa-user"></i>
+                </a>
+            </span>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1><i class="fas fa-headset" style="margin-right: 1rem;"></i>Support Contacts</h1>
+        <p>Need help? Our support team is here to assist you. Reach out to any of the contacts below for assistance with
+            events, registrations, or any other queries.</p>
+    </section>
+
+    <!-- Support Contacts -->
+    <div class="support-container">
+        <div id="support-grid" class="support-grid">
+            <div class="loading">
+                <div class="spinner"></div>
+                <p style="color: var(--text-muted);">Loading support contacts...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2024 TGPCET IT Department. All rights reserved.</p>
+    </footer>
+
+    <script type="module">
+        import { db, collection, getDocs, query, orderBy } from './js/auth.js';
+
+        const container = document.getElementById('support-grid');
+
+        // Helper function for DD/MM/YY date format
+        function formatDateDDMMYY(dateString) {
+            if (!dateString) return 'N/A';
+            const d = new Date(dateString);
+            const day = d.getDate().toString().padStart(2, '0');
+            const month = (d.getMonth() + 1).toString().padStart(2, '0');
+            const year = d.getFullYear().toString().slice(-2);
+            return `${day}/${month}/${year}`;
+        }
+
+        function showLoading() {
+            container.innerHTML = `
+                <div class="loading" style="grid-column: 1/-1;">
+                    <div class="spinner"></div>
+                    <p style="color: var(--text-muted);">Loading support contacts...</p>
+                </div>
+            `;
+        }
+
+        function showError(message) {
+            container.innerHTML = `
+                <div class="empty-state" style="grid-column: 1/-1;">
+                    <i class="fas fa-exclamation-triangle" style="color: #ef4444;"></i>
+                    <h3>Failed to load contacts</h3>
+                    <p>${message}</p>
+                    <button onclick="window.loadSupportContacts()" style="
+                        background: linear-gradient(135deg, #3b82f6, #a855f7);
+                        color: white;
+                        padding: 0.75rem 1.5rem;
+                        border: none;
+                        border-radius: 8px;
+                        cursor: pointer;
+                        font-weight: 600;
+                        margin-top: 1rem;
+                    ">
+                        <i class="fas fa-redo" style="margin-right: 0.5rem;"></i>Try Again
+                    </button>
+                </div>
+            `;
+        }
+
+        async function loadSupportContacts() {
+            showLoading();
+
+            try {
+                // Order by 'order' field (ascending), then by createdAt (descending) as fallback
+                const q = query(collection(db, "support"), orderBy("order", "asc"));
+                const snap = await getDocs(q);
+                container.innerHTML = '';
+
+                if (snap.empty) {
+                    container.innerHTML = `
+                        <div class="empty-state" style="grid-column: 1/-1;">
+                            <i class="fas fa-user-slash"></i>
+                            <h3>No Support Contacts Available</h3>
+                            <p>Support contacts will be listed here once they are added.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                snap.forEach(docSnap => {
+                    const contact = docSnap.data();
+                    const card = document.createElement('div');
+                    card.className = 'support-card';
+                    card.innerHTML = `
+                        <div class="support-avatar">${contact.name.charAt(0).toUpperCase()}</div>
+                        <h3 class="support-name">${contact.name}</h3>
+                        <p class="support-designation">${contact.designation}</p>
+                        <div class="support-contact">
+                            <a href="tel:${contact.phone}">
+                                <i class="fas fa-phone"></i> ${contact.phone}
+                            </a>
+                            ${contact.email ? `
+                            <a href="mailto:${contact.email}">
+                                <i class="fas fa-envelope"></i> ${contact.email}
+                            </a>
+                            ` : ''}
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            } catch (err) {
+                console.error(err);
+                // If ordering by 'order' fails (field doesn't exist yet), fall back to createdAt
+                try {
+                    const q = query(collection(db, "support"), orderBy("createdAt", "desc"));
+                    const snap = await getDocs(q);
+                    container.innerHTML = '';
+
+                    if (snap.empty) {
+                        container.innerHTML = `
+                            <div class="empty-state" style="grid-column: 1/-1;">
+                                <i class="fas fa-user-slash"></i>
+                                <h3>No Support Contacts Available</h3>
+                                <p>Support contacts will be listed here once they are added.</p>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    snap.forEach(docSnap => {
+                        const contact = docSnap.data();
+                        const card = document.createElement('div');
+                        card.className = 'support-card';
+                        card.innerHTML = `
+                            <div class="support-avatar">${contact.name.charAt(0).toUpperCase()}</div>
+                            <h3 class="support-name">${contact.name}</h3>
+                            <p class="support-designation">${contact.designation}</p>
+                            <div class="support-contact">
+                                <a href="tel:${contact.phone}">
+                                    <i class="fas fa-phone"></i> ${contact.phone}
+                                </a>
+                                ${contact.email ? `
+                                <a href="mailto:${contact.email}">
+                                    <i class="fas fa-envelope"></i> ${contact.email}
+                                </a>
+                                ` : ''}
+                            </div>
+                        `;
+                        container.appendChild(card);
+                    });
+                } catch (fallbackErr) {
+                    console.error(fallbackErr);
+                    showError('Please check your connection and try again.');
+                }
+            }
+        }
+
+        // Make function available globally for retry
+        window.loadSupportContacts = loadSupportContacts;
+
+        loadSupportContacts();
+    </script>
+</body>
+
+</html>

@@ -199,7 +199,7 @@
             projectId: "tgpcet-5ef68",
             storageBucket: "tgpcet-5ef68.firebasestorage.app",
             messagingSenderId: "63942237118",
-            appId: "1:63942237118:web:16fc9f531ba84a7ce237ef"
+            appId: "1:63942237118:web:d5a181bd04ba0e8ce237ef"
         };
 
         // --- 4. Init ---
@@ -210,11 +210,26 @@
             console.log("User Overview Initialized");
 
             // --- 5. Auth & Load ---
-            onAuthStateChanged(auth, async (user) => {
-                if (!user) {
-                    window.location.href = '../../login.html';
-                    return;
-                }
+            let currentUser = null;
+
+            // Helper function for DD/MM/YY date format
+            function formatDateDDMMYY(dateString) {
+                if (!dateString) return 'N/A';
+                const d = new Date(dateString);
+                const day = d.getDate().toString().padStart(2, '0');
+                const month = (d.getMonth() + 1).toString().padStart(2, '0');
+                const year = d.getFullYear().toString().slice(-2);
+                return `${day}/${month}/${year}`;
+            }
+
+            async function loadUserData() {
+                if (!currentUser) return;
+                const user = currentUser;
+
+                // Show loading states
+                document.getElementById('registered-events-count').innerHTML = '<span style="font-size: 0.9rem; color: var(--text-muted);">...</span>';
+                document.getElementById('pending-count').innerHTML = '<span style="font-size: 0.9rem; color: var(--text-muted);">...</span>';
+                document.getElementById('recent-activity').innerHTML = '<tr><td colspan="3" style="text-align: center; color: var(--text-muted);">Loading...</td></tr>';
 
                 // Load User Info
                 try {
@@ -235,7 +250,9 @@
                             statusEl.style.color = "var(--success)";
                         }
                     }
-                } catch (e) { console.error("Profile Load Error", e); }
+                } catch (e) {
+                    console.error("Profile Load Error", e);
+                }
 
                 // Load Stats & Recent Activity
                 try {
@@ -268,7 +285,7 @@
                             const tr = document.createElement('tr');
                             tr.innerHTML = `
                                 <td>${app.eventTitle || 'Unknown Event'}</td>
-                                <td style="color: var(--text-muted);">${app.appliedAt ? new Date(app.appliedAt).toLocaleDateString() : 'N/A'}</td>
+                                <td style="color: var(--text-muted);">${formatDateDDMMYY(app.appliedAt)}</td>
                                 <td><span class="badge ${badgeClass}">${app.status}</span></td>
                             `;
                             tbody.appendChild(tr);
@@ -276,8 +293,43 @@
                     }
 
                 } catch (e) {
-                    showError("Stats Load Error: " + e.message);
+                    console.error("Stats Load Error:", e);
+                    showError("Failed to load data: " + e.message);
+
+                    document.getElementById('registered-events-count').innerHTML = '<span style="color: var(--danger);">-</span>';
+                    document.getElementById('pending-count').innerHTML = '<span style="color: var(--danger);">-</span>';
+                    document.getElementById('recent-activity').innerHTML = `
+                        <tr><td colspan="3" style="text-align: center; padding: 2rem;">
+                            <i class="fas fa-exclamation-triangle" style="color: #ef4444; font-size: 1.5rem; margin-bottom: 0.5rem;"></i>
+                            <p style="color: var(--text-muted); margin: 0.5rem 0;">Failed to load data</p>
+                            <button onclick="window.refreshUserData()" style="
+                                background: linear-gradient(135deg, #3b82f6, #a855f7);
+                                color: white;
+                                padding: 0.5rem 1rem;
+                                border: none;
+                                border-radius: 6px;
+                                cursor: pointer;
+                                font-size: 0.85rem;
+                                font-weight: 600;
+                                margin-top: 0.5rem;
+                            "><i class="fas fa-redo" style="margin-right: 0.5rem;"></i>Try Again</button>
+                        </td></tr>
+                    `;
                 }
+            }
+
+            // Make refresh function available globally
+            window.refreshUserData = loadUserData;
+
+            onAuthStateChanged(auth, async (user) => {
+                if (!user) {
+                    window.location.href = '../../login.html';
+                    return;
+                }
+                currentUser = user;
+
+                // Load user data
+                await loadUserData();
             });
 
             // --- 6. UI Listeners ---

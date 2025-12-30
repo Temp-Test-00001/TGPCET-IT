@@ -32,10 +32,91 @@
         .back-home:hover {
             opacity: 1;
         }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(8px);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            gap: 1.5rem;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(168, 85, 247, 0.2);
+            border-top-color: #a855f7;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-text {
+            color: #94a3b8;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+        }
+
+        /* Error Toast */
+        .error-toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(239, 68, 68, 0.95);
+            color: white;
+            padding: 14px 20px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            z-index: 99999;
+            display: none;
+            animation: slideIn 0.3s ease;
+            max-width: 350px;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
     </style>
 </head>
 
 <body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="spinner"></div>
+        <p class="loading-text" id="loading-text">Creating account...</p>
+    </div>
+
+    <!-- Error Toast -->
+    <div class="error-toast" id="error-toast"></div>
+
     <a href="index.html" class="back-home">
         <i class="ri-arrow-left-line"></i> Back to Home
     </a>
@@ -106,11 +187,51 @@
 
     <!-- Firebase Auth Logic -->
     <script type="module">
-        import { auth, createUserWithEmailAndPassword, signInWithPopup, googleProvider, doc, setDoc, db, getDoc } from './js/auth.js';
+        import {
+            auth, db,
+            createUserWithEmailAndPassword,
+            signInWithGoogleWithFallback,
+            doc, setDoc, getDoc
+        } from './js/auth.js';
 
         const regForm = document.getElementById('register-form');
         const regBtn = document.getElementById('reg-btn');
         const googleBtn = document.getElementById('google-btn');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const loadingText = document.getElementById('loading-text');
+        const errorToast = document.getElementById('error-toast');
+
+        // Error messages mapping
+        const errorMessages = {
+            'auth/network-request-failed': 'Network error. Please check your internet connection.',
+            'auth/popup-blocked': 'Popup was blocked. Trying alternative login method...',
+            'auth/popup-closed-by-user': 'Registration cancelled. Please try again.',
+            'auth/email-already-in-use': 'This email is already registered. Try logging in.',
+            'auth/weak-password': 'Password is too weak. Use at least 6 characters.',
+            'auth/invalid-email': 'Please enter a valid email address.',
+            'auth/too-many-requests': 'Too many attempts. Please wait a few minutes.'
+        };
+
+        function showLoading(message = 'Creating account...') {
+            loadingText.textContent = message;
+            loadingOverlay.classList.add('active');
+        }
+
+        function hideLoading() {
+            loadingOverlay.classList.remove('active');
+        }
+
+        function showError(message) {
+            errorToast.textContent = message;
+            errorToast.style.display = 'block';
+            setTimeout(() => {
+                errorToast.style.display = 'none';
+            }, 5000);
+        }
+
+        function getErrorMessage(error) {
+            return errorMessages[error.code] || error.message || 'An unexpected error occurred.';
+        }
 
         // Helper to determine dashboard URL
         async function getDashboardUrl(uid, email) {
@@ -141,21 +262,24 @@
             const terms = document.getElementById('reg-terms').checked;
 
             if (password !== confirmPass) {
-                alert("Passwords do not match!");
+                showError("Passwords do not match!");
                 return;
             }
 
             if (!terms) {
-                alert("Please agree to the terms.");
+                showError("Please agree to the terms.");
                 return;
             }
 
             regBtn.textContent = 'Creating Account...';
             regBtn.disabled = true;
+            showLoading('Creating your account...');
 
             try {
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
+
+                showLoading('Setting up your profile...');
 
                 // Create User Document
                 await setDoc(doc(db, "users", user.uid), {
@@ -170,21 +294,34 @@
 
                 console.log("Registered:", user.uid);
 
+                showLoading('Loading your dashboard...');
                 const url = await getDashboardUrl(user.uid, user.email);
                 window.location.href = url;
             } catch (error) {
                 console.error("Registration Error:", error);
-                alert("Registration Failed: " + error.message);
+                hideLoading();
+                showError(getErrorMessage(error));
                 regBtn.textContent = 'Create Account';
                 regBtn.disabled = false;
             }
         });
 
-        // Google Login (Same as Login Page)
+        // Google Login with Fallback
         googleBtn.addEventListener('click', async () => {
+            showLoading('Connecting to Google...');
+            googleBtn.disabled = true;
+
             try {
-                const result = await signInWithPopup(auth, googleProvider);
+                const result = await signInWithGoogleWithFallback();
+
+                // If redirect was triggered, result will be null
+                if (!result) {
+                    showLoading('Redirecting to Google...');
+                    return;
+                }
+
                 const user = result.user;
+                showLoading('Setting up your account...');
 
                 const userRef = doc(db, "users", user.uid);
                 const userSnap = await getDoc(userRef);
@@ -202,13 +339,25 @@
                     });
                 }
 
+                showLoading('Loading your dashboard...');
                 const url = await getDashboardUrl(user.uid, user.email);
                 window.location.href = url;
             } catch (error) {
                 console.error("Google Login Error:", error);
-                alert("Google Login Failed: " + error.message);
+                hideLoading();
+                googleBtn.disabled = false;
+
+                // Don't show error for intentional cancellation
+                if (error.code !== 'auth/popup-closed-by-user') {
+                    showError(getErrorMessage(error));
+                }
             }
         });
+
+        // Check if returning from redirect
+        if (sessionStorage.getItem('google-login-redirect')) {
+            showLoading('Completing Google sign-up...');
+        }
     </script>
 </body>
 

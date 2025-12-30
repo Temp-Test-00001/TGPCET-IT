@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support Contacts - Admin - TGPCET IT</title>
+    <link rel="stylesheet" href="../../css/new-dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        #error-banner {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: #dc2626;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            z-index: 10000;
+            font-weight: bold;
+        }
+
+        .support-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            transition: all 0.2s;
+        }
+
+        .support-card:hover {
+            border-color: var(--primary);
+        }
+
+        .support-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .support-name {
+            font-size: 1rem;
+            color: white;
+            font-weight: 600;
+        }
+
+        .support-order {
+            background: var(--primary);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .support-designation {
+            font-size: 0.875rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .support-contact {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        .support-contact span {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .support-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.2);
+            color: white;
+            border: 1px solid var(--border-glass);
+            font-family: inherit;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #1e293b;
+            border: 1px solid var(--border-glass);
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h3 {
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .btn-sm {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.75rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="error-banner"></div>
+
+    <!-- Edit Modal -->
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-edit" style="margin-right: 0.5rem;"></i>Edit Support Contact</h3>
+                <button class="modal-close" onclick="closeEditModal()">&times;</button>
+            </div>
+            <form id="edit-form">
+                <input type="hidden" id="edit-id">
+                <div class="form-group">
+                    <label for="edit-name">Name *</label>
+                    <input type="text" id="edit-name" placeholder="Enter full name" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-designation">Designation *</label>
+                    <input type="text" id="edit-designation" placeholder="e.g., Faculty Coordinator" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-email">Email</label>
+                    <input type="email" id="edit-email" placeholder="email@example.com">
+                </div>
+                <div class="form-group">
+                    <label for="edit-phone">Phone *</label>
+                    <input type="tel" id="edit-phone" placeholder="+91 XXXXX XXXXX" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-order">Display Order (1 = first)</label>
+                    <input type="number" id="edit-order" min="1" value="1" placeholder="1">
+                </div>
+                <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                    <button type="button" class="btn btn-outline" onclick="closeEditModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save" style="margin-right: 0.5rem;"></i>Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="brand">
+                <h2>TGPCET IT</h2>
+            </div>
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-link"><i class="fas fa-home"></i><span>Overview</span></a>
+                <a href="users.html" class="nav-link"><i class="fas fa-users"></i><span>Users</span></a>
+                <a href="events.html" class="nav-link"><i class="fas fa-calendar-alt"></i><span>Events</span></a>
+                <a href="approvals.html" class="nav-link"><i class="fas fa-check-circle"></i><span>Approvals</span></a>
+                <a href="notifications.html" class="nav-link"><i class="fas fa-bell"></i><span>Notifications</span></a>
+                <a href="support.html" class="nav-link active"><i class="fas fa-headset"></i><span>Support</span></a>
+            </nav>
+            <div class="user-profile">
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+                    <div
+                        style="width: 32px; height: 32px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
+                        A</div>
+                    <div style="overflow: hidden;">
+                        <div style="font-size: 0.875rem; font-weight: 600;">Admin</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);" id="user-email">Loading...</div>
+                    </div>
+                </div>
+                <button id="logout-btn" class="btn btn-outline"
+                    style="width: 100%; justify-content: flex-start; gap: 0.5rem; border: none; padding: 0.5rem;">
+                    <i class="fas fa-sign-out-alt"></i><span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <button class="mobile-toggle" id="mobile-toggle"><i class="fas fa-bars"></i></button>
+                <h1 style="font-size: 1.25rem; font-weight: 600;">Support Contacts Management</h1>
+            </header>
+
+            <div class="page-content">
+                <!-- Add New Support Contact -->
+                <div class="card" style="margin-bottom: 2rem;">
+                    <h3 style="color: var(--primary); margin-bottom: 1.5rem; font-size: 1.1rem;">
+                        <i class="fas fa-user-plus" style="margin-right: 0.5rem;"></i>Add Support Contact
+                    </h3>
+                    <form id="support-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="support-name">Name *</label>
+                                <input type="text" id="support-name" placeholder="Enter full name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="support-designation">Designation *</label>
+                                <input type="text" id="support-designation" placeholder="e.g., Faculty Coordinator"
+                                    required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="support-email">Email</label>
+                                <input type="email" id="support-email" placeholder="email@example.com">
+                            </div>
+                            <div class="form-group">
+                                <label for="support-phone">Phone *</label>
+                                <input type="tel" id="support-phone" placeholder="+91 XXXXX XXXXX" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="support-order">Display Order (1 = first)</label>
+                                <input type="number" id="support-order" min="1" value="1" placeholder="1">
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                            <button type="button" class="btn btn-outline"
+                                onclick="document.getElementById('support-form').reset();">Clear</button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-plus" style="margin-right: 0.5rem;"></i>Add Contact
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Existing Support Contacts -->
+                <div class="card">
+                    <h3 style="color: var(--text-main); margin-bottom: 1.5rem; font-size: 1.1rem;">
+                        <i class="fas fa-address-book" style="margin-right: 0.5rem;"></i>Support Contacts List
+                        <span
+                            style="font-size: 0.75rem; color: var(--text-muted); font-weight: normal; margin-left: 0.5rem;">(sorted
+                            by display order)</span>
+                    </h3>
+                    <div id="support-list">
+                        <div style="text-align: center; padding: 2rem; color: var(--text-muted);">Loading...</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, collection, getDocs, addDoc, deleteDoc, updateDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        function showError(msg) {
+            const banner = document.getElementById('error-banner');
+            banner.textContent = "Error: " + msg;
+            banner.style.display = 'block';
+            setTimeout(() => { banner.style.display = 'none'; }, 5000);
+        }
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAbpCJRXBwORZC1_MVaqTVlMOqVoA0CT5w",
+            authDomain: "tgpcet-5ef68.firebaseapp.com",
+            projectId: "tgpcet-5ef68",
+            storageBucket: "tgpcet-5ef68.firebasestorage.app",
+            messagingSenderId: "63942237118",
+            appId: "1:63942237118:web:d5a181bd04ba0e8ce237ef"
+        };
+
+        try {
+            const app = initializeApp(firebaseConfig);
+            const auth = getAuth(app);
+            const db = getFirestore(app);
+            console.log("Admin Support Page Initialized");
+
+            onAuthStateChanged(auth, async (user) => {
+                if (!user) {
+                    window.location.href = '../../login.html';
+                    return;
+                }
+                document.getElementById('user-email').textContent = user.email;
+                loadSupportContacts();
+            });
+
+            async function loadSupportContacts() {
+                const container = document.getElementById('support-list');
+                container.innerHTML = '<div style="text-align: center; padding: 2rem;"><div style="display: inline-block; width: 40px; height: 40px; border: 3px solid rgba(168, 85, 247, 0.2); border-top-color: #a855f7; border-radius: 50%; animation: spin 0.8s linear infinite;"></div><p style="color: var(--text-muted); margin-top: 1rem;">Loading contacts...</p></div>';
+
+                try {
+                    const q = query(collection(db, "support"), orderBy("order", "asc"));
+                    const snap = await getDocs(q);
+                    container.innerHTML = '';
+
+                    if (snap.empty) {
+                        container.innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--text-muted);"><i class="fas fa-address-book" style="font-size: 2rem; margin-bottom: 1rem;"></i><p>No support contacts added yet.</p></div>';
+                        return;
+                    }
+
+                    snap.forEach(docSnap => {
+                        const contact = docSnap.data();
+                        const card = document.createElement('div');
+                        card.className = 'support-card';
+                        card.innerHTML = `
+                            <div class="support-header">
+                                <h4 class="support-name">${contact.name}</h4>
+                                <span class="support-order">Order: ${contact.order || 1}</span>
+                            </div>
+                            <p class="support-designation">${contact.designation}</p>
+                            <div class="support-contact">
+                                <span><i class="fas fa-phone"></i> ${contact.phone}</span>
+                                ${contact.email ? `<span><i class="fas fa-envelope"></i> ${contact.email}</span>` : ''}
+                            </div>
+                            <div class="support-actions">
+                                <button class="btn btn-primary btn-sm btn-edit" data-id="${docSnap.id}" data-name="${contact.name}" data-designation="${contact.designation}" data-email="${contact.email || ''}" data-phone="${contact.phone}" data-order="${contact.order || 1}">
+                                    <i class="fas fa-edit" style="margin-right: 0.25rem;"></i>Edit
+                                </button>
+                                <button class="btn btn-danger btn-sm btn-delete" data-id="${docSnap.id}">
+                                    <i class="fas fa-trash" style="margin-right: 0.25rem;"></i>Delete
+                                </button>
+                            </div>
+                        `;
+                        container.appendChild(card);
+                    });
+
+                    // Bind edit buttons
+                    document.querySelectorAll('.btn-edit').forEach(btn => {
+                        btn.onclick = () => openEditModal(btn.dataset);
+                    });
+
+                    // Bind delete buttons
+                    document.querySelectorAll('.btn-delete').forEach(btn => {
+                        btn.onclick = () => deleteContact(btn.dataset.id);
+                    });
+                } catch (err) {
+                    console.error(err);
+                    // If ordering by 'order' fails, try without ordering
+                    try {
+                        const snap = await getDocs(collection(db, "support"));
+                        container.innerHTML = '';
+
+                        if (snap.empty) {
+                            container.innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--text-muted);"><i class="fas fa-address-book" style="font-size: 2rem; margin-bottom: 1rem;"></i><p>No support contacts added yet.</p></div>';
+                            return;
+                        }
+
+                        snap.forEach(docSnap => {
+                            const contact = docSnap.data();
+                            const card = document.createElement('div');
+                            card.className = 'support-card';
+                            card.innerHTML = `
+                                <div class="support-header">
+                                    <h4 class="support-name">${contact.name}</h4>
+                                    <span class="support-order">Order: ${contact.order || 1}</span>
+                                </div>
+                                <p class="support-designation">${contact.designation}</p>
+                                <div class="support-contact">
+                                    <span><i class="fas fa-phone"></i> ${contact.phone}</span>
+                                    ${contact.email ? `<span><i class="fas fa-envelope"></i> ${contact.email}</span>` : ''}
+                                </div>
+                                <div class="support-actions">
+                                    <button class="btn btn-primary btn-sm btn-edit" data-id="${docSnap.id}" data-name="${contact.name}" data-designation="${contact.designation}" data-email="${contact.email || ''}" data-phone="${contact.phone}" data-order="${contact.order || 1}">
+                                        <i class="fas fa-edit" style="margin-right: 0.25rem;"></i>Edit
+                                    </button>
+                                    <button class="btn btn-danger btn-sm btn-delete" data-id="${docSnap.id}">
+                                        <i class="fas fa-trash" style="margin-right: 0.25rem;"></i>Delete
+                                    </button>
+                                </div>
+                            `;
+                            container.appendChild(card);
+                        });
+
+                        document.querySelectorAll('.btn-edit').forEach(btn => {
+                            btn.onclick = () => openEditModal(btn.dataset);
+                        });
+
+                        document.querySelectorAll('.btn-delete').forEach(btn => {
+                            btn.onclick = () => deleteContact(btn.dataset.id);
+                        });
+                    } catch (fallbackErr) {
+                        container.innerHTML = `<div style="text-align: center; padding: 2rem; color: var(--danger);"><i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 1rem;"></i><p>Failed to load contacts</p><button onclick="location.reload()" class="btn btn-outline" style="margin-top: 1rem;">Retry</button></div>`;
+                    }
+                }
+            }
+
+            // Edit Modal Functions
+            window.openEditModal = function (data) {
+                document.getElementById('edit-id').value = data.id;
+                document.getElementById('edit-name').value = data.name;
+                document.getElementById('edit-designation').value = data.designation;
+                document.getElementById('edit-email').value = data.email;
+                document.getElementById('edit-phone').value = data.phone;
+                document.getElementById('edit-order').value = data.order || 1;
+                document.getElementById('editModal').classList.add('active');
+            };
+
+            window.closeEditModal = function () {
+                document.getElementById('editModal').classList.remove('active');
+                document.getElementById('edit-form').reset();
+            };
+
+            // Edit form submission
+            document.getElementById('edit-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right: 0.5rem;"></i>Saving...';
+
+                const id = document.getElementById('edit-id').value;
+                const name = document.getElementById('edit-name').value.trim();
+                const designation = document.getElementById('edit-designation').value.trim();
+                const email = document.getElementById('edit-email').value.trim();
+                const phone = document.getElementById('edit-phone').value.trim();
+                const order = parseInt(document.getElementById('edit-order').value) || 1;
+
+                try {
+                    await updateDoc(doc(db, "support", id), {
+                        name: name,
+                        designation: designation,
+                        email: email || null,
+                        phone: phone,
+                        order: order
+                    });
+
+                    closeEditModal();
+                    loadSupportContacts();
+                } catch (err) {
+                    alert("Failed to update contact: " + err.message);
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-save" style="margin-right: 0.5rem;"></i>Save Changes';
+                }
+            });
+
+            async function deleteContact(id) {
+                if (!confirm("Are you sure you want to delete this contact?")) return;
+
+                try {
+                    await deleteDoc(doc(db, "support", id));
+                    loadSupportContacts();
+                } catch (err) {
+                    alert("Delete failed: " + err.message);
+                }
+            }
+
+            // Form submission for adding new contact
+            document.getElementById('support-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right: 0.5rem;"></i>Adding...';
+
+                const name = document.getElementById('support-name').value.trim();
+                const designation = document.getElementById('support-designation').value.trim();
+                const email = document.getElementById('support-email').value.trim();
+                const phone = document.getElementById('support-phone').value.trim();
+                const order = parseInt(document.getElementById('support-order').value) || 1;
+
+                if (!name || !designation || !phone) {
+                    alert("Please fill in all required fields");
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-plus" style="margin-right: 0.5rem;"></i>Add Contact';
+                    return;
+                }
+
+                try {
+                    await addDoc(collection(db, "support"), {
+                        name: name,
+                        designation: designation,
+                        email: email || null,
+                        phone: phone,
+                        order: order,
+                        createdAt: new Date().toISOString()
+                    });
+
+                    document.getElementById('support-form').reset();
+                    document.getElementById('support-order').value = '1';
+                    loadSupportContacts();
+                } catch (err) {
+                    alert("Failed to add contact: " + err.message);
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-plus" style="margin-right: 0.5rem;"></i>Add Contact';
+                }
+            });
+
+            // Logout
+            document.getElementById('logout-btn').addEventListener('click', () => {
+                signOut(auth).then(() => window.location.href = '../../index.html');
+            });
+
+            // Mobile Sidebar
+            const sidebar = document.getElementById('sidebar');
+            const mobileToggle = document.getElementById('mobile-toggle');
+            mobileToggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                sidebar.classList.toggle('open');
+            });
+            document.addEventListener('click', (e) => {
+                if (window.innerWidth <= 768 && sidebar.classList.contains('open') && !sidebar.contains(e.target) && e.target !== mobileToggle) {
+                    sidebar.classList.remove('open');
+                }
+            });
+
+        } catch (initErr) {
+            showError("Init Failed: " + initErr.message);
+        }
+    </script>
+</body>
+
+</html>

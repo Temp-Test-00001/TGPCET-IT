@@ -181,6 +181,8 @@
                 <a href="events.html" class="nav-link"><i class="fas fa-calendar-alt"></i><span>Events</span></a>
                 <a href="approvals.html" class="nav-link active"><i
                         class="fas fa-check-circle"></i><span>Approvals</span></a>
+                <a href="notifications.html" class="nav-link"><i class="fas fa-bell"></i><span>Notifications</span></a>
+                <a href="support.html" class="nav-link"><i class="fas fa-headset"></i><span>Support</span></a>
             </nav>
             <div class="user-profile">
                 <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
@@ -293,7 +295,7 @@
             projectId: "tgpcet-5ef68",
             storageBucket: "tgpcet-5ef68.firebasestorage.app",
             messagingSenderId: "63942237118",
-            appId: "1:63942237118:web:16fc9f531ba84a7ce237ef"
+            appId: "1:63942237118:web:d5a181bd04ba0e8ce237ef"
         };
 
         // --- 5. Init ---
@@ -305,6 +307,16 @@
 
             let currentUser = null;
             let currentAppId = null;
+
+            // Helper function for DD/MM/YY date format
+            function formatDateDDMMYY(dateString) {
+                if (!dateString) return 'N/A';
+                const d = new Date(dateString);
+                const day = d.getDate().toString().padStart(2, '0');
+                const month = (d.getMonth() + 1).toString().padStart(2, '0');
+                const year = d.getFullYear().toString().slice(-2);
+                return `${day}/${month}/${year}`;
+            }
 
             // --- 6. Auth & Load ---
             onAuthStateChanged(auth, async (user) => {
@@ -363,7 +375,7 @@
                             </td>
                             <td>${profile.fullName || 'Unknown'}</td>
                             <td>${app.eventTitle || 'Unknown'}</td>
-                            <td>${app.appliedAt ? new Date(app.appliedAt).toLocaleDateString() : 'N/A'}</td>
+                            <td>${app.appliedAt ? formatDateDDMMYY(app.appliedAt) : 'N/A'}</td>
                             <td>
                                 <button class="btn btn-outline" id="btn-${app.id}" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">Review</button>
                             </td>
@@ -420,6 +432,16 @@
                                 <div class="detail-item"><label>PRN</label><span>${profile.prn || 'N/A'}</span></div>
                             </div>
                         </div>
+                        
+                        ${app.teamName ? `
+                        <div class="detail-section">
+                            <h4 style="color: var(--primary); margin-bottom: 0.75rem; font-size: 0.9rem; text-transform: uppercase;">Team Information</h4>
+                            <div class="detail-row">
+                                <div class="detail-item"><label>Team Name</label><span style="font-weight: 600; color: var(--accent);">${app.teamName}</span></div>
+                                <div class="detail-item"><label>Team Size</label><span>${(app.teamMembers?.length || 0) + 1} members</span></div>
+                            </div>
+                        </div>
+                        ` : ''}
 
                         <div class="detail-section">
                             <h4 style="color: var(--primary); margin-bottom: 0.75rem; font-size: 0.9rem; text-transform: uppercase;">Event Details</h4>
@@ -427,7 +449,7 @@
                                 <div class="detail-item"><label>Event</label><span>${app.eventTitle || 'N/A'}</span></div>
                                 <div class="detail-item"><label>Fee</label><span>₹${app.fee || 0}</span></div>
                                 <div class="detail-item"><label>Status</label><span class="badge-${app.status || 'pending'}">${app.status || 'pending'}</span></div>
-                                <div class="detail-item"><label>Applied On</label><span>${app.appliedAt ? new Date(app.appliedAt).toLocaleDateString() : 'N/A'}</span></div>
+                                <div class="detail-item"><label>Applied On</label><span>${app.appliedAt ? formatDateDDMMYY(app.appliedAt) : 'N/A'}</span></div>
                             </div>
                         </div>
                     `;

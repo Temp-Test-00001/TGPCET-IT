@@ -32,10 +32,82 @@
         .back-home:hover {
             opacity: 1;
         }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(8px);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            gap: 1.5rem;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(168, 85, 247, 0.2);
+            border-top-color: #a855f7;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: #94a3b8;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+        }
+
+        /* Error Toast */
+        .error-toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(239, 68, 68, 0.95);
+            color: white;
+            padding: 14px 20px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            z-index: 99999;
+            display: none;
+            animation: slideIn 0.3s ease;
+            max-width: 350px;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
     </style>
 </head>
 
 <body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="spinner"></div>
+        <p class="loading-text" id="loading-text">Signing in...</p>
+    </div>
+
+    <!-- Error Toast -->
+    <div class="error-toast" id="error-toast"></div>
+
     <a href="index.html" class="back-home">
         <i class="ri-arrow-left-line"></i> Back to Home
     </a>
@@ -77,7 +149,7 @@
                 <span class="google__icon">
                     <span class="google__g">G</span>
                 </span>
-                <span class="google__text">Sign up with Google</span>
+                <span class="google__text">Sign in with Google</span>
             </button>
 
             <p class="login__register">
@@ -91,11 +163,52 @@
 
     <!-- Firebase Auth Logic -->
     <script type="module">
-        import { auth, signInWithEmailAndPassword, signInWithPopup, googleProvider, doc, getDoc, db, setDoc } from './js/auth.js';
+        import { 
+            auth, db, 
+            signInWithEmailAndPassword, 
+            signInWithGoogleWithFallback,
+            doc, getDoc, setDoc 
+        } from './js/auth.js';
 
         const loginForm = document.getElementById('login-form');
         const googleBtn = document.getElementById('google-btn');
         const loginBtn = document.getElementById('login-btn');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const loadingText = document.getElementById('loading-text');
+        const errorToast = document.getElementById('error-toast');
+
+        // Error messages mapping
+        const errorMessages = {
+            'auth/network-request-failed': 'Network error. Please check your internet connection.',
+            'auth/popup-blocked': 'Popup was blocked. Trying alternative login method...',
+            'auth/popup-closed-by-user': 'Login cancelled. Please try again.',
+            'auth/user-not-found': 'No account found with this email.',
+            'auth/wrong-password': 'Incorrect password. Please try again.',
+            'auth/invalid-email': 'Please enter a valid email address.',
+            'auth/too-many-requests': 'Too many failed attempts. Please wait a few minutes.',
+            'auth/invalid-credential': 'Invalid email or password. Please try again.'
+        };
+
+        function showLoading(message = 'Signing in...') {
+            loadingText.textContent = message;
+            loadingOverlay.classList.add('active');
+        }
+
+        function hideLoading() {
+            loadingOverlay.classList.remove('active');
+        }
+
+        function showError(message) {
+            errorToast.textContent = message;
+            errorToast.style.display = 'block';
+            setTimeout(() => {
+                errorToast.style.display = 'none';
+            }, 5000);
+        }
+
+        function getErrorMessage(error) {
+            return errorMessages[error.code] || error.message || 'An unexpected error occurred.';
+        }
 
         // Helper to determine dashboard URL
         async function getDashboardUrl(uid, email) {
@@ -124,26 +237,40 @@
 
             loginBtn.textContent = 'Logging in...';
             loginBtn.disabled = true;
+            showLoading('Signing in with email...');
 
             try {
                 const userCredential = await signInWithEmailAndPassword(auth, email, password);
                 console.log("Logged in:", userCredential.user.uid);
 
+                showLoading('Loading your dashboard...');
                 const url = await getDashboardUrl(userCredential.user.uid, email);
                 window.location.href = url;
             } catch (error) {
                 console.error("Login Error:", error);
-                alert("Login Failed: " + error.message);
+                hideLoading();
+                showError(getErrorMessage(error));
                 loginBtn.textContent = 'Login';
                 loginBtn.disabled = false;
             }
         });
 
-        // Google Login
+        // Google Login with Fallback
         googleBtn.addEventListener('click', async () => {
+            showLoading('Connecting to Google...');
+            googleBtn.disabled = true;
+
             try {
-                const result = await signInWithPopup(auth, googleProvider);
+                const result = await signInWithGoogleWithFallback();
+                
+                // If redirect was triggered, result will be null
+                if (!result) {
+                    showLoading('Redirecting to Google...');
+                    return;
+                }
+
                 const user = result.user;
+                showLoading('Setting up your account...');
 
                 // Check if user exists in Firestore, if not create basic profile
                 const userRef = doc(db, "users", user.uid);
@@ -162,13 +289,25 @@
                     });
                 }
 
+                showLoading('Loading your dashboard...');
                 const url = await getDashboardUrl(user.uid, user.email);
                 window.location.href = url;
             } catch (error) {
                 console.error("Google Login Error:", error);
-                alert("Google Login Failed: " + error.message);
+                hideLoading();
+                googleBtn.disabled = false;
+                
+                // Don't show error for intentional cancellation
+                if (error.code !== 'auth/popup-closed-by-user') {
+                    showError(getErrorMessage(error));
+                }
             }
         });
+
+        // Check if returning from redirect
+        if (sessionStorage.getItem('google-login-redirect')) {
+            showLoading('Completing Google sign-in...');
+        }
     </script>
 </body>
 
