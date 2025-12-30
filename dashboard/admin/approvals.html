@@ -209,6 +209,41 @@
             </header>
 
             <div class="page-content">
+                <!-- Event-wise Export Section -->
+                <div class="card" style="margin-bottom: 1.5rem;">
+                    <h3 style="font-size: 1rem; margin-bottom: 1rem; color: var(--primary);">
+                        <i class="fas fa-file-export" style="margin-right: 0.5rem;"></i>Export Participants
+                    </h3>
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
+                        <div style="flex: 1; min-width: 200px;">
+                            <label
+                                style="display: block; margin-bottom: 0.5rem; font-size: 0.85rem; color: var(--text-muted);">Select
+                                Event</label>
+                            <select id="exportEventSelect"
+                                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.2); color: white;">
+                                <option value="">Loading events...</option>
+                            </select>
+                        </div>
+                        <div style="flex: 1; min-width: 200px;">
+                            <label
+                                style="display: block; margin-bottom: 0.5rem; font-size: 0.85rem; color: var(--text-muted);">Status
+                                Filter</label>
+                            <select id="exportStatusFilter"
+                                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.2); color: white;">
+                                <option value="all">All Status</option>
+                                <option value="approved">Approved Only</option>
+                                <option value="pending">Pending Only</option>
+                                <option value="rejected">Rejected Only</option>
+                            </select>
+                        </div>
+                        <div style="align-self: flex-end;">
+                            <button id="exportEventPdfBtn" class="btn btn-primary" style="padding: 0.75rem 1.25rem;">
+                                <i class="fas fa-download" style="margin-right: 0.5rem;"></i>Download Event PDF
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="card">
                     <div class="table-container">
                         <table>
@@ -469,12 +504,21 @@
                     if (app.teamMembers && app.teamMembers.length > 0) {
                         html += `
                             <div class="detail-section">
-                                <h4 style="color: var(--primary); margin-bottom: 0.75rem; font-size: 0.9rem; text-transform: uppercase;">Team Members</h4>
-                                <div style="display: grid; gap: 0.5rem;">
-                                    ${app.teamMembers.map(m => `
-                                        <div style="background: rgba(0,0,0,0.2); padding: 0.5rem; border-radius: 4px; display: flex; justify-content: space-between;">
-                                            <span style="font-weight: 500;">${m.name}</span>
-                                            <span style="color: #aaa; font-size: 0.85rem;">${m.email}</span>
+                                <h4 style="color: var(--primary); margin-bottom: 0.75rem; font-size: 0.9rem; text-transform: uppercase;">Team Members (${app.teamMembers.length} members)</h4>
+                                <div style="display: grid; gap: 0.75rem;">
+                                    ${app.teamMembers.map((m, idx) => `
+                                        <div style="background: rgba(0,0,0,0.2); padding: 0.75rem; border-radius: 8px; border-left: 3px solid var(--primary);">
+                                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                                <span style="font-weight: 600; color: white;">Member ${idx + 1}: ${m.name}</span>
+                                            </div>
+                                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.5rem; font-size: 0.85rem;">
+                                                <div><span style="color: var(--text-muted);">Email: </span><span style="color: #aaa;">${m.email || 'N/A'}</span></div>
+                                                <div><span style="color: var(--text-muted);">Mobile: </span><span style="color: #aaa;">${m.mobile || 'N/A'}</span></div>
+                                                <div><span style="color: var(--text-muted);">College: </span><span style="color: #aaa;">${m.college || 'N/A'}</span></div>
+                                                <div><span style="color: var(--text-muted);">Branch: </span><span style="color: #aaa;">${m.branch || 'N/A'}</span></div>
+                                                <div><span style="color: var(--text-muted);">Year: </span><span style="color: #aaa;">${m.year || 'N/A'}</span></div>
+                                                <div><span style="color: var(--text-muted);">PRN: </span><span style="color: #aaa;">${m.prn || 'N/A'}</span></div>
+                                            </div>
                                         </div>
                                     `).join('')}
                                 </div>
@@ -611,6 +655,202 @@
                     sidebar.classList.remove('open');
                 }
             });
+
+            // --- 9. Event-wise PDF Export ---
+            async function loadEventsForExport() {
+                const select = document.getElementById('exportEventSelect');
+                try {
+                    const eventsSnap = await getDocs(collection(db, "events"));
+                    select.innerHTML = '<option value="">-- Select an Event --</option>';
+                    eventsSnap.forEach(docSnap => {
+                        const event = docSnap.data();
+                        const option = document.createElement('option');
+                        option.value = docSnap.id;
+                        option.textContent = event.title;
+                        option.dataset.eventTitle = event.title;
+                        select.appendChild(option);
+                    });
+                } catch (err) {
+                    select.innerHTML = '<option value="">Error loading events</option>';
+                }
+            }
+
+            // Load events for export dropdown
+            loadEventsForExport();
+
+            document.getElementById('exportEventPdfBtn').addEventListener('click', async () => {
+                const eventId = document.getElementById('exportEventSelect').value;
+                const statusFilter = document.getElementById('exportStatusFilter').value;
+
+                if (!eventId) {
+                    alert('Please select an event first.');
+                    return;
+                }
+
+                const btn = document.getElementById('exportEventPdfBtn');
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right: 0.5rem;"></i>Generating...';
+
+                try {
+                    // Get event details
+                    const eventDoc = await getDoc(doc(db, "events", eventId));
+                    const eventData = eventDoc.data();
+
+                    // Get applications for this event
+                    let applicationsQuery = query(collection(db, "applications"), where("eventId", "==", eventId));
+                    const appsSnap = await getDocs(applicationsQuery);
+
+                    let applications = [];
+                    appsSnap.forEach(docSnap => {
+                        const app = docSnap.data();
+                        if (statusFilter === 'all' || app.status === statusFilter) {
+                            applications.push({ id: docSnap.id, ...app });
+                        }
+                    });
+
+                    if (applications.length === 0) {
+                        alert('No applications found for the selected criteria.');
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fas fa-download" style="margin-right: 0.5rem;"></i>Download Event PDF';
+                        return;
+                    }
+
+                    // Generate PDF
+                    await generateEventParticipantsPDF(eventData, applications);
+
+                } catch (err) {
+                    alert('Failed to generate PDF: ' + err.message);
+                } finally {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-download" style="margin-right: 0.5rem;"></i>Download Event PDF';
+                }
+            });
+
+            async function generateEventParticipantsPDF(eventData, applications) {
+                // Load jsPDF if not already loaded
+                if (!window.jspdf) {
+                    await new Promise((resolve, reject) => {
+                        const script = document.createElement('script');
+                        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+                        script.onload = resolve;
+                        script.onerror = reject;
+                        document.head.appendChild(script);
+                    });
+                }
+
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const pageWidth = pdf.internal.pageSize.getWidth();
+                const pageHeight = pdf.internal.pageSize.getHeight();
+                const margin = 15;
+                let y = margin;
+
+                // Helper function for DD/MM/YY format
+                function formatDate(dateString) {
+                    if (!dateString) return 'N/A';
+                    const d = new Date(dateString);
+                    return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getFullYear()).slice(-2)}`;
+                }
+
+                // Header
+                pdf.setFillColor(30, 41, 59);
+                pdf.rect(0, 0, pageWidth, 35, 'F');
+                pdf.setTextColor(255, 255, 255);
+                pdf.setFontSize(18);
+                pdf.setFont('helvetica', 'bold');
+                pdf.text('TGPCET IT Department', pageWidth / 2, 15, { align: 'center' });
+                pdf.setFontSize(12);
+                pdf.setFont('helvetica', 'normal');
+                pdf.text('Event Participants Report', pageWidth / 2, 23, { align: 'center' });
+                pdf.setFontSize(10);
+                pdf.text(`Generated on: ${formatDate(new Date().toISOString())}`, pageWidth / 2, 30, { align: 'center' });
+
+                y = 45;
+
+                // Event Details
+                pdf.setTextColor(0, 0, 0);
+                pdf.setFontSize(14);
+                pdf.setFont('helvetica', 'bold');
+                pdf.text(`Event: ${eventData.title}`, margin, y);
+                y += 8;
+                pdf.setFontSize(10);
+                pdf.setFont('helvetica', 'normal');
+                pdf.text(`Date: ${eventData.date || 'N/A'} | Venue: ${eventData.venue || 'N/A'}`, margin, y);
+                y += 6;
+                pdf.text(`Total Participants: ${applications.length}`, margin, y);
+                y += 10;
+
+                // Draw separator line
+                pdf.setDrawColor(150, 150, 150);
+                pdf.line(margin, y, pageWidth - margin, y);
+                y += 8;
+
+                // Participants
+                applications.forEach((app, index) => {
+                    // Check if we need a new page
+                    if (y > pageHeight - 60) {
+                        pdf.addPage();
+                        y = margin;
+                    }
+
+                    const profile = app.teamLeader?.profile || {};
+
+                    // Participant header
+                    pdf.setFillColor(240, 240, 240);
+                    pdf.rect(margin, y - 4, pageWidth - 2 * margin, 10, 'F');
+                    pdf.setFontSize(11);
+                    pdf.setFont('helvetica', 'bold');
+                    pdf.setTextColor(50, 50, 50);
+                    pdf.text(`${index + 1}. ${app.teamName || profile.fullName || 'N/A'}`, margin + 2, y + 2);
+
+                    // Status badge
+                    const statusText = (app.status || 'pending').toUpperCase();
+                    pdf.setFontSize(8);
+                    const statusColor = app.status === 'approved' ? [34, 197, 94] : app.status === 'rejected' ? [239, 68, 68] : [234, 179, 8];
+                    pdf.setTextColor(...statusColor);
+                    pdf.text(statusText, pageWidth - margin - 20, y + 2);
+                    y += 12;
+
+                    pdf.setTextColor(0, 0, 0);
+                    pdf.setFontSize(9);
+                    pdf.setFont('helvetica', 'normal');
+
+                    // Application details
+                    pdf.text(`App #: ${app.applicationNumber || app.id?.substring(0, 8) || 'N/A'}`, margin + 2, y);
+                    pdf.text(`Applied: ${formatDate(app.appliedAt)}`, margin + 60, y);
+                    y += 5;
+
+                    // Team Leader / Individual
+                    pdf.text(`Leader: ${profile.fullName || 'N/A'} | Email: ${app.teamLeader?.email || 'N/A'}`, margin + 2, y);
+                    y += 5;
+                    pdf.text(`Mobile: ${profile.mobile || 'N/A'} | PRN: ${profile.prn || 'N/A'}`, margin + 2, y);
+                    y += 5;
+                    pdf.text(`College: ${profile.college || 'N/A'} | Branch: ${profile.branch || 'N/A'}`, margin + 2, y);
+                    y += 6;
+
+                    // Team members if any
+                    if (app.teamMembers && app.teamMembers.length > 0) {
+                        pdf.setFont('helvetica', 'bold');
+                        pdf.text(`Team Members (${app.teamMembers.length}):`, margin + 2, y);
+                        y += 5;
+                        pdf.setFont('helvetica', 'normal');
+
+                        app.teamMembers.forEach((member, idx) => {
+                            if (y > pageHeight - 20) {
+                                pdf.addPage();
+                                y = margin;
+                            }
+                            pdf.text(`  ${idx + 1}. ${member.name} | ${member.email || 'N/A'} | ${member.mobile || 'N/A'}`, margin + 4, y);
+                            y += 4;
+                        });
+                    }
+
+                    y += 6;
+                });
+
+                // Save PDF
+                pdf.save(`${eventData.title.replace(/[^a-zA-Z0-9]/g, '_')}_Participants.pdf`);
+            }
 
         } catch (initErr) {
             showError("Init Failed: " + initErr.message);

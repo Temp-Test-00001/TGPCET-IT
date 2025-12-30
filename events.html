@@ -330,15 +330,28 @@
                         ? event.description.replace(/\n/g, '<br>')
                         : 'No description available.';
 
+                    // Format eligibility as badges if present
+                    let eligibilityHtml = '';
+                    if (event.eligibility) {
+                        const criteria = event.eligibility.split(',').map(c => c.trim()).filter(c => c);
+                        if (criteria.length > 0) {
+                            eligibilityHtml = `<div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem;">
+                                ${criteria.map(c => `<span style="background: rgba(168, 85, 247, 0.2); color: #a855f7; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">${c}</span>`).join('')}
+                            </div>`;
+                        }
+                    }
+
                     card.innerHTML = `
                         <div class="event-image">
                             <i class="fas fa-calendar-alt" style="font-size: 3rem; color: rgba(255,255,255,0.2);"></i>
                         </div>
                         <h3 class="event-title">${event.title}</h3>
+                        ${event.organizedBy ? `<p style="color: var(--primary); font-size: 0.85rem; margin-bottom: 0.5rem;"><i class="fas fa-building" style="margin-right: 0.5rem;"></i>Organized by: ${event.organizedBy}</p>` : ''}
                         <div class="event-meta">
                             <span><i class="far fa-calendar"></i> ${event.date}</span>
                             <span><i class="fas fa-map-marker-alt"></i> ${event.venue}</span>
                         </div>
+                        ${eligibilityHtml}
                         <p class="event-desc">${formattedDesc}</p>
                         <a href="login.html" class="btn-register">Register Now</a>
                     `;

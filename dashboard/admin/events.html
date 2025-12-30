@@ -52,6 +52,17 @@
                         style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.2); color: white;">
                 </div>
                 <div style="grid-column: 1 / -1;">
+                    <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Organized By</label>
+                    <input type="text" id="edit-eventOrganizedBy" placeholder="e.g., IT Department, Coding Club"
+                        style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.2); color: white;">
+                </div>
+                <div style="grid-column: 1 / -1;">
+                    <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Eligibility
+                        Criteria</label>
+                    <input type="text" id="edit-eventEligibility" placeholder="e.g., 1st Year, 2nd Year, CSE, IT"
+                        style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.2); color: white;">
+                </div>
+                <div style="grid-column: 1 / -1;">
                     <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Description</label>
                     <textarea id="edit-eventDescription" rows="4" required
                         style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.2); color: white;"></textarea>
@@ -211,6 +222,20 @@
                         </div>
 
                         <div style="grid-column: 1 / -1;">
+                            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Organized
+                                By</label>
+                            <input type="text" id="eventOrganizedBy" placeholder="e.g., IT Department, Coding Club"
+                                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.2); color: white;">
+                        </div>
+
+                        <div style="grid-column: 1 / -1;">
+                            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Eligibility
+                                Criteria (comma separated)</label>
+                            <input type="text" id="eventEligibility" placeholder="e.g., 1st Year, 2nd Year, CSE, IT"
+                                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.2); color: white;">
+                        </div>
+
+                        <div style="grid-column: 1 / -1;">
                             <label
                                 style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Description</label>
                             <textarea id="eventDescription" rows="3" required
@@ -342,6 +367,8 @@
                 date: document.getElementById('eventDate').value,
                 venue: document.getElementById('eventVenue').value,
                 description: document.getElementById('eventDescription').value,
+                organizedBy: document.getElementById('eventOrganizedBy').value || '',
+                eligibility: document.getElementById('eventEligibility').value || '',
                 eventType: document.getElementById('eventType').value,
                 maxParticipants: parseInt(document.getElementById('maxParticipants').value),
                 fee: parseFloat(document.getElementById('eventFee').value),
@@ -394,6 +421,8 @@
                     document.getElementById('edit-eventVenue').value = event.venue || '';
                     document.getElementById('edit-eventFee').value = event.fee || 0;
                     document.getElementById('edit-registrationDeadline').value = event.registrationDeadline || '';
+                    document.getElementById('edit-eventOrganizedBy').value = event.organizedBy || '';
+                    document.getElementById('edit-eventEligibility').value = event.eligibility || '';
                     document.getElementById('edit-eventDescription').value = event.description || '';
                     modal.style.display = 'flex';
                 }
@@ -423,6 +452,8 @@
                     venue: document.getElementById('edit-eventVenue').value,
                     fee: parseFloat(document.getElementById('edit-eventFee').value),
                     registrationDeadline: document.getElementById('edit-registrationDeadline').value,
+                    organizedBy: document.getElementById('edit-eventOrganizedBy').value || '',
+                    eligibility: document.getElementById('edit-eventEligibility').value || '',
                     description: document.getElementById('edit-eventDescription').value
                 });
                 await logActivity("Edit Event", `Edited event: ${document.getElementById('edit-eventTitle').value}`, currentUser);
