@@ -301,15 +301,56 @@
                         card.className = 'card';
                         card.style.background = 'rgba(255,255,255,0.02)';
                         card.style.border = '1px solid rgba(255,255,255,0.05)';
+                        card.style.overflow = 'hidden';
+                        card.style.padding = '0';
+
+                        // Build image HTML
+                        let eventImageHtml = '';
+                        if (e.eventImage) {
+                            eventImageHtml = `<img src="../${e.eventImage}" alt="${e.title}" style="width: 100%; height: 150px; object-fit: cover;">`;
+                        } else {
+                            eventImageHtml = `<div style="width: 100%; height: 100px; background: linear-gradient(135deg, rgba(79,70,229,0.2) 0%, rgba(147,51,234,0.2) 100%); display: flex; align-items: center; justify-content: center;"><i class="fas fa-calendar-alt" style="font-size: 2.5rem; color: rgba(255,255,255,0.2);"></i></div>`;
+                        }
+
+                        // Build eligibility badges
+                        let eligibilityHtml = '';
+                        if (e.eligibility) {
+                            const criteria = e.eligibility.split(',').map(c => c.trim()).filter(c => c);
+                            if (criteria.length > 0) {
+                                eligibilityHtml = `<div style="display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.5rem;">
+                                    ${criteria.map(c => `<span style="background: rgba(168, 85, 247, 0.2); color: #a855f7; padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.7rem;">${c}</span>`).join('')}
+                                </div>`;
+                            }
+                        }
+
+                        const fee = parseFloat(e.fee) || 0;
+                        let feeText = 'Free';
+                        if (fee > 0) {
+                            feeText = '₹' + fee;
+                            if (e.eventType === 'team' && e.feeType === 'person') {
+                                feeText += '/person';
+                            } else if (e.eventType === 'team') {
+                                feeText += '/team';
+                            }
+                        }
+
                         card.innerHTML = `
-                            <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--text-main);">${e.title}</h3>
-                            <p style="color: var(--text-muted); margin-bottom: 0.5rem; font-size: 0.875rem;"><i class="fas fa-clock" style="margin-right: 0.5rem;"></i> ${e.date} | <i class="fas fa-map-marker-alt" style="margin-right: 0.5rem;"></i> ${e.venue}</p>
-                            <p style="color: var(--text-muted); margin-bottom: 1rem; font-size: 0.875rem; line-height: 1.5;">${e.description || 'No description available.'}</p>
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 1rem;">
-                                <span style="color: var(--primary); font-weight: 600; font-size: 1.1rem;">${e.fee > 0 ? '₹' + e.fee : 'Free'}</span>
-                                <span class="badge badge-warning">${e.eventType}</span>
+                            ${eventImageHtml}
+                            <div style="padding: 1rem;">
+                                <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--text-main);">${e.title}</h3>
+                                ${e.organizedBy ? `<p style="color: var(--primary); font-size: 0.75rem; margin-bottom: 0.5rem;"><i class="fas fa-building" style="margin-right: 0.35rem;"></i>${e.organizedBy}</p>` : ''}
+                                <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 0.75rem; font-size: 0.8rem; color: var(--text-muted);">
+                                    <span><i class="far fa-calendar" style="margin-right: 0.35rem;"></i>${e.date}</span>
+                                    <span><i class="fas fa-map-marker-alt" style="margin-right: 0.35rem;"></i>${e.venue}</span>
+                                </div>
+                                ${eligibilityHtml}
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin: 0.75rem 0; padding-top: 0.75rem; border-top: 1px solid rgba(255,255,255,0.05);">
+                                    <span style="color: var(--success); font-weight: 600;">${feeText}</span>
+                                    <span class="badge badge-warning" style="font-size: 0.7rem; padding: 0.25rem 0.5rem;">${e.eventType}</span>
+                                </div>
+                                <p style="color: var(--text-muted); margin-bottom: 1rem; font-size: 0.8rem; line-height: 1.4; max-height: 3.6rem; overflow: hidden;">${e.description || 'No description available.'}</p>
+                                <a href="eventregform.html?eventId=${doc.id}" class="btn btn-primary" style="width: 100%; text-decoration: none; text-align: center; display: block; font-size: 0.875rem;">Apply Now</a>
                             </div>
-                            <a href="eventregform.html?eventId=${doc.id}" class="btn btn-primary" style="width: 100%; text-decoration: none; text-align: center; display: block;">Apply Now</a>
                         `;
                         container.appendChild(card);
                     });

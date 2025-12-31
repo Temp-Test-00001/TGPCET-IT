@@ -63,6 +63,19 @@
                         style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.2); color: white;">
                 </div>
                 <div style="grid-column: 1 / -1;">
+                    <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Event Image</label>
+                    <select id="edit-eventImage"
+                        style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: #1e293b; color: white;"
+                        onchange="previewEditEventImage(this.value)">
+                        <option value="">-- No Image (Blank) --</option>
+                        <option value="" disabled>Loading images...</option>
+                    </select>
+                    <div id="editImagePreview" style="margin-top: 0.5rem; display: none; text-align: center;">
+                        <img id="editPreviewImg"
+                            style="max-width: 150px; max-height: 100px; border-radius: 8px; border: 1px solid var(--border-glass);">
+                    </div>
+                </div>
+                <div style="grid-column: 1 / -1;">
                     <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Description</label>
                     <textarea id="edit-eventDescription" rows="4" required
                         style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.2); color: white;"></textarea>
@@ -236,6 +249,26 @@
                         </div>
 
                         <div style="grid-column: 1 / -1;">
+                            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Event
+                                Image</label>
+                            <select id="eventImage"
+                                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: #1e293b; color: white;"
+                                onchange="previewEventImage(this.value)">
+                                <option value="">-- No Image (Blank) --</option>
+                                <option value="" disabled>Loading images...</option>
+                            </select>
+                            <small
+                                style="display: block; margin-top: 0.5rem; color: var(--text-muted); font-size: 0.75rem;">
+                                <i class="fas fa-info-circle"></i> Add images to <code>Images/events/</code> folder and
+                                update <code>event-images.json</code>
+                            </small>
+                            <div id="imagePreview" style="margin-top: 0.75rem; display: none; text-align: center;">
+                                <img id="previewImg"
+                                    style="max-width: 200px; max-height: 150px; border-radius: 8px; border: 1px solid var(--border-glass);">
+                            </div>
+                        </div>
+
+                        <div style="grid-column: 1 / -1;">
                             <label
                                 style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Description</label>
                             <textarea id="eventDescription" rows="3" required
@@ -374,6 +407,7 @@
                 fee: parseFloat(document.getElementById('eventFee').value),
                 feeType: document.getElementById('feeType').value,
                 registrationDeadline: document.getElementById('registrationDeadline').value,
+                eventImage: document.getElementById('eventImage').value || '',
                 createdAt: new Date().toISOString(),
                 createdBy: currentUser.email
             };
@@ -411,6 +445,9 @@
         window.openEditEventModal = async (id) => {
             const modal = document.getElementById('editEventModal');
             try {
+                // Load images for dropdown first
+                await loadEditEventImages();
+
                 const { getDoc } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js");
                 const docSnap = await getDoc(doc(db, "events", id));
                 if (docSnap.exists()) {
@@ -423,7 +460,12 @@
                     document.getElementById('edit-registrationDeadline').value = event.registrationDeadline || '';
                     document.getElementById('edit-eventOrganizedBy').value = event.organizedBy || '';
                     document.getElementById('edit-eventEligibility').value = event.eligibility || '';
+                    document.getElementById('edit-eventImage').value = event.eventImage || '';
                     document.getElementById('edit-eventDescription').value = event.description || '';
+
+                    // Show preview if image exists
+                    previewEditEventImage(event.eventImage || '');
+
                     modal.style.display = 'flex';
                 }
             } catch (err) {
@@ -454,6 +496,7 @@
                     registrationDeadline: document.getElementById('edit-registrationDeadline').value,
                     organizedBy: document.getElementById('edit-eventOrganizedBy').value || '',
                     eligibility: document.getElementById('edit-eventEligibility').value || '',
+                    eventImage: document.getElementById('edit-eventImage').value || '',
                     description: document.getElementById('edit-eventDescription').value
                 });
                 await logActivity("Edit Event", `Edited event: ${document.getElementById('edit-eventTitle').value}`, currentUser);
@@ -466,6 +509,98 @@
                 submitBtn.innerHTML = '<i class="fas fa-save" style="margin-right: 0.5rem;"></i>Save Changes';
             }
         });
+
+        // Image Preview Function for Create Form
+        window.previewEventImage = (imagePath) => {
+            const preview = document.getElementById('imagePreview');
+            const previewImg = document.getElementById('previewImg');
+            if (imagePath) {
+                previewImg.src = '../../' + imagePath;
+                preview.style.display = 'block';
+                previewImg.onerror = () => {
+                    preview.style.display = 'none';
+                };
+            } else {
+                preview.style.display = 'none';
+            }
+        };
+
+        // Load Event Images from JSON config file
+        async function loadEventImages() {
+            const select = document.getElementById('eventImage');
+            try {
+                const response = await fetch('../../Images/events/event-images.json');
+                if (!response.ok) throw new Error('Failed to load image list');
+                const images = await response.json();
+
+                // Clear loading placeholder
+                select.innerHTML = '<option value="">-- No Image (Blank) --</option>';
+
+                if (images.length === 0) {
+                    select.innerHTML += '<option value="" disabled>No images available</option>';
+                    return;
+                }
+
+                images.forEach(filename => {
+                    const option = document.createElement('option');
+                    option.value = 'Images/events/' + filename;
+                    // Format display name: remove extension and clean up
+                    const displayName = filename.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ');
+                    option.textContent = displayName;
+                    select.appendChild(option);
+                });
+            } catch (err) {
+                console.error('Error loading event images:', err);
+                select.innerHTML = '<option value="">-- No Image (Blank) --</option><option value="" disabled>Could not load images</option>';
+            }
+        }
+
+        // Load images on page load
+        loadEventImages();
+
+        // Load Event Images for Edit Modal
+        async function loadEditEventImages() {
+            const select = document.getElementById('edit-eventImage');
+            try {
+                const response = await fetch('../../Images/events/event-images.json');
+                if (!response.ok) throw new Error('Failed to load image list');
+                const images = await response.json();
+
+                // Clear loading placeholder
+                select.innerHTML = '<option value="">-- No Image (Blank) --</option>';
+
+                if (images.length === 0) {
+                    select.innerHTML += '<option value="" disabled>No images available</option>';
+                    return;
+                }
+
+                images.forEach(filename => {
+                    const option = document.createElement('option');
+                    option.value = 'Images/events/' + filename;
+                    const displayName = filename.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ');
+                    option.textContent = displayName;
+                    select.appendChild(option);
+                });
+            } catch (err) {
+                console.error('Error loading event images for edit:', err);
+                select.innerHTML = '<option value="">-- No Image (Blank) --</option>';
+            }
+        }
+
+        // Image Preview Function for Edit Modal
+        window.previewEditEventImage = (imagePath) => {
+            const preview = document.getElementById('editImagePreview');
+            const previewImg = document.getElementById('editPreviewImg');
+            if (imagePath) {
+                previewImg.src = '../../' + imagePath;
+                preview.style.display = 'block';
+                previewImg.onerror = () => {
+                    preview.style.display = 'none';
+                };
+            } else {
+                preview.style.display = 'none';
+            }
+        };
 
         document.getElementById('logout-btn').addEventListener('click', () => {
             signOut(auth).then(() => window.location.href = '../../index.html');
