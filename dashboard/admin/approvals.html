@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Approvals - TGPCET IT</title>
-    <link rel="stylesheet" href="../../css/new-dashboard.css">`n    <link rel="stylesheet" href="../../css/mobile.css">
+    <link rel="stylesheet" href="../../css/new-dashboard.css">`n
+    <link rel="stylesheet" href="../../css/mobile.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Load jsPDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -466,6 +467,12 @@
                                 <div class="detail-item"><label>Mobile</label><span>${profile.mobile || 'N/A'}</span></div>
                                 <div class="detail-item"><label>PRN</label><span>${profile.prn || 'N/A'}</span></div>
                             </div>
+                            <div class="detail-row" style="margin-top: 0.5rem;">
+                                <div class="detail-item"><label>College</label><span>${profile.collegeName || 'N/A'}</span></div>
+                                <div class="detail-item"><label>Department</label><span>${profile.department || 'N/A'}</span></div>
+                                <div class="detail-item"><label>Year</label><span>${profile.year || 'N/A'}</span></div>
+                                <div class="detail-item"><label>Section</label><span>${profile.section || 'N/A'}</span></div>
+                            </div>
                         </div>
                         
                         ${app.teamName ? `
@@ -823,9 +830,9 @@
                     // Team Leader / Individual
                     pdf.text(`Leader: ${profile.fullName || 'N/A'} | Email: ${app.teamLeader?.email || 'N/A'}`, margin + 2, y);
                     y += 5;
-                    pdf.text(`Mobile: ${profile.mobile || 'N/A'} | PRN: ${profile.prn || 'N/A'}`, margin + 2, y);
+                    pdf.text(`Mobile: ${profile.mobile || 'N/A'} | PRN: ${profile.prn || 'N/A'} | Year: ${profile.year || 'N/A'}`, margin + 2, y);
                     y += 5;
-                    pdf.text(`College: ${profile.college || 'N/A'} | Branch: ${profile.branch || 'N/A'}`, margin + 2, y);
+                    pdf.text(`College: ${profile.collegeName || 'N/A'} | Department: ${profile.department || 'N/A'}`, margin + 2, y);
                     y += 6;
 
                     // Team members if any

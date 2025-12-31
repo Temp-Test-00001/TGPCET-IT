@@ -460,6 +460,12 @@
                                 <div class="detail-item"><label>Mobile</label><span>${profile.mobile || 'N/A'}</span></div>
                                 <div class="detail-item"><label>PRN</label><span>${profile.prn || 'N/A'}</span></div>
                             </div>
+                            <div class="detail-row" style="margin-top: 0.5rem;">
+                                <div class="detail-item"><label>College</label><span>${profile.collegeName || 'N/A'}</span></div>
+                                <div class="detail-item"><label>Department</label><span>${profile.department || 'N/A'}</span></div>
+                                <div class="detail-item"><label>Year</label><span>${profile.year || 'N/A'}</span></div>
+                                <div class="detail-item"><label>Section</label><span>${profile.section || 'N/A'}</span></div>
+                            </div>
                         </div>
 
                         <div class="detail-section">
@@ -468,7 +474,7 @@
                                 <div class="detail-item"><label>Event</label><span>${app.eventTitle}</span></div>
                                 <div class="detail-item"><label>Fee</label><span>₹${app.fee || 0}</span></div>
                                 <div class="detail-item"><label>Status</label><span class="badge-${app.status || 'pending'}">${app.status || 'pending'}</span></div>
-                                <div class="detail-item"><label>Applied On</label><span>${app.appliedAt ? new Date(app.appliedAt).toLocaleDateString() : 'N/A'}</span></div>
+                                <div class="detail-item"><label>Applied On</label><span>${app.appliedAt ? formatDateDDMMYY(app.appliedAt) : 'N/A'}</span></div>
                             </div>
                         </div>
                     `;

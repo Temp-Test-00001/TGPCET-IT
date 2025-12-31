@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile - TGPCET IT</title>
-    <link rel="stylesheet" href="../../css/new-dashboard.css">`n    <link rel="stylesheet" href="../../css/mobile.css">
+    <link rel="stylesheet" href="../../css/new-dashboard.css">
+    <link rel="stylesheet" href="../../css/mobile.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
@@ -167,6 +168,14 @@
                                 style="color: var(--primary); border-bottom: 1px solid var(--border-glass); padding-bottom: 0.5rem; margin-bottom: 1rem;">
                                 Academic Details</h3>
                         </div>
+                        <div style="grid-column: 1 / -1;">
+                            <label
+                                style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">College/Institute
+                                Name</label>
+                            <input type="text" id="collegeName" required
+                                placeholder="e.g. Tulsiramji Gaikwad-Patil College of Engineering and Technology"
+                                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.2); color: white;">
+                        </div>
                         <div>
                             <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">PRN
                                 Number</label>
@@ -182,6 +191,21 @@
                                 <option value="2">2nd Year</option>
                                 <option value="3">3rd Year</option>
                                 <option value="4">4th Year</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label
+                                style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Department/Branch</label>
+                            <select id="department" required
+                                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: #1e293b; color: white;">
+                                <option value="">Select Department</option>
+                                <option value="Information Technology">Information Technology</option>
+                                <option value="Computer Science">Computer Science</option>
+                                <option value="Electronics">Electronics</option>
+                                <option value="Electrical">Electrical</option>
+                                <option value="Mechanical">Mechanical</option>
+                                <option value="Civil">Civil</option>
+                                <option value="Other">Other</option>
                             </select>
                         </div>
                         <div>
@@ -281,6 +305,8 @@
                     document.getElementById('tenth').value = p.tenth || '';
                     document.getElementById('twelfth').value = p.twelfth || '';
                     document.getElementById('cgpa').value = p.cgpa || '';
+                    document.getElementById('collegeName').value = p.collegeName || '';
+                    document.getElementById('department').value = p.department || '';
                 }
             }
         });
@@ -309,6 +335,8 @@
                 tenth: document.getElementById('tenth').value,
                 twelfth: document.getElementById('twelfth').value,
                 cgpa: document.getElementById('cgpa').value,
+                collegeName: document.getElementById('collegeName').value,
+                department: document.getElementById('department').value,
             };
 
             try {
