@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Events - TGPCET IT</title>
     <link rel="stylesheet" href="css/new-dashboard.css">
+    <link rel="stylesheet" href="css/mobile.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script type="module" src="js/auth.js"></script>
@@ -356,12 +357,12 @@
                         feeHtml = `<span style="background: rgba(34, 197, 94, 0.2); color: #22c55e; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">FREE</span>`;
                     }
 
-                    // Build image HTML
+                    // Build image HTML - Resolution: 1280px x 750px (displayed responsively)
                     let eventImageHtml = '';
                     if (event.eventImage) {
-                        eventImageHtml = `<img src="${event.eventImage}" alt="${event.title}" style="width: 100%; height: 180px; object-fit: cover; border-radius: 12px 12px 0 0;">`;
+                        eventImageHtml = `<img src="${event.eventImage}" alt="${event.title}" style="width: 100%; max-width: 1280px; height: auto; max-height: 750px; object-fit: cover; border-radius: 12px 12px 0 0; aspect-ratio: 1280 / 750;">`;
                     } else {
-                        eventImageHtml = `<div class="event-image"><i class="fas fa-calendar-alt" style="font-size: 3rem; color: rgba(255,255,255,0.2);"></i></div>`;
+                        eventImageHtml = `<div class="event-image" style="width: 100%; height: 200px;"><i class="fas fa-calendar-alt" style="font-size: 3rem; color: rgba(255,255,255,0.2);"></i></div>`;
                     }
 
                     card.innerHTML = `

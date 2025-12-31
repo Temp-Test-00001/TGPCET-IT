@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TGPCET IT Department</title>
     <link rel="stylesheet" href="css/new-dashboard.css">
+    <link rel="stylesheet" href="css/mobile.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -326,7 +327,13 @@
         <div class="logo">
             <h1>TGPCET IT</h1>
         </div>
-        <div class="nav-links">
+        <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Toggle menu">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="nav-links" id="nav-links">
+            <button class="mobile-close-btn" id="mobile-close-btn" aria-label="Close menu">
+                <i class="fas fa-times"></i>
+            </button>
             <a href="index.html">Home</a>
             <a href="events.html">Events</a>
             <a href="staff.html">Staff</a>
@@ -380,6 +387,36 @@
     <footer>
         <p>&copy; 2024 TGPCET IT Department. All rights reserved.</p>
     </footer>
+
+    <script>
+        // Mobile Menu Toggle
+        const mobileToggle = document.getElementById('mobile-menu-toggle');
+        const mobileClose = document.getElementById('mobile-close-btn');
+        const navLinks = document.getElementById('nav-links');
+
+        if (mobileToggle && navLinks) {
+            mobileToggle.addEventListener('click', () => {
+                navLinks.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        }
+
+        if (mobileClose && navLinks) {
+            mobileClose.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+        }
+
+        // Close menu when clicking on a link
+        navLinks?.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+        });
+    </script>
 </body>
+
 
 </html>

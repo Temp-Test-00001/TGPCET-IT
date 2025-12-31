@@ -10,6 +10,7 @@
 
     <!-- Main CSS -->
     <link rel="stylesheet" href="css/auth-custom.css">
+    <link rel="stylesheet" href="css/mobile.css">
 
     <title>Login - TGPCET IT</title>
     <style>
@@ -64,7 +65,9 @@
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         .loading-text {
@@ -92,8 +95,15 @@
         }
 
         @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
         }
     </style>
 </head>
@@ -163,11 +173,11 @@
 
     <!-- Firebase Auth Logic -->
     <script type="module">
-        import { 
-            auth, db, 
-            signInWithEmailAndPassword, 
+        import {
+            auth, db,
+            signInWithEmailAndPassword,
             signInWithGoogleWithFallback,
-            doc, getDoc, setDoc 
+            doc, getDoc, setDoc
         } from './js/auth.js';
 
         const loginForm = document.getElementById('login-form');
@@ -262,7 +272,7 @@
 
             try {
                 const result = await signInWithGoogleWithFallback();
-                
+
                 // If redirect was triggered, result will be null
                 if (!result) {
                     showLoading('Redirecting to Google...');
@@ -296,7 +306,7 @@
                 console.error("Google Login Error:", error);
                 hideLoading();
                 googleBtn.disabled = false;
-                
+
                 // Don't show error for intentional cancellation
                 if (error.code !== 'auth/popup-closed-by-user') {
                     showError(getErrorMessage(error));
