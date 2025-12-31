@@ -609,18 +609,20 @@
         function calculateFee() {
             if (!event) return;
 
-            if (!event.fee || event.fee === 0) {
+            const eventFee = parseFloat(event.fee) || 0;
+
+            if (eventFee === 0) {
                 calculatedTotalFee = 0;
             } else if (event.eventType === 'individual') {
-                calculatedTotalFee = event.fee;
+                calculatedTotalFee = eventFee;
             } else {
                 // Team event
                 if (event.feeType === 'person') {
                     // Leader + members
-                    calculatedTotalFee = event.fee * (1 + teamMembers.length);
+                    calculatedTotalFee = eventFee * (1 + teamMembers.length);
                 } else {
                     // Per team
-                    calculatedTotalFee = event.fee;
+                    calculatedTotalFee = eventFee;
                 }
             }
 
@@ -693,6 +695,10 @@
                 if (currentStep === 2) {
                     calculateFee(); // Ensure fee is calculated before deciding to skip
                     if (calculatedTotalFee === 0) {
+                        // Remove required from payment fields when skipping Step 3
+                        const txnidField = document.getElementById('txnid');
+                        if (txnidField) txnidField.removeAttribute('required');
+
                         currentStep = 4;
                         showStep(4);
                         generateSummary();
@@ -799,11 +805,14 @@
 
             if (event.eventType === 'team') data.teamName = document.getElementById('teamname').value;
 
-            if (calculatedTotalFee > 0) {
-                data.fee = calculatedTotalFee;
+            // Ensure calculatedTotalFee is a number
+            const totalFee = parseFloat(calculatedTotalFee) || 0;
+            data.fee = totalFee;
+
+            if (totalFee > 0) {
                 data.transactionId = document.getElementById('txnid').value;
                 data.payment = {
-                    amount: calculatedTotalFee,
+                    amount: totalFee,
                     utr: document.getElementById('txnid').value,
                     date: new Date().toISOString()
                 };
