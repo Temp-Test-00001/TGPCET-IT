@@ -1,330 +1,272 @@
 /* =========================================
-   TGPCET Website - Mobile UI Enhancement
-   Complete Responsive Design System
+   TGPCET Website - Mobile UI
+   Proper, Efficient, Easy to Navigate
    ========================================= */
 
-/* Hide mobile elements on desktop */
+/* ===========================================
+   DESKTOP: Hide mobile-only elements
+   =========================================== */
 .mobile-menu-toggle,
 .mobile-close-btn {
-    display: none;
+    display: none !important;
 }
 
-/* =========================================
-   1. Mobile Navigation
-   ========================================= */
-@media (max-width: 768px) {
+/* ===========================================
+   MOBILE STYLES (max-width: 768px)
+   =========================================== */
+@media screen and (max-width: 768px) {
 
-    /* Mobile Navigation Toggle */
-    .mobile-menu-toggle {
-        display: flex !important;
-        position: absolute;
-        top: 50%;
-        right: 1rem;
-        transform: translateY(-50%);
-        z-index: 1001;
-        background: rgba(59, 130, 246, 0.2);
-        border: 1px solid rgba(59, 130, 246, 0.4);
-        color: #60a5fa;
-        width: 44px;
-        height: 44px;
-        border-radius: 10px;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.25rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-
-    .mobile-menu-toggle:hover {
-        background: rgba(59, 130, 246, 0.3);
-    }
-
-    /* Mobile Close Button */
-    .mobile-close-btn {
-        display: flex !important;
-        position: absolute;
-        top: 1.5rem;
-        right: 1.5rem;
-        background: rgba(244, 63, 94, 0.2);
-        border: 1px solid rgba(244, 63, 94, 0.4);
-        color: #fb7185;
-        width: 44px;
-        height: 44px;
-        border-radius: 10px;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.5rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-
-    .mobile-close-btn:hover {
-        background: rgba(244, 63, 94, 0.3);
-    }
-
-    /* Navbar adjustments */
+    /* --- Fixed Navbar Header --- */
     .navbar {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
         padding: 0.75rem 1rem !important;
-        position: relative;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        z-index: 1000 !important;
+        background: #0f172a !important;
+        height: 60px !important;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5) !important;
+        box-sizing: border-box !important;
     }
 
-    .navbar .logo h1 {
-        font-size: 1.3rem !important;
+    /* --- Logo Styling --- */
+    .logo {
+        display: block !important;
     }
 
-    /* Hide desktop nav links, show mobile menu */
-    .nav-links {
+    .logo h1 {
+        font-size: 1.25rem !important;
+        color: white !important;
+        margin: 0 !important;
+    }
+
+    /* --- Hamburger Menu Toggle Button --- */
+    .mobile-menu-toggle,
+    #mobile-menu-toggle {
+        display: flex !important;
+        background: rgba(59, 130, 246, 0.1) !important;
+        border: 1px solid rgba(59, 130, 246, 0.3) !important;
+        color: #60a5fa !important;
+        padding: 8px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        width: 40px !important;
+        height: 40px !important;
+        align-items: center !important;
+        justify-content: center !important;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .mobile-menu-toggle i,
+    #mobile-menu-toggle i {
+        font-size: 1.25rem !important;
+    }
+
+    /* --- Full-Screen Navigation Overlay --- */
+    .nav-links,
+    #nav-links {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100vh !important;
+        background: #0f172a !important;
         display: none !important;
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(15, 23, 42, 0.98);
-        backdrop-filter: blur(15px);
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        gap: 1rem;
-        z-index: 1000;
-        padding: 3rem 2rem;
+        flex-direction: column !important;
+        justify-content: flex-start !important;
+        align-items: stretch !important;
+        gap: 0.5rem !important;
+        z-index: 2000 !important;
+        padding: 80px 1.5rem 2rem !important;
+        box-sizing: border-box !important;
+        overflow-y: auto !important;
     }
 
-    .nav-links.active {
+    .nav-links.active,
+    #nav-links.active {
         display: flex !important;
     }
 
+    /* --- Navigation Links Inside Overlay --- */
     .nav-links a,
-    .nav-links span {
-        margin: 0 !important;
-        font-size: 1.1rem;
-        padding: 1rem 2rem;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 12px;
-        width: 100%;
-        max-width: 280px;
-        text-align: center;
-        background: rgba(255, 255, 255, 0.03);
-        text-decoration: none;
-        color: #e2e8f0;
-        transition: all 0.3s ease;
-    }
-
-    .nav-links a:hover {
-        background: rgba(59, 130, 246, 0.15);
-        border-color: rgba(59, 130, 246, 0.4);
-        color: #60a5fa;
-    }
-
-    .nav-links .login-icon-btn {
-        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-        border: none;
-        color: white;
-    }
-}
-
-/* =========================================
-   2. Hero Section Mobile
-   ========================================= */
-@media (max-width: 768px) {
-
-    .hero-section,
-    section[style*="padding-top"] {
-        padding: 6rem 1rem 3rem !important;
-    }
-
-    .hero-title,
-    h1 {
-        font-size: 1.75rem !important;
-        line-height: 1.3 !important;
-    }
-
-    .hero-subtitle,
-    .lead {
+    .nav-links span,
+    #nav-links a,
+    #nav-links span {
+        color: #e2e8f0 !important;
         font-size: 1rem !important;
-        line-height: 1.5 !important;
+        font-weight: 500 !important;
+        text-decoration: none !important;
+        padding: 1rem 1.5rem !important;
+        margin: 0 !important;
+        background: rgba(255, 255, 255, 0.03) !important;
+        border: 1px solid rgba(255, 255, 255, 0.05) !important;
+        border-radius: 12px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        transition: all 0.2s ease !important;
+        -webkit-tap-highlight-color: transparent;
     }
 
-    /* Hero Buttons */
-    .hero-buttons,
-    .btn-group {
+    .nav-links a:active,
+    #nav-links a:active {
+        background: rgba(59, 130, 246, 0.2) !important;
+        border-color: rgba(59, 130, 246, 0.4) !important;
+        transform: scale(0.98);
+    }
+
+    .nav-links a::after,
+    #nav-links a::after {
+        display: none !important;
+    }
+
+    /* --- Close Button (X) --- */
+    .mobile-close-btn,
+    #mobile-close-btn {
+        display: flex !important;
+        position: absolute !important;
+        top: 1rem !important;
+        right: 1rem !important;
+        width: 40px !important;
+        height: 40px !important;
+        align-items: center !important;
+        justify-content: center !important;
+        background: rgba(239, 68, 68, 0.1) !important;
+        border: 1px solid rgba(239, 68, 68, 0.2) !important;
+        border-radius: 8px !important;
+        color: #f87171 !important;
+        font-size: 1.25rem !important;
+        cursor: pointer !important;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    /* --- Push Content Below Fixed Navbar --- */
+    .hero-section {
+        padding-top: 100px !important;
+    }
+
+    .container,
+    main.container {
+        padding-top: 80px !important;
+    }
+
+    /* --- Hero Section Mobile --- */
+    .hero-title {
+        font-size: 2rem !important;
+        line-height: 1.2 !important;
+    }
+
+    .hero-subtitle {
+        font-size: 0.95rem !important;
+    }
+
+    .hero-bg-glow {
+        width: 250px !important;
+        height: 250px !important;
+    }
+
+    /* --- CTA Buttons --- */
+    .cta-group {
         flex-direction: column !important;
         gap: 0.75rem !important;
         width: 100%;
+        max-width: 280px;
+        margin: 0 auto;
     }
 
-    .hero-buttons .btn,
-    .btn-group .btn {
+    .cta-group a {
         width: 100% !important;
-        padding: 1rem !important;
-        font-size: 1rem !important;
+        text-align: center !important;
     }
-}
 
-/* =========================================
-   3. Cards Grid Mobile
-   ========================================= */
-@media (max-width: 768px) {
-
-    /* Event Cards, Staff Cards, etc */
-    .events-grid,
-    .staff-grid,
-    .cards-container,
-    [style*="grid-template-columns"] {
-        display: grid !important;
+    /* --- Features Grid --- */
+    .features-grid {
         grid-template-columns: 1fr !important;
         gap: 1rem !important;
-        padding: 0 0.5rem;
+        padding: 2rem 1rem !important;
     }
 
-    .glass-card,
-    .card,
-    .event-card {
+    .feature-card {
         padding: 1.25rem !important;
-        margin: 0 !important;
+    }
+
+    /* --- Event Cards --- */
+    .events-grid,
+    #events-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+    }
+
+    .event-card {
         width: 100% !important;
+        margin: 0 !important;
     }
 
-    .event-card h3,
-    .card h3 {
-        font-size: 1.1rem !important;
+    /* --- Staff Grid --- */
+    .staff-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.75rem !important;
     }
 
-    .event-card p,
-    .card p {
-        font-size: 0.9rem !important;
-        line-height: 1.5 !important;
-    }
-
-    /* Event image container */
-    .event-image {
-        height: 120px !important;
-    }
-
-    /* Event meta info */
-    .event-meta {
-        flex-wrap: wrap !important;
-        gap: 0.5rem !important;
-        font-size: 0.8rem !important;
-    }
-}
-
-/* =========================================
-   4. Forms Mobile
-   ========================================= */
-@media (max-width: 768px) {
-
-    /* Login/Register Forms */
-    .auth-container,
-    .form-container {
-        padding: 1.5rem !important;
-        margin: 1rem !important;
-        width: calc(100% - 2rem) !important;
-        max-width: 100% !important;
-    }
-
-    .auth-container h2,
-    .form-container h2 {
-        font-size: 1.5rem !important;
-    }
-
-    /* Form Grid */
-    .form-grid,
-    [style*="grid-template-columns: repeat"] {
+    /* --- Support Grid --- */
+    .support-grid {
         grid-template-columns: 1fr !important;
     }
 
-    /* All inputs */
+    /* --- Forms --- */
+    .auth-container,
+    .login-container,
+    .register-container {
+        margin: 80px 1rem 2rem !important;
+        padding: 1.5rem !important;
+        width: calc(100% - 2rem) !important;
+        max-width: none !important;
+    }
+
     input,
     select,
     textarea {
         font-size: 16px !important;
-        /* Prevents iOS zoom */
+        padding: 0.75rem !important;
+    }
+
+    .btn,
+    button[type="submit"] {
+        width: 100%;
         padding: 0.875rem !important;
     }
 
-    .btn {
-        padding: 0.875rem 1.25rem !important;
-        font-size: 0.9rem !important;
-        width: 100%;
+    /* --- Dashboard --- */
+    .dashboard-layout {
+        grid-template-columns: 1fr !important;
     }
 
-    /* Form buttons side by side */
-    .form-buttons,
-    [style*="display: flex"][style*="gap"] {
-        flex-direction: column !important;
-        gap: 0.75rem !important;
-    }
-
-    .form-buttons .btn {
-        flex: none !important;
-        width: 100% !important;
-    }
-}
-
-/* =========================================
-   5. Tables Mobile
-   ========================================= */
-@media (max-width: 768px) {
-    .table-container {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        border-radius: 8px;
-    }
-
-    table {
-        min-width: 600px;
-        font-size: 0.85rem;
-    }
-
-    th,
-    td {
-        padding: 0.75rem 0.5rem !important;
-        white-space: nowrap;
-    }
-
-    /* Hide less important columns on mobile */
-    .hide-mobile {
-        display: none !important;
-    }
-}
-
-/* =========================================
-   6. Dashboard Mobile Enhancements
-   ========================================= */
-@media (max-width: 768px) {
-
-    /* Sidebar */
     .sidebar {
-        width: 100% !important;
-        max-width: 100% !important;
+        position: fixed !important;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 280px !important;
+        max-width: 85vw !important;
         transform: translateX(-100%);
-        z-index: 100;
+        transition: transform 0.3s ease !important;
+        z-index: 1000 !important;
     }
 
     .sidebar.open {
-        transform: translateX(0);
+        transform: translateX(0) !important;
     }
 
-    /* Sidebar Overlay */
-    .sidebar-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 99;
-        display: none;
+    .main-content {
+        grid-column: 1 !important;
     }
 
-    .sidebar.open~.sidebar-overlay {
-        display: block;
-    }
-
-    /* Dashboard Content */
-    .page-content {
-        padding: 1rem !important;
+    .mobile-toggle {
+        display: flex !important;
     }
 
     .top-bar {
@@ -332,299 +274,138 @@
     }
 
     .top-bar h1 {
-        font-size: 1.1rem !important;
+        font-size: 1rem !important;
     }
 
-    /* Stats Grid */
-    .stats-grid,
-    .dashboard-stats {
+    .page-content {
+        padding: 1rem !important;
+    }
+
+    /* --- Stats Grid --- */
+    .stats-grid {
         grid-template-columns: repeat(2, 1fr) !important;
         gap: 0.75rem !important;
     }
 
-    .stat-card,
-    .stats-grid>div {
+    .stat-card {
         padding: 1rem !important;
     }
 
-    .stat-card h3,
-    .stat-value {
-        font-size: 1.5rem !important;
+    .stat-card h3 {
+        font-size: 1.25rem !important;
     }
 
-    .stat-card p,
-    .stat-label {
-        font-size: 0.75rem !important;
+    .stat-card p {
+        font-size: 0.7rem !important;
     }
 
-    /* Mobile Toggle Button */
-    .mobile-toggle {
-        display: flex !important;
-        width: 44px;
-        height: 44px;
+    /* --- Tables --- */
+    .table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
     }
-}
 
-/* =========================================
-   7. Modals Mobile
-   ========================================= */
-@media (max-width: 768px) {
+    table {
+        min-width: 500px;
+        font-size: 0.8rem;
+    }
 
+    th,
+    td {
+        padding: 0.5rem !important;
+    }
+
+    /* --- Modals --- */
     .modal-backdrop,
-    .custom-modal-backdrop,
-    [style*="position: fixed"][style*="display: flex"] {
-        padding: 0.75rem !important;
+    .custom-modal-backdrop {
+        padding: 1rem !important;
         align-items: flex-end !important;
     }
 
     .modal-content,
-    .custom-modal-content,
-    [class*="modal"]>div {
+    .custom-modal-content {
         max-width: 100% !important;
-        max-height: 90vh !important;
-        overflow-y: auto !important;
-        padding: 1.25rem !important;
+        max-height: 85vh !important;
         margin: 0 !important;
         border-radius: 16px 16px 0 0 !important;
+        overflow-y: auto !important;
     }
 
-    .modal-content h2,
-    .custom-modal-content h2 {
-        font-size: 1.25rem !important;
-    }
-}
-
-/* =========================================
-   8. Event Registration Form Mobile
-   ========================================= */
-@media (max-width: 768px) {
-
-    /* Step Indicator */
-    .step-indicator {
-        flex-wrap: nowrap !important;
-        overflow-x: auto !important;
-        gap: 0.5rem !important;
-        padding-bottom: 0.5rem;
-        -webkit-overflow-scrolling: touch;
-    }
-
-    .step {
-        min-width: 60px !important;
-        flex-shrink: 0;
-    }
-
-    .step-number {
-        width: 28px !important;
-        height: 28px !important;
-        font-size: 0.8rem !important;
-    }
-
-    .step-label {
-        font-size: 0.7rem !important;
-    }
-
-    /* Team Members Table */
-    .team-table {
-        font-size: 0.8rem !important;
-    }
-
-    .team-table th,
-    .team-table td {
-        padding: 0.5rem !important;
-    }
-
-    /* Payment Section */
-    .qr-code img {
-        max-width: 150px !important;
-    }
-
-    #total-fee-display {
-        font-size: 2rem !important;
-    }
-}
-
-/* =========================================
-   9. Support Page Mobile
-   ========================================= */
-@media (max-width: 768px) {
-
-    .support-grid,
-    .contact-grid {
-        grid-template-columns: 1fr !important;
-    }
-
-    .support-card {
-        padding: 1.25rem !important;
-    }
-
-    .support-card h3 {
-        font-size: 1rem !important;
-    }
-}
-
-/* =========================================
-   10. Notifications Mobile
-   ========================================= */
-@media (max-width: 768px) {
-    .notification-item {
-        padding: 1rem !important;
-        flex-direction: column !important;
-        align-items: flex-start !important;
-        gap: 0.75rem !important;
-    }
-
-    .notification-date {
-        font-size: 0.75rem !important;
-    }
-
-    .notification-actions {
-        width: 100%;
-        justify-content: flex-end;
-    }
-}
-
-/* =========================================
-   11. Footer Mobile
-   ========================================= */
-@media (max-width: 768px) {
+    /* --- Footer --- */
     footer {
-        padding: 2rem 1rem !important;
+        padding: 1.5rem 1rem !important;
         text-align: center;
     }
-
-    .footer-grid {
-        grid-template-columns: 1fr !important;
-        gap: 1.5rem !important;
-    }
-
-    .footer-links {
-        flex-direction: column;
-        gap: 0.75rem;
-    }
 }
 
-/* =========================================
-   12. Touch Enhancements
-   ========================================= */
-@media (max-width: 768px) {
+/* ===========================================
+   VERY SMALL SCREENS (max-width: 480px)
+   =========================================== */
+@media screen and (max-width: 480px) {
 
-    /* Larger touch targets */
-    a,
-    button,
-    .btn,
-    .nav-link {
-        min-height: 44px;
-        min-width: 44px;
-    }
-
-    /* Remove hover effects on touch devices */
-    @media (hover: none) {
-
-        .card:hover,
-        .btn:hover,
-        .nav-link:hover,
-        .glass-card:hover {
-            transform: none !important;
-            box-shadow: inherit;
-        }
-    }
-
-    /* Active states for touch */
-    .btn:active,
-    .card:active {
-        transform: scale(0.98) !important;
-        opacity: 0.9;
-    }
-
-    /* Disable text selection on buttons */
-    button,
-    .btn {
-        -webkit-user-select: none;
-        user-select: none;
-        -webkit-tap-highlight-color: transparent;
-    }
-}
-
-/* =========================================
-   13. Small Screen Adjustments (< 480px)
-   ========================================= */
-@media (max-width: 480px) {
-
-    .hero-title,
-    h1 {
-        font-size: 1.5rem !important;
+    .hero-title {
+        font-size: 1.6rem !important;
     }
 
     .hero-subtitle {
-        font-size: 0.9rem !important;
+        font-size: 0.875rem !important;
     }
 
-    .container {
-        padding: 0 0.75rem !important;
-    }
-
-    /* Stats in single column on very small screens */
-    .stats-grid,
-    .dashboard-stats {
+    .stats-grid {
         grid-template-columns: 1fr !important;
     }
 
-    /* Smaller badges */
-    .badge {
-        font-size: 0.65rem !important;
-        padding: 0.25rem 0.5rem !important;
-    }
-
-    /* Compact buttons */
-    .btn {
-        padding: 0.75rem 1rem !important;
-        font-size: 0.85rem !important;
+    .staff-grid {
+        grid-template-columns: 1fr !important;
     }
 }
 
-/* =========================================
-   14. Landscape Mode Adjustments
-   ========================================= */
-@media (max-width: 768px) and (orientation: landscape) {
+/* ===========================================
+   LANDSCAPE MODE
+   =========================================== */
+@media screen and (max-width: 768px) and (orientation: landscape) {
+
     .hero-section {
+        padding-top: 80px !important;
         min-height: auto !important;
-        padding: 4rem 1rem 2rem !important;
     }
 
-    .modal-content,
-    .custom-modal-content {
-        max-height: 85vh !important;
-    }
-}
-
-/* =========================================
-   15. Safe Area Insets (Notched Phones)
-   ========================================= */
-@supports (padding: env(safe-area-inset-bottom)) {
-    @media (max-width: 768px) {
-        body {
-            padding-left: env(safe-area-inset-left);
-            padding-right: env(safe-area-inset-right);
-        }
-
-        .sidebar {
-            padding-bottom: env(safe-area-inset-bottom);
-        }
-
-        .modal-content {
-            padding-bottom: calc(1.25rem + env(safe-area-inset-bottom));
-        }
+    .nav-links,
+    #nav-links {
+        padding-top: 60px !important;
     }
 }
 
-/* =========================================
-   16. Print Styles (Hide Mobile Elements)
-   ========================================= */
-@media print {
+/* ===========================================
+   TOUCH DEVICE ENHANCEMENTS
+   =========================================== */
+@media (hover: none) and (pointer: coarse) {
 
-    .mobile-toggle,
-    .mobile-menu-toggle,
-    .sidebar-overlay {
-        display: none !important;
+    a,
+    button,
+    .btn,
+    .nav-link,
+    input,
+    select {
+        min-height: 44px;
+    }
+
+    .card:hover,
+    .feature-card:hover,
+    .btn:hover {
+        transform: none !important;
+    }
+}
+
+/* ===========================================
+   SAFE AREA (for notched phones)
+   =========================================== */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+    @media screen and (max-width: 768px) {
+
+        .nav-links,
+        #nav-links {
+            padding-bottom: calc(2rem + env(safe-area-inset-bottom));
+        }
     }
 }
