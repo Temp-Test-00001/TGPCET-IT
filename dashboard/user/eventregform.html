@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Event Registration - TGPCET IT</title>
-    <link rel="stylesheet" href="../../css/new-dashboard.css">`n    <link rel="stylesheet" href="../../css/mobile.css">
+    <link rel="stylesheet" href="../../css/new-dashboard.css">`n
+    <link rel="stylesheet" href="../../css/mobile.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .step-indicator {
@@ -191,6 +192,24 @@
                                     <label
                                         style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">PRN</label>
                                     <input type="text" id="userprn" readonly
+                                        style="width: 100%; padding: 0.75rem; border-radius: 8px; background: rgba(0,0,0,0.2); color: white; border: 1px solid var(--border-glass);">
+                                </div>
+                                <div>
+                                    <label
+                                        style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">College</label>
+                                    <input type="text" id="usercollege" readonly
+                                        style="width: 100%; padding: 0.75rem; border-radius: 8px; background: rgba(0,0,0,0.2); color: white; border: 1px solid var(--border-glass);">
+                                </div>
+                                <div>
+                                    <label
+                                        style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Department</label>
+                                    <input type="text" id="userdepartment" readonly
+                                        style="width: 100%; padding: 0.75rem; border-radius: 8px; background: rgba(0,0,0,0.2); color: white; border: 1px solid var(--border-glass);">
+                                </div>
+                                <div>
+                                    <label
+                                        style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Year</label>
+                                    <input type="text" id="useryear" readonly
                                         style="width: 100%; padding: 0.75rem; border-radius: 8px; background: rgba(0,0,0,0.2); color: white; border: 1px solid var(--border-glass);">
                                 </div>
                             </div>
@@ -467,6 +486,9 @@
                 document.getElementById('useremail').value = user.email;
                 document.getElementById('usermobile').value = p.mobile || 'N/A';
                 document.getElementById('userprn').value = p.prn || 'N/A';
+                document.getElementById('usercollege').value = p.collegeName || 'N/A';
+                document.getElementById('userdepartment').value = p.department || 'N/A';
+                document.getElementById('useryear').value = p.year ? `${p.year} Year` : 'N/A';
 
                 if (event.eventType === 'team') {
                     document.getElementById('teamdiv').style.display = 'block';
@@ -752,6 +774,9 @@
                     <p><strong style="color: var(--text-muted);">Event:</strong> <span style="color: white;">${event.title}</span></p>
                     <p><strong style="color: var(--text-muted);">Applicant:</strong> <span style="color: white;">${p?.fullName}</span></p>
                     <p><strong style="color: var(--text-muted);">Contact:</strong> <span style="color: white;">${p?.mobile || 'N/A'}</span></p>
+                    <p><strong style="color: var(--text-muted);">College:</strong> <span style="color: white;">${p?.collegeName || 'N/A'}</span></p>
+                    <p><strong style="color: var(--text-muted);">Department:</strong> <span style="color: white;">${p?.department || 'N/A'}</span></p>
+                    <p><strong style="color: var(--text-muted);">Year:</strong> <span style="color: white;">${p?.year ? p.year + ' Year' : 'N/A'}</span></p>
             `;
 
             if (event?.eventType === 'team') {
