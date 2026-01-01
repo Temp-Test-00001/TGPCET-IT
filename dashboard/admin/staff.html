@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Management - Admin - TGPCET IT</title>
+    <link rel="stylesheet" href="../../css/new-dashboard.css">
+    <link rel="stylesheet" href="../../css/mobile.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .staff-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .staff-table th,
+        .staff-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-glass);
+        }
+
+        .staff-table th {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .staff-table tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .action-btn {
+            padding: 0.4rem 0.75rem;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .btn-edit {
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+        }
+
+        .btn-edit:hover {
+            background: rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-delete {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+        }
+
+        .btn-delete:hover {
+            background: rgba(239, 68, 68, 0.3);
+        }
+
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal-backdrop.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border: 1px solid var(--border-glass);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 500px;
+            padding: 2rem;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h3 {
+            color: white;
+            margin: 0;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.25rem;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-glass);
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .search-box input {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-glass);
+            background: rgba(0, 0, 0, 0.2);
+            color: white;
+        }
+
+        .avatar-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="brand">
+                <h2>TGPCET IT</h2>
+            </div>
+
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>Overview</span>
+                </a>
+                <a href="events.html" class="nav-link">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Events</span>
+                </a>
+                <a href="approvals.html" class="nav-link">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Approvals</span>
+                </a>
+                <a href="notifications.html" class="nav-link">
+                    <i class="fas fa-bell"></i>
+                    <span>Notifications</span>
+                </a>
+                <a href="staff.html" class="nav-link active">
+                    <i class="fas fa-users"></i>
+                    <span>Staff</span>
+                </a>
+                <a href="support.html" class="nav-link">
+                    <i class="fas fa-headset"></i>
+                    <span>Support</span>
+                </a>
+            </nav>
+
+            <div class="user-profile">
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+                    <div
+                        style="width: 32px; height: 32px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
+                        A
+                    </div>
+                    <div style="overflow: hidden;">
+                        <div id="user-name" style="font-size: 0.875rem; font-weight: 600;">Admin</div>
+                        <div id="user-email" style="font-size: 0.75rem; color: var(--text-muted);">Loading...</div>
+                    </div>
+                </div>
+                <button id="logout-btn" class="btn btn-outline"
+                    style="width: 100%; justify-content: flex-start; gap: 0.5rem; border: none; padding: 0.5rem;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <button class="mobile-toggle" id="mobile-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 style="font-size: 1.25rem; font-weight: 600;">Staff Management</h1>
+            </header>
+
+            <div class="page-content">
+                <div class="card">
+                    <div class="search-box">
+                        <input type="text" id="searchInput" placeholder="Search by name, designation...">
+                        <button class="btn btn-primary" onclick="openAddModal()">
+                            <i class="fas fa-plus" style="margin-right: 0.5rem;"></i>Add Staff
+                        </button>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="staff-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Designation</th>
+                                    <th>Role</th>
+                                    <th>Email</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="staffTableBody">
+                                <tr>
+                                    <td colspan="5" class="empty-state">
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                        <p>Loading staff members...</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add/Edit Staff Modal -->
+    <div class="modal-backdrop" id="staffModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Add Staff Member</h3>
+                <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="staffForm">
+                <input type="hidden" id="staffId">
+                <div class="form-group">
+                    <label>Full Name *</label>
+                    <input type="text" id="staffName" required placeholder="e.g. Dr. John Doe">
+                </div>
+                <div class="form-group">
+                    <label>Designation *</label>
+                    <input type="text" id="staffDesignation" required placeholder="e.g. Professor, Assistant Professor">
+                </div>
+                <div class="form-group">
+                    <label>Role *</label>
+                    <select id="staffRole" required>
+                        <option value="">Select Role</option>
+                        <option value="HOD">Head of Department (HOD)</option>
+                        <option value="Coordinator">Event Coordinator</option>
+                        <option value="Faculty">Faculty</option>
+                        <option value="Lab Assistant">Lab Assistant</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="staffEmail" placeholder="e.g. john.doe@tgpcet.edu.in">
+                </div>
+                <div class="form-group">
+                    <label>Qualifications</label>
+                    <input type="text" id="staffQualifications" placeholder="e.g. Ph.D, M.Tech, B.E.">
+                </div>
+                <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                    <button type="button" class="btn btn-outline" onclick="closeModal()"
+                        style="flex: 1;">Cancel</button>
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">
+                        <i class="fas fa-save" style="margin-right: 0.5rem;"></i>Save
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal-backdrop" id="deleteModal">
+        <div class="modal-content" style="max-width: 400px; text-align: center;">
+            <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #f59e0b; margin-bottom: 1rem;"></i>
+            <h3 style="color: white; margin-bottom: 0.5rem;">Delete Staff Member?</h3>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">This action cannot be undone. The staff member
+                will be permanently removed.</p>
+            <input type="hidden" id="deleteStaffId">
+            <div style="display: flex; gap: 1rem;">
+                <button class="btn btn-outline" onclick="closeDeleteModal()" style="flex: 1;">Cancel</button>
+                <button class="btn" style="flex: 1; background: #dc2626; color: white;" onclick="confirmDelete()">
+                    <i class="fas fa-trash" style="margin-right: 0.5rem;"></i>Delete
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { auth, signOut, db, collection, getDocs, doc, addDoc, updateDoc, deleteDoc, getDoc } from '../../js/auth.js';
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        // Sidebar Toggle
+        const sidebar = document.getElementById('sidebar');
+        const mobileToggle = document.getElementById('mobile-toggle');
+        mobileToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            sidebar.classList.toggle('open');
+        });
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 768 && sidebar.classList.contains('open') && !sidebar.contains(e.target) && e.target !== mobileToggle) {
+                sidebar.classList.remove('open');
+            }
+        });
+
+        // Auth check
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = '../../login.html';
+                return;
+            }
+            document.getElementById('user-email').textContent = user.email;
+
+            const userDoc = await getDoc(doc(db, "users", user.uid));
+            if (userDoc.exists()) {
+                const data = userDoc.data();
+                if (data.role !== 'admin') {
+                    alert('Access denied. Admin only.');
+                    window.location.href = '../../index.html';
+                    return;
+                }
+            }
+            loadStaff();
+        });
+
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            signOut(auth).then(() => window.location.href = '../../index.html');
+        });
+
+        // Staff data
+        let staffList = [];
+
+        async function loadStaff() {
+            const tbody = document.getElementById('staffTableBody');
+            tbody.innerHTML = `<tr><td colspan="5" class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Loading...</p></td></tr>`;
+
+            try {
+                const querySnapshot = await getDocs(collection(db, "staff"));
+                staffList = [];
+                querySnapshot.forEach(d => {
+                    staffList.push({ id: d.id, ...d.data() });
+                });
+                renderStaff(staffList);
+            } catch (err) {
+                console.error(err);
+                tbody.innerHTML = `<tr><td colspan="5" class="empty-state"><i class="fas fa-exclamation-circle" style="color: #f87171;"></i><p>Failed to load staff</p></td></tr>`;
+            }
+        }
+
+        function renderStaff(list) {
+            const tbody = document.getElementById('staffTableBody');
+            if (list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="empty-state"><i class="fas fa-users"></i><p>No staff members found. Click "Add Staff" to add one.</p></td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = list.map(s => `
+                <tr>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <div class="avatar-circle">${s.name.charAt(0)}</div>
+                            <div>
+                                <div style="font-weight: 500; color: white;">${s.name}</div>
+                                ${s.qualifications ? `<div style="font-size: 0.75rem; color: var(--text-muted);">${s.qualifications}</div>` : ''}
+                            </div>
+                        </div>
+                    </td>
+                    <td style="color: var(--text-muted);">${s.designation || '-'}</td>
+                    <td><span class="badge badge-primary">${s.role || '-'}</span></td>
+                    <td style="color: var(--text-muted);">${s.email || '-'}</td>
+                    <td>
+                        <button class="action-btn btn-edit" onclick="editStaff('${s.id}')"><i class="fas fa-edit"></i></button>
+                        <button class="action-btn btn-delete" onclick="deleteStaff('${s.id}')"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Search
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const q = e.target.value.toLowerCase();
+            const filtered = staffList.filter(s =>
+                s.name.toLowerCase().includes(q) ||
+                (s.designation && s.designation.toLowerCase().includes(q)) ||
+                (s.role && s.role.toLowerCase().includes(q))
+            );
+            renderStaff(filtered);
+        });
+
+        // Modal functions
+        window.openAddModal = () => {
+            document.getElementById('modalTitle').textContent = 'Add Staff Member';
+            document.getElementById('staffForm').reset();
+            document.getElementById('staffId').value = '';
+            document.getElementById('staffModal').classList.add('active');
+        };
+
+        window.closeModal = () => {
+            document.getElementById('staffModal').classList.remove('active');
+        };
+
+        window.editStaff = (id) => {
+            const staff = staffList.find(s => s.id === id);
+            if (!staff) return;
+            document.getElementById('modalTitle').textContent = 'Edit Staff Member';
+            document.getElementById('staffId').value = id;
+            document.getElementById('staffName').value = staff.name || '';
+            document.getElementById('staffDesignation').value = staff.designation || '';
+            document.getElementById('staffRole').value = staff.role || '';
+            document.getElementById('staffEmail').value = staff.email || '';
+            document.getElementById('staffQualifications').value = staff.qualifications || '';
+            document.getElementById('staffModal').classList.add('active');
+        };
+
+        window.deleteStaff = (id) => {
+            document.getElementById('deleteStaffId').value = id;
+            document.getElementById('deleteModal').classList.add('active');
+        };
+
+        window.closeDeleteModal = () => {
+            document.getElementById('deleteModal').classList.remove('active');
+        };
+
+        window.confirmDelete = async () => {
+            const id = document.getElementById('deleteStaffId').value;
+            try {
+                await deleteDoc(doc(db, "staff", id));
+                closeDeleteModal();
+                loadStaff();
+            } catch (err) {
+                console.error(err);
+                alert('Failed to delete staff: ' + err.message);
+            }
+        };
+
+        // Form submit
+        document.getElementById('staffForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('staffId').value;
+            const data = {
+                name: document.getElementById('staffName').value.trim(),
+                designation: document.getElementById('staffDesignation').value.trim(),
+                role: document.getElementById('staffRole').value,
+                email: document.getElementById('staffEmail').value.trim(),
+                qualifications: document.getElementById('staffQualifications').value.trim(),
+                updatedAt: new Date().toISOString()
+            };
+
+            try {
+                if (id) {
+                    await updateDoc(doc(db, "staff", id), data);
+                } else {
+                    data.createdAt = new Date().toISOString();
+                    await addDoc(collection(db, "staff"), data);
+                }
+                closeModal();
+                loadStaff();
+            } catch (err) {
+                console.error(err);
+                alert('Failed to save: ' + err.message);
+            }
+        });
+    </script>
+</body>
+
+</html>

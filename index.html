@@ -350,6 +350,14 @@
 
     <section class="hero-section">
         <div class="hero-bg-glow"></div>
+        <!-- Animated shapes -->
+        <div
+            style="position: absolute; top: 20%; left: 10%; width: 300px; height: 300px; background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%); border-radius: 50%; animation: float 6s ease-in-out infinite;">
+        </div>
+        <div
+            style="position: absolute; bottom: 20%; right: 15%; width: 200px; height: 200px; background: radial-gradient(circle, rgba(236, 72, 153, 0.1) 0%, transparent 70%); border-radius: 50%; animation: float 8s ease-in-out infinite reverse;">
+        </div>
+
         <h1 class="hero-title">
             Department of<br>Information Technology
         </h1>
@@ -360,6 +368,69 @@
         <div class="cta-group">
             <a href="events.html" class="btn-primary">Explore Events</a>
             <a href="register.html" class="btn-outline">Join Us</a>
+        </div>
+
+        <!-- Stats Bar -->
+        <div
+            style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-top: 4rem; max-width: 800px; margin-left: auto; margin-right: auto;">
+            <div
+                style="text-align: center; padding: 1.5rem; background: rgba(255,255,255,0.03); border-radius: 16px; border: 1px solid rgba(255,255,255,0.05);">
+                <div
+                    style="font-size: 2.5rem; font-weight: 800; background: linear-gradient(135deg, #3b82f6, #60a5fa); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                    500+</div>
+                <div style="color: var(--text-muted); font-size: 0.875rem; margin-top: 0.25rem;">Students</div>
+            </div>
+            <div
+                style="text-align: center; padding: 1.5rem; background: rgba(255,255,255,0.03); border-radius: 16px; border: 1px solid rgba(255,255,255,0.05);">
+                <div
+                    style="font-size: 2.5rem; font-weight: 800; background: linear-gradient(135deg, #a855f7, #c084fc); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                    25+</div>
+                <div style="color: var(--text-muted); font-size: 0.875rem; margin-top: 0.25rem;">Faculty</div>
+            </div>
+            <div
+                style="text-align: center; padding: 1.5rem; background: rgba(255,255,255,0.03); border-radius: 16px; border: 1px solid rgba(255,255,255,0.05);">
+                <div
+                    style="font-size: 2.5rem; font-weight: 800; background: linear-gradient(135deg, #ec4899, #f472b6); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                    10+</div>
+                <div style="color: var(--text-muted); font-size: 0.875rem; margin-top: 0.25rem;">Labs</div>
+            </div>
+            <div
+                style="text-align: center; padding: 1.5rem; background: rgba(255,255,255,0.03); border-radius: 16px; border: 1px solid rgba(255,255,255,0.05);">
+                <div
+                    style="font-size: 2.5rem; font-weight: 800; background: linear-gradient(135deg, #22c55e, #4ade80); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                    85%</div>
+                <div style="color: var(--text-muted); font-size: 0.875rem; margin-top: 0.25rem;">Placement</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Links Section -->
+    <section style="max-width: 1200px; margin: 0 auto; padding: 3rem 2rem;">
+        <h2 style="text-align: center; color: white; font-size: 2rem; margin-bottom: 0.5rem;">Quick Access</h2>
+        <p style="text-align: center; color: var(--text-muted); margin-bottom: 2rem;">Everything you need, just a click
+            away</p>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
+            <a href="events.html"
+                style="display: flex; flex-direction: column; align-items: center; padding: 1.5rem; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 16px; text-decoration: none; transition: all 0.3s;">
+                <i class="fas fa-calendar-alt" style="font-size: 2rem; color: #3b82f6; margin-bottom: 0.75rem;"></i>
+                <span style="color: white; font-weight: 500;">Events</span>
+            </a>
+            <a href="staff.html"
+                style="display: flex; flex-direction: column; align-items: center; padding: 1.5rem; background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.2); border-radius: 16px; text-decoration: none; transition: all 0.3s;">
+                <i class="fas fa-chalkboard-teacher"
+                    style="font-size: 2rem; color: #a855f7; margin-bottom: 0.75rem;"></i>
+                <span style="color: white; font-weight: 500;">Faculty</span>
+            </a>
+            <a href="notifications.html"
+                style="display: flex; flex-direction: column; align-items: center; padding: 1.5rem; background: rgba(236, 72, 153, 0.1); border: 1px solid rgba(236, 72, 153, 0.2); border-radius: 16px; text-decoration: none; transition: all 0.3s;">
+                <i class="fas fa-bell" style="font-size: 2rem; color: #ec4899; margin-bottom: 0.75rem;"></i>
+                <span style="color: white; font-weight: 500;">Notices</span>
+            </a>
+            <a href="support.html"
+                style="display: flex; flex-direction: column; align-items: center; padding: 1.5rem; background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.2); border-radius: 16px; text-decoration: none; transition: all 0.3s;">
+                <i class="fas fa-headset" style="font-size: 2rem; color: #22c55e; margin-bottom: 0.75rem;"></i>
+                <span style="color: white; font-weight: 500;">Support</span>
+            </a>
         </div>
     </section>
 
@@ -384,9 +455,98 @@
         </div>
     </section>
 
-    <footer>
-        <p>&copy; 2024 TGPCET IT Department. All rights reserved.</p>
+    <!-- Enhanced Footer -->
+    <footer
+        style="background: rgba(15, 23, 42, 0.9); border-top: 1px solid rgba(255,255,255,0.05); padding: 3rem 2rem 1.5rem;">
+        <div
+            style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
+            <div>
+                <h3
+                    style="color: white; font-size: 1.25rem; margin-bottom: 1rem; background: linear-gradient(to right, #3b82f6, #a855f7); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                    TGPCET IT</h3>
+                <p style="color: var(--text-muted); font-size: 0.875rem; line-height: 1.6;">Department of Information
+                    Technology, Tulsiramji Gaikwad-Patil College of Engineering and Technology, Nagpur.</p>
+            </div>
+            <div>
+                <h4
+                    style="color: white; font-size: 0.9rem; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.05em;">
+                    Quick Links</h4>
+                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <a href="events.html"
+                        style="color: var(--text-muted); text-decoration: none; font-size: 0.875rem; transition: color 0.2s;">Events</a>
+                    <a href="staff.html"
+                        style="color: var(--text-muted); text-decoration: none; font-size: 0.875rem; transition: color 0.2s;">Faculty</a>
+                    <a href="notifications.html"
+                        style="color: var(--text-muted); text-decoration: none; font-size: 0.875rem; transition: color 0.2s;">Notifications</a>
+                    <a href="support.html"
+                        style="color: var(--text-muted); text-decoration: none; font-size: 0.875rem; transition: color 0.2s;">Support</a>
+                </div>
+            </div>
+            <div>
+                <h4
+                    style="color: white; font-size: 0.9rem; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.05em;">
+                    Contact</h4>
+                <div
+                    style="display: flex; flex-direction: column; gap: 0.5rem; color: var(--text-muted); font-size: 0.875rem;">
+                    <p><i class="fas fa-map-marker-alt" style="margin-right: 0.5rem; color: #a855f7;"></i>Mohgaon,
+                        Wardha Road, Nagpur</p>
+                    <p><i class="fas fa-phone" style="margin-right: 0.5rem; color: #a855f7;"></i>+91 8446953374</p>
+                    <p><i class="fas fa-envelope" style="margin-right: 0.5rem; color: #a855f7;"></i>it@tgpcet.edu.in</p>
+                </div>
+            </div>
+            <div>
+                <h4
+                    style="color: white; font-size: 0.9rem; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.05em;">
+                    Follow Us</h4>
+                <div style="display: flex; gap: 0.75rem;">
+                    <a href="#"
+                        style="width: 40px; height: 40px; background: rgba(255,255,255,0.05); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-muted); transition: all 0.2s;"><i
+                            class="fab fa-instagram"></i></a>
+                    <a href="#"
+                        style="width: 40px; height: 40px; background: rgba(255,255,255,0.05); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-muted); transition: all 0.2s;"><i
+                            class="fab fa-linkedin"></i></a>
+                    <a href="#"
+                        style="width: 40px; height: 40px; background: rgba(255,255,255,0.05); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-muted); transition: all 0.2s;"><i
+                            class="fab fa-youtube"></i></a>
+                    <a href="https://wa.me/918446953374" target="_blank"
+                        style="width: 40px; height: 40px; background: rgba(255,255,255,0.05); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-muted); transition: all 0.2s;"><i
+                            class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+        </div>
+        <div style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 1.5rem; text-align: center;">
+            <p style="color: var(--text-muted); font-size: 0.8rem;">&copy; 2025 TGPCET IT Department. All rights
+                reserved.</p>
+        </div>
     </footer>
+
+    <style>
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        /* Stats bar responsive */
+        @media (max-width: 768px) {
+            section>div[style*="grid-template-columns: repeat(4"] {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 1rem !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            section>div[style*="grid-template-columns: repeat(4"] {
+                grid-template-columns: 1fr 1fr !important;
+            }
+        }
+    </style>
 
     <script>
         // Mobile Menu Toggle
