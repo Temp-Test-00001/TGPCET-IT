@@ -417,14 +417,17 @@
 
                         const row = document.createElement('tr');
                         let actions = `
+                            <button class="btn-status btn btn-primary" data-appid="${app.id}" style="padding: 0.4rem 0.8rem; font-size: 0.75rem; margin-right: 0.5rem;">
+                                <i class="fas fa-info-circle" style="margin-right: 0.5rem;"></i>Status
+                            </button>
                             <button class="btn-pdf btn btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.75rem;">
                                 <i class="fas fa-download" style="margin-right: 0.5rem;"></i> ${app.status === 'approved' ? 'Admit Card' : 'Application'}
                             </button>
                         `;
-                        if (app.status === 'rejected') {
+                        if (app.status === 'rejected' || app.status === 'reversed') {
                             actions += `
                                 <button class="btn-reject btn btn-danger" style="padding: 0.4rem 0.8rem; font-size: 0.75rem; margin-left: 0.5rem;">
-                                    <i class="fas fa-exclamation-circle" style="margin-right: 0.5rem;"></i> Fix Issue
+                                    <i class="fas fa-exclamation-circle" style="margin-right: 0.5rem;"></i>Fix Issue
                                 </button>
                             `;
                         }
@@ -462,6 +465,9 @@
                             document.getElementById('rejectionDetailsModal').classList.add('active');
                         };
 
+                        const statusBtn = row.querySelector('.btn-status');
+                        if (statusBtn) statusBtn.onclick = () => showAppStatus(app);
+
                         tbody.appendChild(row);
                     }
                 } catch (err) {
@@ -491,6 +497,125 @@
         } catch (initErr) {
             showError("Init Failed: " + initErr.message);
         }
+    </script>
+
+    <!-- Application Status Modal -->
+    <div id="appStatusModal" class="modal-backdrop"
+        style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); z-index: 1001; align-items: center; justify-content: center; padding: 1rem;">
+        <div
+            style="background: linear-gradient(135deg, #1e293b, #0f172a); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; max-width: 550px; width: 100%; max-height: 90vh; overflow-y: auto; position: relative;">
+            <button onclick="closeAppStatus()"
+                style="position: absolute; top: 1rem; right: 1rem; background: rgba(255,255,255,0.1); border: none; color: white; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 1rem;">
+                <i class="fas fa-times"></i>
+            </button>
+            <div style="padding: 1.5rem;">
+                <h3 style="color: white; margin-bottom: 1rem; font-size: 1.1rem;"><i class="fas fa-file-alt"
+                        style="margin-right: 0.5rem; color: var(--primary);"></i>Application Status</h3>
+                <div id="appStatusContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Show Application Status Modal with history
+        function showAppStatus(app) {
+            const modal = document.getElementById('appStatusModal');
+            const content = document.getElementById('appStatusContent');
+
+            // Format date
+            function formatDate(dateStr) {
+                if (!dateStr) return 'N/A';
+                const d = new Date(dateStr);
+                return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getFullYear()).slice(-2)} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+            }
+
+            // Status badge colors
+            const statusColors = {
+                'pending': { bg: 'rgba(234, 179, 8, 0.2)', color: '#facc15' },
+                'approved': { bg: 'rgba(34, 197, 94, 0.2)', color: '#4ade80' },
+                'rejected': { bg: 'rgba(239, 68, 68, 0.2)', color: '#f87171' },
+                'reversed': { bg: 'rgba(168, 85, 247, 0.2)', color: '#c084fc' }
+            };
+            const sc = statusColors[app.status] || statusColors.pending;
+
+            let html = `
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1.25rem;">
+                    <div>
+                        <div style="color: var(--text-muted); font-size: 0.7rem; text-transform: uppercase;">Application #</div>
+                        <div style="color: white; font-size: 0.9rem;">${app.applicationNumber || app.id}</div>
+                    </div>
+                    <div>
+                        <div style="color: var(--text-muted); font-size: 0.7rem; text-transform: uppercase;">Current Status</div>
+                        <div style="display: inline-block; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: 500; background: ${sc.bg}; color: ${sc.color}; margin-top: 0.25rem;">${(app.status || 'pending').toUpperCase()}</div>
+                    </div>
+                    <div>
+                        <div style="color: var(--text-muted); font-size: 0.7rem; text-transform: uppercase;">Event</div>
+                        <div style="color: white; font-size: 0.9rem;">${app.eventTitle || 'N/A'}</div>
+                    </div>
+                    <div>
+                        <div style="color: var(--text-muted); font-size: 0.7rem; text-transform: uppercase;">Applied On</div>
+                        <div style="color: white; font-size: 0.9rem;">${formatDate(app.appliedAt)}</div>
+                    </div>
+                    ${app.teamName ? `<div style="grid-column: 1/-1;"><div style="color: var(--text-muted); font-size: 0.7rem; text-transform: uppercase;">Team Name</div><div style="color: var(--primary); font-weight: 500;">${app.teamName}</div></div>` : ''}
+                </div>
+            `;
+
+            // Last remark (if exists)
+            if (app.lastRemark) {
+                html += `
+                    <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 10px; padding: 1rem; margin-bottom: 1rem;">
+                        <div style="color: #fca5a5; font-size: 0.75rem; margin-bottom: 0.5rem;"><i class="fas fa-comment-alt" style="margin-right: 0.5rem;"></i>LATEST ADMIN REMARK</div>
+                        <p style="color: white; font-style: italic; margin: 0;">"${app.lastRemark}"</p>
+                        ${app.lastActionBy ? `<div style="color: var(--text-muted); font-size: 0.7rem; margin-top: 0.5rem;">By ${app.lastActionBy} on ${formatDate(app.lastActionAt)}</div>` : ''}
+                    </div>
+                `;
+            }
+
+            // Action History
+            if (app.actionHistory && app.actionHistory.length > 0) {
+                html += `
+                    <div style="margin-top: 1rem;">
+                        <div style="color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; margin-bottom: 0.75rem;"><i class="fas fa-history" style="margin-right: 0.5rem;"></i>Action History</div>
+                `;
+
+                // Show in reverse order (most recent first)
+                const reversedHistory = [...app.actionHistory].reverse();
+                reversedHistory.forEach((h, i) => {
+                    const borderColor = h.action.toLowerCase().includes('approved') ? '#22c55e' :
+                        h.action.toLowerCase().includes('rejected') ? '#ef4444' :
+                            h.action.toLowerCase().includes('reversed') ? '#a855f7' : '#3b82f6';
+                    html += `
+                        <div style="background: rgba(255,255,255,0.03); padding: 0.75rem; border-radius: 8px; margin-bottom: 0.5rem; border-left: 3px solid ${borderColor};">
+                            <div style="font-weight: 500; color: white; font-size: 0.85rem;">${h.action}</div>
+                            <div style="color: var(--text-muted); font-size: 0.7rem; margin-top: 0.25rem;">By ${h.by} on ${formatDate(h.at)}</div>
+                            ${h.remark ? `<div style="color: #94a3b8; font-size: 0.8rem; margin-top: 0.5rem; font-style: italic;">"${h.remark}"</div>` : ''}
+                        </div>
+                    `;
+                });
+                html += '</div>';
+            } else if (app.status === 'pending') {
+                html += `
+                    <div style="text-align: center; padding: 1.5rem; color: var(--text-muted);">
+                        <i class="fas fa-clock" style="font-size: 2rem; margin-bottom: 0.75rem; opacity: 0.5;"></i>
+                        <p style="margin: 0;">Your application is under review. You'll be notified once it's processed.</p>
+                    </div>
+                `;
+            }
+
+            content.innerHTML = html;
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeAppStatus() {
+            document.getElementById('appStatusModal').style.display = 'none';
+            document.body.style.overflow = '';
+        }
+
+        // Close on backdrop click
+        document.getElementById('appStatusModal').addEventListener('click', function (e) {
+            if (e.target === this) closeAppStatus();
+        });
     </script>
 
     <!-- Event Details Modal -->

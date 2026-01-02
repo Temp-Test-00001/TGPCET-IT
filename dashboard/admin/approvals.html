@@ -178,11 +178,13 @@
             </div>
             <nav class="nav-menu">
                 <a href="index.html" class="nav-link"><i class="fas fa-home"></i><span>Overview</span></a>
-                <a href="users.html" class="nav-link"><i class="fas fa-users"></i><span>Users</span></a>
                 <a href="events.html" class="nav-link"><i class="fas fa-calendar-alt"></i><span>Events</span></a>
                 <a href="approvals.html" class="nav-link active"><i
                         class="fas fa-check-circle"></i><span>Approvals</span></a>
+                <a href="applicationmanagement.html" class="nav-link"><i
+                        class="fas fa-file-alt"></i><span>Applications</span></a>
                 <a href="notifications.html" class="nav-link"><i class="fas fa-bell"></i><span>Notifications</span></a>
+                <a href="staff.html" class="nav-link"><i class="fas fa-chalkboard-teacher"></i><span>Staff</span></a>
                 <a href="support.html" class="nav-link"><i class="fas fa-headset"></i><span>Support</span></a>
             </nav>
             <div class="user-profile">
@@ -465,7 +467,7 @@
                                 <div class="detail-item"><label>Name</label><span>${profile.fullName || 'N/A'}</span></div>
                                 <div class="detail-item"><label>Email</label><span>${app.teamLeader?.email || 'N/A'}</span></div>
                                 <div class="detail-item"><label>Mobile</label><span>${profile.mobile || 'N/A'}</span></div>
-                                <div class="detail-item"><label>PRN</label><span>${profile.prn || 'N/A'}</span></div>
+                                <div class="detail-item"><label>College ID</label><span>${profile.prn || 'N/A'}</span></div>
                             </div>
                             <div class="detail-row" style="margin-top: 0.5rem;">
                                 <div class="detail-item"><label>College</label><span>${profile.collegeName || 'N/A'}</span></div>
@@ -524,7 +526,7 @@
                                                 <div><span style="color: var(--text-muted);">College: </span><span style="color: #aaa;">${m.college || 'N/A'}</span></div>
                                                 <div><span style="color: var(--text-muted);">Branch: </span><span style="color: #aaa;">${m.branch || 'N/A'}</span></div>
                                                 <div><span style="color: var(--text-muted);">Year: </span><span style="color: #aaa;">${m.year || 'N/A'}</span></div>
-                                                <div><span style="color: var(--text-muted);">PRN: </span><span style="color: #aaa;">${m.prn || 'N/A'}</span></div>
+                                                <div><span style="color: var(--text-muted);">College ID: </span><span style="color: #aaa;">${m.prn || 'N/A'}</span></div>
                                             </div>
                                         </div>
                                     `).join('')}
@@ -830,7 +832,7 @@
                     // Team Leader / Individual
                     pdf.text(`Leader: ${profile.fullName || 'N/A'} | Email: ${app.teamLeader?.email || 'N/A'}`, margin + 2, y);
                     y += 5;
-                    pdf.text(`Mobile: ${profile.mobile || 'N/A'} | PRN: ${profile.prn || 'N/A'} | Year: ${profile.year || 'N/A'}`, margin + 2, y);
+                    pdf.text(`Mobile: ${profile.mobile || 'N/A'} | College ID: ${profile.prn || 'N/A'} | Year: ${profile.year || 'N/A'}`, margin + 2, y);
                     y += 5;
                     pdf.text(`College: ${profile.collegeName || 'N/A'} | Department: ${profile.department || 'N/A'}`, margin + 2, y);
                     y += 6;
