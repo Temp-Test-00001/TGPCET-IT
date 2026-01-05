@@ -220,6 +220,66 @@
 
         .btn-register:hover {
             transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+        }
+
+        /* Read More Button */
+        .btn-read-more {
+            background: transparent;
+            color: #a855f7;
+            border: 1px solid rgba(168, 85, 247, 0.4);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .btn-read-more:hover {
+            background: rgba(168, 85, 247, 0.1);
+            border-color: #a855f7;
+        }
+
+        .btn-read-more i {
+            transition: transform 0.2s;
+        }
+
+        .btn-read-more.expanded i {
+            transform: rotate(180deg);
+        }
+
+        /* Event Details (hidden by default) */
+        .event-details {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 0.3s ease, opacity 0.3s ease, margin 0.3s ease;
+            margin-top: 0;
+        }
+
+        .event-details.expanded {
+            max-height: 1000px;
+            opacity: 1;
+            margin-top: 1rem;
+            overflow: auto;
+        }
+
+        .event-venue-detail {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .btn-register:hover {
+            transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(168, 85, 247, 0.4);
         }
 
@@ -371,19 +431,30 @@
                         eventImageHtml = `<div class="event-image" style="width: 100%; height: 200px;"><i class="fas fa-calendar-alt" style="font-size: 3rem; color: rgba(255,255,255,0.2);"></i></div>`;
                     }
 
+                    const cardId = 'event-' + doc.id;
                     card.innerHTML = `
                         ${eventImageHtml}
                         <div style="padding: 1.25rem;">
                             <h3 class="event-title">${event.title}</h3>
-                            ${event.organizedBy ? `<p style="color: var(--primary); font-size: 0.85rem; margin-bottom: 0.5rem;"><i class="fas fa-building" style="margin-right: 0.5rem;"></i>Organized by: ${event.organizedBy}</p>` : ''}
+                            ${event.organizedBy ? `<p style="color: #a855f7; font-size: 0.85rem; margin-bottom: 0.5rem;"><i class="fas fa-building" style="margin-right: 0.5rem;"></i>Organized by: ${event.organizedBy}</p>` : ''}
                             <div class="event-meta">
                                 <span><i class="far fa-calendar"></i> ${event.date}</span>
-                                <span><i class="fas fa-map-marker-alt"></i> ${event.venue}</span>
+                                <span><i class="fas fa-map-marker-alt"></i> ${event.venue || 'TBA'}</span>
                                 ${feeHtml}
                             </div>
-                            ${eligibilityHtml}
-                            <p class="event-desc">${formattedDesc}</p>
-                            <a href="login.html" class="btn-register">Register Now</a>
+                            
+                            <div style="display: flex; gap: 0.75rem; margin-top: 1rem; flex-wrap: wrap;">
+                                <a href="login.html" class="btn-register" style="flex: 1; min-width: 140px;">Participate Now</a>
+                                <button class="btn-read-more" onclick="toggleEventDetails('${cardId}', this)" style="margin-top: 0;">
+                                    <span>Read More</span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="event-details" id="${cardId}">
+                                ${eligibilityHtml}
+                                <p class="event-desc">${formattedDesc}</p>
+                            </div>
                         </div>
                     `;
                     container.appendChild(card);
@@ -398,6 +469,31 @@
         window.loadEvents = loadEvents;
 
         loadEvents();
+
+        // Toggle event details visibility
+        function toggleEventDetails(cardId, btn) {
+            const details = document.getElementById(cardId);
+            const button = btn || event.target.closest('.btn-read-more');
+
+            if (details.classList.contains('expanded')) {
+                details.classList.remove('expanded');
+                if (button) {
+                    button.classList.remove('expanded');
+                    const span = button.querySelector('span');
+                    if (span) span.textContent = 'Read More';
+                }
+            } else {
+                details.classList.add('expanded');
+                if (button) {
+                    button.classList.add('expanded');
+                    const span = button.querySelector('span');
+                    if (span) span.textContent = 'Show Less';
+                }
+            }
+        }
+
+        // Make it global
+        window.toggleEventDetails = toggleEventDetails;
     </script>
 
     <!-- Mobile Menu Script -->
