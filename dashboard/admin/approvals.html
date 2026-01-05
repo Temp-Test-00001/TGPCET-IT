@@ -736,7 +736,7 @@
             });
 
             async function generateEventParticipantsPDF(eventData, applications) {
-                // Load jsPDF if not already loaded
+                // Load jsPDF
                 if (!window.jspdf) {
                     await new Promise((resolve, reject) => {
                         const script = document.createElement('script');
@@ -748,117 +748,236 @@
                 }
 
                 const { jsPDF } = window.jspdf;
-                const pdf = new jsPDF('p', 'mm', 'a4');
-                const pageWidth = pdf.internal.pageSize.getWidth();
-                const pageHeight = pdf.internal.pageSize.getHeight();
+                const pdf = new jsPDF('p', 'mm', 'a4'); // Portrait A4
+                const pageWidth = pdf.internal.pageSize.getWidth(); // 210mm
+                const pageHeight = pdf.internal.pageSize.getHeight(); // 297mm
                 const margin = 15;
+                const tableWidth = pageWidth - 2 * margin; // 180mm
                 let y = margin;
+                let pageNum = 1;
 
-                // Helper function for DD/MM/YY format
-                function formatDate(dateString) {
-                    if (!dateString) return 'N/A';
-                    const d = new Date(dateString);
-                    return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getFullYear()).slice(-2)}`;
+                // ===== SANITIZE TEXT =====
+                function clean(str) {
+                    if (str === null || str === undefined) return '';
+                    let t = String(str)
+                        .replace(/[œŒæÆßñÑçÇ]/g, c => ({
+                            'œ': 'oe', 'Œ': 'OE', 'æ': 'ae', 'Æ': 'AE',
+                            'ß': 'ss', 'ñ': 'n', 'Ñ': 'N', 'ç': 'c', 'Ç': 'C'
+                        }[c] || c))
+                        .replace(/[–—]/g, '-')
+                        .replace(/['']/g, "'")
+                        .replace(/[""]/g, '"')
+                        .replace(/…/g, '...')
+                        .replace(/₹/g, 'Rs.')
+                        .replace(/[\u00A0\u200B-\u200D\uFEFF\t\r\n]/g, ' ');
+                    t = t.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                    t = t.replace(/[^\x20-\x7E]/g, '').replace(/\s+/g, ' ').trim();
+                    return t;
+                }
+                function txt(s) { return clean(s) || '-'; }
+                function cut(s, max) { const v = txt(s); return v.length > max ? v.slice(0, max - 2) + '..' : v; }
+
+                // Statistics
+                const total = applications.length;
+                const approved = applications.filter(a => a.status === 'approved').length;
+                const pending = applications.filter(a => a.status === 'pending').length;
+                const rejected = applications.filter(a => a.status === 'rejected' || a.status === 'reversed').length;
+
+                // Column widths (total = 180mm)
+                const colW = [12, 45, 60, 30, 33]; // Sr, Name, Email, Mobile, Status
+                const colX = [margin];
+                for (let i = 1; i < colW.length; i++) colX[i] = colX[i - 1] + colW[i - 1];
+
+                // ===== DRAW HEADER =====
+                function drawPageHeader() {
+                    // Dark header bar
+                    pdf.setFillColor(31, 41, 55);
+                    pdf.rect(0, 0, pageWidth, 28, 'F');
+
+                    pdf.setTextColor(255, 255, 255);
+                    pdf.setFont('helvetica', 'bold');
+                    pdf.setFontSize(16);
+                    pdf.text('TGPCET IT Department', pageWidth / 2, 11, { align: 'center' });
+
+                    pdf.setFont('helvetica', 'normal');
+                    pdf.setFontSize(10);
+                    pdf.text('Event Participants Report', pageWidth / 2, 18, { align: 'center' });
+
+                    pdf.setFontSize(8);
+                    pdf.text('Page ' + pageNum, pageWidth / 2, 24, { align: 'center' });
+
+                    y = 35;
                 }
 
-                // Header
-                pdf.setFillColor(30, 41, 59);
-                pdf.rect(0, 0, pageWidth, 35, 'F');
-                pdf.setTextColor(255, 255, 255);
-                pdf.setFontSize(18);
-                pdf.setFont('helvetica', 'bold');
-                pdf.text('TGPCET IT Department', pageWidth / 2, 15, { align: 'center' });
-                pdf.setFontSize(12);
-                pdf.setFont('helvetica', 'normal');
-                pdf.text('Event Participants Report', pageWidth / 2, 23, { align: 'center' });
-                pdf.setFontSize(10);
-                pdf.text(`Generated on: ${formatDate(new Date().toISOString())}`, pageWidth / 2, 30, { align: 'center' });
+                // ===== DRAW TABLE HEADER =====
+                function drawTableHeader() {
+                    const h = 8;
+                    pdf.setFillColor(59, 130, 246);
+                    pdf.rect(margin, y, tableWidth, h, 'F');
 
-                y = 45;
+                    pdf.setDrawColor(37, 99, 235);
+                    pdf.setLineWidth(0.3);
+                    pdf.rect(margin, y, tableWidth, h, 'S');
 
-                // Event Details
-                pdf.setTextColor(0, 0, 0);
-                pdf.setFontSize(14);
-                pdf.setFont('helvetica', 'bold');
-                pdf.text(`Event: ${eventData.title}`, margin, y);
-                y += 8;
-                pdf.setFontSize(10);
-                pdf.setFont('helvetica', 'normal');
-                pdf.text(`Date: ${eventData.date || 'N/A'} | Venue: ${eventData.venue || 'N/A'}`, margin, y);
-                y += 6;
-                pdf.text(`Total Participants: ${applications.length}`, margin, y);
-                y += 10;
-
-                // Draw separator line
-                pdf.setDrawColor(150, 150, 150);
-                pdf.line(margin, y, pageWidth - margin, y);
-                y += 8;
-
-                // Participants
-                applications.forEach((app, index) => {
-                    // Check if we need a new page
-                    if (y > pageHeight - 60) {
-                        pdf.addPage();
-                        y = margin;
+                    // Vertical lines
+                    for (let i = 1; i < colX.length; i++) {
+                        pdf.line(colX[i], y, colX[i], y + h);
                     }
 
-                    const profile = app.teamLeader?.profile || {};
-
-                    // Participant header
-                    pdf.setFillColor(240, 240, 240);
-                    pdf.rect(margin, y - 4, pageWidth - 2 * margin, 10, 'F');
-                    pdf.setFontSize(11);
+                    pdf.setTextColor(255, 255, 255);
                     pdf.setFont('helvetica', 'bold');
-                    pdf.setTextColor(50, 50, 50);
-                    pdf.text(`${index + 1}. ${app.teamName || profile.fullName || 'N/A'}`, margin + 2, y + 2);
-
-                    // Status badge
-                    const statusText = (app.status || 'pending').toUpperCase();
-                    pdf.setFontSize(8);
-                    const statusColor = app.status === 'approved' ? [34, 197, 94] : app.status === 'rejected' ? [239, 68, 68] : [234, 179, 8];
-                    pdf.setTextColor(...statusColor);
-                    pdf.text(statusText, pageWidth - margin - 20, y + 2);
-                    y += 12;
-
-                    pdf.setTextColor(0, 0, 0);
                     pdf.setFontSize(9);
+
+                    const headers = ['Sr', 'Name', 'Email', 'Mobile', 'Status'];
+                    headers.forEach((h, i) => {
+                        pdf.text(h, colX[i] + 2, y + 5.5);
+                    });
+
+                    y += 8;
+                }
+
+                // ===== CHECK PAGE =====
+                function checkPage(need) {
+                    if (y + need > pageHeight - 20) {
+                        pdf.addPage();
+                        pageNum++;
+                        drawPageHeader();
+                        drawTableHeader();
+                    }
+                }
+
+                // ===== START =====
+                drawPageHeader();
+
+                // Event Info
+                pdf.setFillColor(243, 244, 246);
+                pdf.roundedRect(margin, y, tableWidth, 18, 2, 2, 'F');
+                pdf.setDrawColor(200, 200, 200);
+                pdf.roundedRect(margin, y, tableWidth, 18, 2, 2, 'S');
+
+                pdf.setTextColor(17, 24, 39);
+                pdf.setFont('helvetica', 'bold');
+                pdf.setFontSize(12);
+                pdf.text(cut(eventData.title, 50), margin + 5, y + 7);
+
+                pdf.setFont('helvetica', 'normal');
+                pdf.setFontSize(9);
+                pdf.setTextColor(75, 85, 99);
+                pdf.text('Date: ' + txt(eventData.date) + '   Venue: ' + cut(eventData.venue, 30), margin + 5, y + 14);
+
+                // Stats on right
+                pdf.setFontSize(8);
+                pdf.setTextColor(31, 41, 55);
+                pdf.text('Total: ' + total + '  |  Approved: ' + approved + '  |  Pending: ' + pending + '  |  Rejected: ' + rejected,
+                    pageWidth - margin - 5, y + 10, { align: 'right' });
+
+                y += 24;
+
+                // Table
+                drawTableHeader();
+
+                // Rows
+                applications.forEach((app, i) => {
+                    const profile = app.teamLeader?.profile || {};
+                    const hasTeam = app.teamMembers && app.teamMembers.length > 0;
+                    const rowH = 7;
+                    const teamH = hasTeam ? app.teamMembers.length * 5 : 0;
+
+                    checkPage(rowH + teamH + 2);
+
+                    // Row background
+                    pdf.setFillColor(i % 2 === 0 ? 255 : 248, i % 2 === 0 ? 255 : 250, i % 2 === 0 ? 255 : 252);
+                    pdf.rect(margin, y, tableWidth, rowH, 'F');
+
+                    // Row border
+                    pdf.setDrawColor(220, 220, 220);
+                    pdf.setLineWidth(0.2);
+                    pdf.rect(margin, y, tableWidth, rowH, 'S');
+
+                    // Vertical lines
+                    for (let j = 1; j < colX.length; j++) {
+                        pdf.line(colX[j], y, colX[j], y + rowH);
+                    }
+
+                    pdf.setFont('helvetica', 'normal');
+                    pdf.setFontSize(8);
+                    pdf.setTextColor(31, 41, 55);
+
+                    const ty = y + 5;
+
+                    // Sr
+                    pdf.text(String(i + 1), colX[0] + 4, ty);
+
+                    // Name (bold)
+                    pdf.setFont('helvetica', 'bold');
+                    pdf.text(cut(app.teamName || profile.fullName, 24), colX[1] + 2, ty);
                     pdf.setFont('helvetica', 'normal');
 
-                    // Application details
-                    pdf.text(`App #: ${app.applicationNumber || app.id?.substring(0, 8) || 'N/A'}`, margin + 2, y);
-                    pdf.text(`Applied: ${formatDate(app.appliedAt)}`, margin + 60, y);
-                    y += 5;
+                    // Email
+                    pdf.text(cut(app.teamLeader?.email, 34), colX[2] + 2, ty);
 
-                    // Team Leader / Individual
-                    pdf.text(`Leader: ${profile.fullName || 'N/A'} | Email: ${app.teamLeader?.email || 'N/A'}`, margin + 2, y);
-                    y += 5;
-                    pdf.text(`Mobile: ${profile.mobile || 'N/A'} | College ID: ${profile.prn || 'N/A'} | Year: ${profile.year || 'N/A'}`, margin + 2, y);
-                    y += 5;
-                    pdf.text(`College: ${profile.collegeName || 'N/A'} | Department: ${profile.department || 'N/A'}`, margin + 2, y);
-                    y += 6;
+                    // Mobile
+                    pdf.text(cut(profile.mobile, 14), colX[3] + 2, ty);
 
-                    // Team members if any
-                    if (app.teamMembers && app.teamMembers.length > 0) {
-                        pdf.setFont('helvetica', 'bold');
-                        pdf.text(`Team Members (${app.teamMembers.length}):`, margin + 2, y);
-                        y += 5;
-                        pdf.setFont('helvetica', 'normal');
+                    // Status with color
+                    const st = txt(app.status || 'pending');
+                    if (st === 'approved') pdf.setTextColor(22, 163, 74);
+                    else if (st === 'rejected' || st === 'reversed') pdf.setTextColor(220, 38, 38);
+                    else pdf.setTextColor(202, 138, 4);
+                    pdf.setFont('helvetica', 'bold');
+                    pdf.text(st.toUpperCase(), colX[4] + 2, ty);
 
-                        app.teamMembers.forEach((member, idx) => {
-                            if (y > pageHeight - 20) {
-                                pdf.addPage();
-                                y = margin;
-                            }
-                            pdf.text(`  ${idx + 1}. ${member.name} | ${member.email || 'N/A'} | ${member.mobile || 'N/A'}`, margin + 4, y);
-                            y += 4;
+                    y += rowH;
+
+                    // Team members
+                    if (hasTeam) {
+                        app.teamMembers.forEach((m, mi) => {
+                            checkPage(5);
+
+                            pdf.setFillColor(254, 252, 232);
+                            pdf.rect(margin, y, tableWidth, 5, 'F');
+                            pdf.setDrawColor(253, 230, 138);
+                            pdf.rect(margin, y, tableWidth, 5, 'S');
+
+                            pdf.setFontSize(7);
+                            pdf.setTextColor(133, 77, 14);
+                            pdf.setFont('helvetica', 'normal');
+                            pdf.text('  Team Member ' + (mi + 1) + ': ' + cut(m.name, 20) + ' | ' + cut(m.email, 25) + ' | ' + cut(m.mobile, 12),
+                                margin + 15, y + 3.5);
+
+                            y += 5;
                         });
                     }
-
-                    y += 6;
                 });
 
-                // Save PDF
-                pdf.save(`${eventData.title.replace(/[^a-zA-Z0-9]/g, '_')}_Participants.pdf`);
+                // Summary
+                checkPage(25);
+                y += 8;
+
+                pdf.setFillColor(240, 253, 244);
+                pdf.roundedRect(margin, y, tableWidth, 16, 2, 2, 'F');
+                pdf.setDrawColor(134, 239, 172);
+                pdf.roundedRect(margin, y, tableWidth, 16, 2, 2, 'S');
+
+                pdf.setFont('helvetica', 'bold');
+                pdf.setFontSize(10);
+                pdf.setTextColor(22, 101, 52);
+                pdf.text('Summary', margin + 5, y + 6);
+
+                pdf.setFont('helvetica', 'normal');
+                pdf.setFontSize(9);
+                pdf.text('Total: ' + total + '     Approved: ' + approved + '     Pending: ' + pending + '     Rejected: ' + rejected,
+                    margin + 5, y + 12);
+
+                // Footer
+                pdf.setFontSize(7);
+                pdf.setTextColor(128, 128, 128);
+                pdf.text('Generated: ' + new Date().toLocaleString('en-IN'), margin, pageHeight - 8);
+                pdf.text('TGPCET IT Department - Confidential', pageWidth - margin, pageHeight - 8, { align: 'right' });
+
+                // Save
+                const name = clean(eventData.title || 'Event').replace(/[^a-zA-Z0-9]/g, '_').slice(0, 20) || 'Report';
+                pdf.save(name + '_Participants.pdf');
             }
 
         } catch (initErr) {
