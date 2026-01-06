@@ -453,8 +453,10 @@
                 if (udoc.exists()) profile = udoc.data();
 
                 const p = profile?.profile || profile;
-                if (!p?.fullName) {
-                    alert('Please complete your profile first!');
+                const isProfileComplete = profile?.profileCompleted === true;
+
+                if (!p?.fullName || !isProfileComplete) {
+                    alert('Please complete your profile 100% before registering for events! All fields are mandatory.');
                     window.location.href = 'profile.html';
                     return;
                 }
@@ -547,16 +549,21 @@
                 } else {
                     const userData = snap.docs[0].data();
                     const p = userData.profile || userData;
+                    const isMemberProfileComplete = userData.profileCompleted === true;
 
-                    if (p && p.fullName) {
-                        document.getElementById('tm-name').value = p.fullName;
-                        document.getElementById('tm-mobile').value = p.mobile || 'N/A';
-                        document.getElementById('tm-prn').value = p.prn || 'N/A';
-                    } else {
-                        alert('User found but profile is incomplete (Name missing).');
+                    // Check all required fields for team member
+                    const requiredFields = ['fullName', 'mobile', 'dob', 'gender', 'prn', 'collegeName', 'department', 'year'];
+                    const hasAllFields = requiredFields.every(field => p && p[field] && String(p[field]).trim().length > 0);
+
+                    if (!isMemberProfileComplete || !hasAllFields) {
+                        alert('Profile not completed! This team member has not completed their profile 100%. They must fill all mandatory fields (Name, Email, Mobile, Gender, DOB, College Name, College ID, Department, Year) before they can be added to a team.');
                         document.getElementById('tm-name').value = '';
                         document.getElementById('tm-mobile').value = '';
                         document.getElementById('tm-prn').value = '';
+                    } else {
+                        document.getElementById('tm-name').value = p.fullName;
+                        document.getElementById('tm-mobile').value = p.mobile || 'N/A';
+                        document.getElementById('tm-prn').value = p.prn || 'N/A';
                     }
                 }
             } catch (err) {

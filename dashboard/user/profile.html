@@ -104,61 +104,10 @@
                             </select>
                         </div>
                         <div>
-                            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Blood
-                                Group</label>
-                            <select id="bloodGroup"
-                                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: #1e293b; color: white;">
-                                <option value="">Select</option>
-                                <option value="A+">A+</option>
-                                <option value="A-">A-</option>
-                                <option value="B+">B+</option>
-                                <option value="B-">B-</option>
-                                <option value="O+">O+</option>
-                                <option value="O-">O-</option>
-                                <option value="AB+">AB+</option>
-                                <option value="AB-">AB-</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label
-                                style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Caste/Category</label>
-                            <input type="text" id="category" placeholder="e.g. OPEN, OBC, SC"
-                                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.2); color: white;">
-                        </div>
-
-                        <!-- Contact Details -->
-                        <div style="grid-column: 1 / -1; margin-top: 1rem;">
-                            <h3
-                                style="color: var(--primary); border-bottom: 1px solid var(--border-glass); padding-bottom: 0.5rem; margin-bottom: 1rem;">
-                                Contact Details</h3>
-                        </div>
-                        <div>
                             <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Mobile
-                                Number</label>
-                            <input type="tel" id="mobile" required
-                                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.2); color: white;">
-                        </div>
-                        <div>
-                            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Parent's
-                                Mobile</label>
-                            <input type="tel" id="parentMobile" required
-                                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.2); color: white;">
-                        </div>
-                        <div style="grid-column: 1 / -1;">
-                            <label
-                                style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Address</label>
-                            <textarea id="address" rows="2" required
-                                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.2); color: white;"></textarea>
-                        </div>
-                        <div>
-                            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">City</label>
-                            <input type="text" id="city" required
-                                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.2); color: white;">
-                        </div>
-                        <div>
-                            <label
-                                style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">State</label>
-                            <input type="text" id="state" required
+                                Number <span style="color: #ef4444;">*</span></label>
+                            <input type="tel" id="mobile" required pattern="[0-9]{10}"
+                                placeholder="10 digit mobile number"
                                 style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.2); color: white;">
                         </div>
 
@@ -208,38 +157,13 @@
                                 <option value="Other">Other</option>
                             </select>
                         </div>
-                        <div>
-                            <label
-                                style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Section</label>
-                            <input type="text" id="section" required
-                                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.2); color: white;">
-                        </div>
-                        <div>
-                            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Roll
-                                Number</label>
-                            <input type="text" id="rollNumber" required
-                                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.2); color: white;">
-                        </div>
-                        <div>
-                            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">10th
-                                Percentage</label>
-                            <input type="number" step="0.01" id="tenth"
-                                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.2); color: white;">
-                        </div>
-                        <div>
-                            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">12th/Diploma
-                                %</label>
-                            <input type="number" step="0.01" id="twelfth"
-                                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.2); color: white;">
-                        </div>
-                        <div>
-                            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Current
-                                CGPA</label>
-                            <input type="number" step="0.01" id="cgpa"
-                                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-glass); background: rgba(0,0,0,0.2); color: white;">
-                        </div>
 
                         <div style="grid-column: 1 / -1; margin-top: 1.5rem;">
+                            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1rem;">
+                                <i class="fas fa-info-circle" style="color: var(--primary);"></i>
+                                All fields marked with <span style="color: #ef4444;">*</span> are mandatory. You must
+                                complete your profile 100% to participate in events.
+                            </p>
                             <button type="submit" class="btn btn-primary" style="width: 100%;">Save Profile</button>
                         </div>
                     </form>
@@ -289,22 +213,9 @@
                     document.getElementById('fullName').value = p.fullName || '';
                     document.getElementById('dob').value = p.dob || '';
                     document.getElementById('gender').value = p.gender || '';
-                    document.getElementById('bloodGroup').value = p.bloodGroup || '';
-                    document.getElementById('category').value = p.category || '';
-
                     document.getElementById('mobile').value = p.mobile || '';
-                    document.getElementById('parentMobile').value = p.parentMobile || '';
-                    document.getElementById('address').value = p.address || '';
-                    document.getElementById('city').value = p.city || '';
-                    document.getElementById('state').value = p.state || '';
-
                     document.getElementById('prn').value = p.prn || '';
                     document.getElementById('year').value = p.year || '';
-                    document.getElementById('section').value = p.section || '';
-                    document.getElementById('rollNumber').value = p.rollNumber || '';
-                    document.getElementById('tenth').value = p.tenth || '';
-                    document.getElementById('twelfth').value = p.twelfth || '';
-                    document.getElementById('cgpa').value = p.cgpa || '';
                     document.getElementById('collegeName').value = p.collegeName || '';
                     document.getElementById('department').value = p.department || '';
                 }
@@ -316,33 +227,24 @@
             if (!currentUser) return;
 
             const profileData = {
-                fullName: document.getElementById('fullName').value,
+                fullName: document.getElementById('fullName').value.trim(),
                 dob: document.getElementById('dob').value,
                 gender: document.getElementById('gender').value,
-                bloodGroup: document.getElementById('bloodGroup').value,
-                category: document.getElementById('category').value,
-
-                mobile: document.getElementById('mobile').value,
-                parentMobile: document.getElementById('parentMobile').value,
-                address: document.getElementById('address').value,
-                city: document.getElementById('city').value,
-                state: document.getElementById('state').value,
-
-                prn: document.getElementById('prn').value,
+                mobile: document.getElementById('mobile').value.trim(),
+                prn: document.getElementById('prn').value.trim(),
                 year: document.getElementById('year').value,
-                section: document.getElementById('section').value,
-                rollNumber: document.getElementById('rollNumber').value,
-                tenth: document.getElementById('tenth').value,
-                twelfth: document.getElementById('twelfth').value,
-                cgpa: document.getElementById('cgpa').value,
-                collegeName: document.getElementById('collegeName').value,
+                collegeName: document.getElementById('collegeName').value.trim(),
                 department: document.getElementById('department').value,
             };
+
+            // Check if all mandatory fields are filled
+            const requiredFields = ['fullName', 'dob', 'gender', 'mobile', 'prn', 'year', 'collegeName', 'department'];
+            const isComplete = requiredFields.every(field => profileData[field] && profileData[field].length > 0);
 
             try {
                 await setDoc(doc(db, "users", currentUser.uid), {
                     profile: profileData,
-                    profileCompleted: true,
+                    profileCompleted: isComplete,
                     updatedAt: new Date().toISOString()
                 }, { merge: true });
 
