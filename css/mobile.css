@@ -14,188 +14,327 @@
 /* ===========================================
    MOBILE STYLES (max-width: 768px)
    =========================================== */
-/* ===========================================
-   MOBILE STYLES (max-width: 768px)
-   =========================================== */
 @media screen and (max-width: 768px) {
 
-    /* --- Layout Adjustments --- */
+    /* --- Fixed Navbar Header --- */
+    .navbar {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        padding: 0.75rem 1rem !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        z-index: 1000 !important;
+        background: #0f172a !important;
+        height: 60px !important;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5) !important;
+        box-sizing: border-box !important;
+    }
+
+    /* --- Logo Styling --- */
+    .logo {
+        display: block !important;
+    }
+
+    .logo h1 {
+        font-size: 1.25rem !important;
+        color: white !important;
+        margin: 0 !important;
+    }
+
+    /* --- Hamburger Menu Toggle Button --- */
+    .mobile-menu-toggle,
+    #mobile-menu-toggle {
+        display: flex !important;
+        background: rgba(59, 130, 246, 0.1) !important;
+        border: 1px solid rgba(59, 130, 246, 0.3) !important;
+        color: #60a5fa !important;
+        padding: 8px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        width: 40px !important;
+        height: 40px !important;
+        align-items: center !important;
+        justify-content: center !important;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .mobile-menu-toggle i,
+    #mobile-menu-toggle i {
+        font-size: 1.25rem !important;
+    }
+
+    /* --- Full-Screen Navigation Overlay --- */
+    .nav-links,
+    #nav-links {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100vh !important;
+        background: #0f172a !important;
+        display: none !important;
+        flex-direction: column !important;
+        justify-content: flex-start !important;
+        align-items: stretch !important;
+        gap: 0.5rem !important;
+        z-index: 2000 !important;
+        padding: 80px 1.5rem 2rem !important;
+        box-sizing: border-box !important;
+        overflow-y: auto !important;
+    }
+
+    .nav-links.active,
+    #nav-links.active {
+        display: flex !important;
+    }
+
+    /* --- Navigation Links Inside Overlay --- */
+    .nav-links a,
+    .nav-links span,
+    #nav-links a,
+    #nav-links span {
+        color: #e2e8f0 !important;
+        font-size: 1rem !important;
+        font-weight: 500 !important;
+        text-decoration: none !important;
+        padding: 1rem 1.5rem !important;
+        margin: 0 !important;
+        background: rgba(255, 255, 255, 0.03) !important;
+        border: 1px solid rgba(255, 255, 255, 0.05) !important;
+        border-radius: 12px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        transition: all 0.2s ease !important;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .nav-links a:active,
+    #nav-links a:active {
+        background: rgba(59, 130, 246, 0.2) !important;
+        border-color: rgba(59, 130, 246, 0.4) !important;
+        transform: scale(0.98);
+    }
+
+    .nav-links a::after,
+    #nav-links a::after {
+        display: none !important;
+    }
+
+    /* --- Close Button (X) --- */
+    .mobile-close-btn,
+    #mobile-close-btn {
+        display: flex !important;
+        position: absolute !important;
+        top: 1rem !important;
+        right: 1rem !important;
+        width: 40px !important;
+        height: 40px !important;
+        align-items: center !important;
+        justify-content: center !important;
+        background: rgba(239, 68, 68, 0.1) !important;
+        border: 1px solid rgba(239, 68, 68, 0.2) !important;
+        border-radius: 8px !important;
+        color: #f87171 !important;
+        font-size: 1.25rem !important;
+        cursor: pointer !important;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    /* --- Push Content Below Fixed Navbar --- */
+    .hero-section {
+        padding-top: 100px !important;
+    }
+
+    .container,
+    main.container {
+        padding-top: 80px !important;
+    }
+
+    /* --- Hero Section Mobile --- */
+    .hero-title {
+        font-size: 2rem !important;
+        line-height: 1.2 !important;
+    }
+
+    .hero-subtitle {
+        font-size: 0.95rem !important;
+    }
+
+    .hero-bg-glow {
+        width: 250px !important;
+        height: 250px !important;
+    }
+
+    /* --- CTA Buttons --- */
+    .cta-group {
+        flex-direction: column !important;
+        gap: 0.75rem !important;
+        width: 100%;
+        max-width: 280px;
+        margin: 0 auto;
+    }
+
+    .cta-group a {
+        width: 100% !important;
+        text-align: center !important;
+    }
+
+    /* --- Features Grid --- */
+    .features-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+        padding: 2rem 1rem !important;
+    }
+
+    .feature-card {
+        padding: 1.25rem !important;
+    }
+
+    /* --- Event Cards --- */
+    .events-grid,
+    #events-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+    }
+
+    .event-card {
+        width: 100% !important;
+        margin: 0 !important;
+    }
+
+    /* --- Staff Grid --- */
+    .staff-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.75rem !important;
+    }
+
+    /* --- Support Grid --- */
+    .support-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* --- Forms --- */
+    .auth-container,
+    .login-container,
+    .register-container {
+        margin: 80px 1rem 2rem !important;
+        padding: 1.5rem !important;
+        width: calc(100% - 2rem) !important;
+        max-width: none !important;
+    }
+
+    input,
+    select,
+    textarea {
+        font-size: 16px !important;
+        padding: 0.75rem !important;
+    }
+
+    .btn,
+    button[type="submit"] {
+        width: 100%;
+        padding: 0.875rem !important;
+    }
+
+    /* --- Dashboard --- */
     .dashboard-layout {
         grid-template-columns: 1fr !important;
     }
 
-    .main-content {
-        grid-column: 1 !important;
-        width: 100%;
-        overflow-x: hidden;
-    }
-
-    .page-content {
-        padding: 1rem !important;
-    }
-
-    /* --- Sidebar & Navigation --- */
     .sidebar {
         position: fixed !important;
         left: 0;
         top: 0;
         bottom: 0;
         width: 280px !important;
-        max-width: 80vw !important;
+        max-width: 85vw !important;
         transform: translateX(-100%);
-        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-        z-index: 1050 !important;
-        background: rgba(15, 23, 42, 0.95) !important;
-        backdrop-filter: blur(12px) !important;
-        border-right: 1px solid rgba(255, 255, 255, 0.1);
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        transition: transform 0.3s ease !important;
+        z-index: 1000 !important;
     }
 
     .sidebar.open {
         transform: translateX(0) !important;
     }
 
-    /* Overlay for Sidebar */
-    .app-overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.6);
-        backdrop-filter: blur(4px);
-        z-index: 1040;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
-
-    .sidebar.open+.app-overlay,
-    .app-overlay.active {
-        display: block;
-        opacity: 1;
-    }
-
-    /* --- Header / Top Bar --- */
-    .top-bar {
-        padding: 0 1rem !important;
-        height: 60px !important;
-        background: rgba(15, 23, 42, 0.9) !important;
-        backdrop-filter: blur(10px);
-        position: sticky;
-        top: 0;
-        z-index: 100;
-        justify-content: space-between;
-    }
-
-    .top-bar h1 {
-        font-size: 1.1rem !important;
-        margin-left: 0.5rem;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+    .main-content {
+        grid-column: 1 !important;
     }
 
     .mobile-toggle {
         display: flex !important;
-        align-items: center;
-        justify-content: center;
-        width: 40px;
-        height: 40px;
-        border-radius: 8px;
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        color: #e2e8f0;
-        font-size: 1.25rem;
-        cursor: pointer;
-        transition: all 0.2s;
     }
 
-    .mobile-toggle:active {
-        transform: scale(0.95);
-        background: rgba(255, 255, 255, 0.1);
+    .top-bar {
+        padding: 0.75rem 1rem !important;
     }
 
-    /* --- Typography & Spacing --- */
-    h1 {
-        font-size: 1.5rem !important;
+    .top-bar h1 {
+        font-size: 1rem !important;
     }
 
-    h2 {
-        font-size: 1.25rem !important;
+    .page-content {
+        padding: 1rem !important;
     }
 
-    h3 {
-        font-size: 1.1rem !important;
-    }
-
-    .card {
-        padding: 1.25rem !important;
-        margin-bottom: 1rem;
-    }
-
-    /* --- Grids --- */
+    /* --- Stats Grid --- */
     .stats-grid {
         grid-template-columns: repeat(2, 1fr) !important;
-        /* 2 columns for stats on mobile usually works better */
         gap: 0.75rem !important;
     }
 
-    /* On very small screens, fall back to 1 column */
-    @media (max-width: 400px) {
-        .stats-grid {
-            grid-template-columns: 1fr !important;
-        }
+    .stat-card {
+        padding: 1rem !important;
     }
 
-    .form-grid {
-        grid-template-columns: 1fr !important;
-        gap: 1rem !important;
+    .stat-card h3 {
+        font-size: 1.25rem !important;
+    }
+
+    .stat-card p {
+        font-size: 0.7rem !important;
     }
 
     /* --- Tables --- */
     .table-container {
-        margin: 0 -0.5rem;
-        /* Negative margin to let table span full width */
-        width: calc(100% + 1rem);
-        border-radius: 0;
-        border-left: none;
-        border-right: none;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
     }
 
     table {
-        min-width: 600px;
-        /* Ensure horizontal scroll logic triggers */
+        min-width: 500px;
+        font-size: 0.8rem;
     }
 
     th,
     td {
-        padding: 0.75rem 1rem !important;
-        font-size: 0.85rem !important;
+        padding: 0.5rem !important;
     }
 
     /* --- Modals --- */
-    .modal-content,
-    .custom-modal-content {
-        width: 100% !important;
-        height: 100% !important;
-        max-height: 100% !important;
-        border-radius: 0 !important;
-        top: 0 !important;
-        padding: 1.5rem !important;
-        overflow-y: auto;
+    .modal-backdrop,
+    .custom-modal-backdrop {
+        padding: 1rem !important;
+        align-items: flex-end !important;
     }
 
-    .modal-backdrop {
-        padding: 0 !important;
-        align-items: flex-start !important;
-        /* Start from top for full screen feel */
+    .modal-content,
+    .custom-modal-content {
+        max-width: 100% !important;
+        max-height: 85vh !important;
+        margin: 0 !important;
+        border-radius: 16px 16px 0 0 !important;
+        overflow-y: auto !important;
     }
 
     /* --- Footer --- */
     footer {
         padding: 1.5rem 1rem !important;
-        font-size: 0.8rem;
+        text-align: center;
     }
 }
 
