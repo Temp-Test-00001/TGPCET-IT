@@ -432,6 +432,23 @@
                     }
 
                     const cardId = 'event-' + doc.id;
+
+                    // Check if registration is closed (deadline passed)
+                    let registrationClosed = false;
+                    if (event.registrationDeadline) {
+                        const deadlineDate = new Date(event.registrationDeadline);
+                        const now = new Date();
+                        registrationClosed = now > deadlineDate;
+                    }
+
+                    // Generate button based on deadline status
+                    let actionButton = '';
+                    if (registrationClosed) {
+                        actionButton = `<button onclick="alert('Registration for this event has ended. Please contact support for help.')" class="btn-register" style="flex: 1; min-width: 140px; background: linear-gradient(135deg, #64748b, #475569); cursor: not-allowed;">Registration Closed</button>`;
+                    } else {
+                        actionButton = `<a href="login.html" class="btn-register" style="flex: 1; min-width: 140px;">Participate Now</a>`;
+                    }
+
                     card.innerHTML = `
                         ${eventImageHtml}
                         <div style="padding: 1.25rem;">
@@ -442,9 +459,10 @@
                                 <span><i class="fas fa-map-marker-alt"></i> ${event.venue || 'TBA'}</span>
                                 ${feeHtml}
                             </div>
+                            ${registrationClosed ? `<div style="margin-top: 0.5rem;"><span style="background: rgba(239, 68, 68, 0.2); color: #f87171; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600;"><i class="fas fa-clock" style="margin-right: 0.25rem;"></i>Deadline Passed</span></div>` : ''}
                             
                             <div style="display: flex; gap: 0.75rem; margin-top: 1rem; flex-wrap: wrap;">
-                                <a href="login.html" class="btn-register" style="flex: 1; min-width: 140px;">Participate Now</a>
+                                ${actionButton}
                                 <button class="btn-read-more" onclick="toggleEventDetails('${cardId}', this)" style="margin-top: 0;">
                                     <span>Read More</span>
                                     <i class="fas fa-chevron-down"></i>

@@ -68,18 +68,18 @@ onAuthStateChanged(auth, async (user) => {
         // User is signed in
         if (authLinks) {
             try {
-                // Aggressively enforce Admin Role for specific email
+                // Aggressively enforce Super Admin Role for specific email
                 if (user.email === 'bhushanmallick2006@gmail.com') {
                     const userRef = doc(db, "users", user.uid);
                     const snap = await getDoc(userRef);
-                    if (!snap.exists() || snap.data().role !== 'admin') {
+                    if (!snap.exists() || snap.data().role !== 'superadmin') {
                         await setDoc(userRef, {
                             uid: user.uid,
                             email: user.email,
-                            role: 'admin',
+                            role: 'superadmin',
                             createdAt: new Date().toISOString()
                         }, { merge: true });
-                        console.log("Admin role enforced for bhushanmallick2006@gmail.com");
+                        console.log("Super Admin role enforced for bhushanmallick2006@gmail.com");
                     }
                 }
 
@@ -92,18 +92,18 @@ onAuthStateChanged(auth, async (user) => {
                     let role = userData.role || 'user';
 
                     // Double check local variable logic just in case
-                    if (user.email === 'bhushanmallick2006@gmail.com') role = 'admin';
+                    if (user.email === 'bhushanmallick2006@gmail.com') role = 'superadmin';
 
                     dashboardLink = `dashboard/${role}/index.html`;
                 } else {
-                    // New user - check if admin
+                    // New user - check if superadmin
                     let role = 'user';
                     if (user.email === 'bhushanmallick2006@gmail.com') {
-                        role = 'admin';
+                        role = 'superadmin';
                         await setDoc(doc(db, "users", user.uid), {
                             uid: user.uid,
                             email: user.email,
-                            role: 'admin',
+                            role: 'superadmin',
                             createdAt: new Date().toISOString()
                         });
                     }

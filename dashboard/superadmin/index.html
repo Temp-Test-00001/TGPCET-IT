@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Overview - TGPCET IT</title>
+    <title>Super Admin Overview - TGPCET IT</title>
     <link rel="stylesheet" href="../../css/new-dashboard.css">
     <link rel="stylesheet" href="../../css/mobile.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -140,6 +140,18 @@
             background: rgba(239, 68, 68, 0.2);
             color: #f87171;
         }
+
+        .superadmin-badge {
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-left: 0.5rem;
+        }
     </style>
 </head>
 
@@ -151,7 +163,7 @@
         <!-- Sidebar -->
         <aside class="sidebar" id="sidebar">
             <div class="brand">
-                <h2>TGPCET IT</h2>
+                <h2>TGPCET IT <span class="superadmin-badge">Super Admin</span></h2>
             </div>
 
             <nav class="nav-menu">
@@ -159,7 +171,10 @@
                     <i class="fas fa-home"></i>
                     <span>Overview</span>
                 </a>
-                
+                <a href="users.html" class="nav-link">
+                    <i class="fas fa-users"></i>
+                    <span>Users</span>
+                </a>
                 <a href="events.html" class="nav-link">
                     <i class="fas fa-calendar-alt"></i>
                     <span>Events</span>
@@ -168,26 +183,36 @@
                     <i class="fas fa-check-circle"></i>
                     <span>Approvals</span>
                 </a>
-                
+                <a href="applicationmanagement.html" class="nav-link">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Applications</span>
+                </a>
                 <a href="notifications.html" class="nav-link">
                     <i class="fas fa-bell"></i>
                     <span>Notifications</span>
                 </a>
-                
+                <a href="staff.html" class="nav-link">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    <span>Staff</span>
+                </a>
                 <a href="support.html" class="nav-link">
                     <i class="fas fa-headset"></i>
                     <span>Support</span>
+                </a>
+                <a href="activity.html" class="nav-link">
+                    <i class="fas fa-history"></i>
+                    <span>Activity</span>
                 </a>
             </nav>
 
             <div class="user-profile">
                 <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
                     <div
-                        style="width: 32px; height: 32px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
-                        A
+                        style="width: 32px; height: 32px; background: linear-gradient(135deg, #f59e0b, #ef4444); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
+                        S
                     </div>
                     <div style="overflow: hidden;">
-                        <div style="font-size: 0.875rem; font-weight: 600;">Admin</div>
+                        <div style="font-size: 0.875rem; font-weight: 600;">Super Admin</div>
                         <div style="font-size: 0.75rem; color: var(--text-muted);" id="user-email">Loading...</div>
                     </div>
                 </div>
@@ -205,7 +230,7 @@
                 <button class="mobile-toggle" id="mobile-toggle">
                     <i class="fas fa-bars"></i>
                 </button>
-                <h1 style="font-size: 1.25rem; font-weight: 600;">Dashboard Overview</h1>
+                <h1 style="font-size: 1.25rem; font-weight: 600;">Super Admin Dashboard</h1>
             </header>
 
             <div class="page-content">
@@ -228,6 +253,95 @@
                             Approvals</h3>
                         <div class="value" id="pending-approvals"
                             style="font-size: 2rem; font-weight: 700; color: var(--warning);">Loading...</div>
+                    </div>
+                    <div class="card">
+                        <h3 style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 0.5rem;">Total Staff
+                        </h3>
+                        <div class="value" id="total-staff" style="font-size: 2rem; font-weight: 700;">Loading...</div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="card" style="margin-bottom: 2rem;">
+                    <h3 style="margin-bottom: 1rem;"><i class="fas fa-bolt"
+                            style="color: #f59e0b; margin-right: 0.5rem;"></i>Quick Actions</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem;">
+                        <a href="users.html"
+                            style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem; background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.3); border-radius: 10px; text-decoration: none; color: white; transition: all 0.2s;">
+                            <i class="fas fa-user-shield" style="font-size: 1.25rem; color: #a855f7;"></i>
+                            <div>
+                                <div style="font-weight: 600;">Manage Users</div>
+                                <div style="font-size: 0.75rem; color: var(--text-muted);">Change roles & profiles</div>
+                            </div>
+                        </a>
+                        <a href="events.html"
+                            style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 10px; text-decoration: none; color: white; transition: all 0.2s;">
+                            <i class="fas fa-calendar-plus" style="font-size: 1.25rem; color: #3b82f6;"></i>
+                            <div>
+                                <div style="font-weight: 600;">Create Event</div>
+                                <div style="font-size: 0.75rem; color: var(--text-muted);">Add new events</div>
+                            </div>
+                        </a>
+                        <a href="approvals.html"
+                            style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem; background: rgba(234, 179, 8, 0.1); border: 1px solid rgba(234, 179, 8, 0.3); border-radius: 10px; text-decoration: none; color: white; transition: all 0.2s;">
+                            <i class="fas fa-clipboard-check" style="font-size: 1.25rem; color: #eab308;"></i>
+                            <div>
+                                <div style="font-weight: 600;">Review Pending</div>
+                                <div style="font-size: 0.75rem; color: var(--text-muted);">Approve applications</div>
+                            </div>
+                        </a>
+                        <a href="notifications.html"
+                            style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem; background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 10px; text-decoration: none; color: white; transition: all 0.2s;">
+                            <i class="fas fa-bullhorn" style="font-size: 1.25rem; color: #22c55e;"></i>
+                            <div>
+                                <div style="font-weight: 600;">Send Notice</div>
+                                <div style="font-size: 0.75rem; color: var(--text-muted);">Broadcast notifications</div>
+                            </div>
+                        </a>
+                        <a href="staff.html"
+                            style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem; background: rgba(236, 72, 153, 0.1); border: 1px solid rgba(236, 72, 153, 0.3); border-radius: 10px; text-decoration: none; color: white; transition: all 0.2s;">
+                            <i class="fas fa-chalkboard-teacher" style="font-size: 1.25rem; color: #ec4899;"></i>
+                            <div>
+                                <div style="font-weight: 600;">Manage Staff</div>
+                                <div style="font-size: 0.75rem; color: var(--text-muted);">Faculty directory</div>
+                            </div>
+                        </a>
+                        <a href="activity.html"
+                            style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem; background: rgba(148, 163, 184, 0.1); border: 1px solid rgba(148, 163, 184, 0.3); border-radius: 10px; text-decoration: none; color: white; transition: all 0.2s;">
+                            <i class="fas fa-history" style="font-size: 1.25rem; color: #94a3b8;"></i>
+                            <div>
+                                <div style="font-weight: 600;">Activity Logs</div>
+                                <div style="font-size: 0.75rem; color: var(--text-muted);">Track all actions</div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Role Distribution -->
+                <div class="card" style="margin-bottom: 2rem;">
+                    <h3 style="margin-bottom: 1.5rem;"><i class="fas fa-user-shield"
+                            style="color: var(--primary); margin-right: 0.5rem;"></i>User Role Distribution</h3>
+                    <div id="role-distribution"
+                        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
+                        <div
+                            style="text-align: center; padding: 1rem; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                            <div id="role-superadmin" style="font-size: 1.5rem; font-weight: 700; color: #f59e0b;">-
+                            </div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Super
+                                Admins</div>
+                        </div>
+                        <div
+                            style="text-align: center; padding: 1rem; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                            <div id="role-admin" style="font-size: 1.5rem; font-weight: 700; color: #60a5fa;">-</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Admins
+                            </div>
+                        </div>
+                        <div
+                            style="text-align: center; padding: 1rem; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                            <div id="role-user" style="font-size: 1.5rem; font-weight: 700; color: #cbd5e1;">-</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Users
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -325,12 +439,27 @@
                 document.getElementById('total-users').innerHTML = '<span style="font-size: 0.9rem; color: var(--text-muted);">Loading...</span>';
                 document.getElementById('active-events').innerHTML = '<span style="font-size: 0.9rem; color: var(--text-muted);">Loading...</span>';
                 document.getElementById('pending-approvals').innerHTML = '<span style="font-size: 0.9rem; color: var(--text-muted);">Loading...</span>';
+                document.getElementById('total-staff').innerHTML = '<span style="font-size: 0.9rem; color: var(--text-muted);">Loading...</span>';
                 document.getElementById('recent-apps').innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Loading...</td></tr>';
 
                 try {
-                    // Load Stats with retry
+                    // Load Stats
                     const usersSnap = await getDocs(collection(db, "users"));
                     document.getElementById('total-users').textContent = usersSnap.size;
+
+                    // Calculate role distribution
+                    let roleCounts = { superadmin: 0, admin: 0, user: 0 };
+                    usersSnap.forEach(doc => {
+                        const role = doc.data().role || 'user';
+                        if (roleCounts.hasOwnProperty(role)) {
+                            roleCounts[role]++;
+                        } else {
+                            roleCounts['user']++;
+                        }
+                    });
+                    document.getElementById('role-superadmin').textContent = roleCounts.superadmin;
+                    document.getElementById('role-admin').textContent = roleCounts.admin;
+                    document.getElementById('role-user').textContent = roleCounts.user;
 
                     const eventsSnap = await getDocs(collection(db, "events"));
                     document.getElementById('active-events').textContent = eventsSnap.size;
@@ -339,45 +468,16 @@
                     const pendingCount = appsSnap.docs.filter(doc => doc.data().status === 'pending').length;
                     document.getElementById('pending-approvals').textContent = pendingCount;
 
+                    // Load Staff count
+                    const staffSnap = await getDocs(collection(db, "staff"));
+                    document.getElementById('total-staff').textContent = staffSnap.size;
+
                     // Load Recent Apps Table
                     loadRecentApps(appsSnap);
 
                 } catch (err) {
                     console.error("Data load error:", err);
                     showError("Failed to load data: " + err.message);
-
-                    // Show retry option in stats
-                    const retryHtml = `<button onclick="window.refreshDashboard()" style="
-                        background: linear-gradient(135deg, #3b82f6, #a855f7);
-                        color: white;
-                        padding: 0.5rem 1rem;
-                        border: none;
-                        border-radius: 6px;
-                        cursor: pointer;
-                        font-size: 0.75rem;
-                        font-weight: 600;
-                    ">Retry</button>`;
-
-                    document.getElementById('total-users').innerHTML = retryHtml;
-                    document.getElementById('active-events').innerHTML = '<span style="color: var(--danger);">Error</span>';
-                    document.getElementById('pending-approvals').innerHTML = '<span style="color: var(--danger);">Error</span>';
-                    document.getElementById('recent-apps').innerHTML = `
-                        <tr><td colspan="4" style="text-align: center; padding: 2rem;">
-                            <i class="fas fa-exclamation-triangle" style="color: #ef4444; font-size: 1.5rem; margin-bottom: 0.5rem;"></i>
-                            <p style="color: var(--text-muted); margin: 0.5rem 0;">Failed to load applications</p>
-                            <button onclick="window.refreshDashboard()" style="
-                                background: linear-gradient(135deg, #3b82f6, #a855f7);
-                                color: white;
-                                padding: 0.5rem 1rem;
-                                border: none;
-                                border-radius: 6px;
-                                cursor: pointer;
-                                font-size: 0.85rem;
-                                font-weight: 600;
-                                margin-top: 0.5rem;
-                            "><i class="fas fa-redo" style="margin-right: 0.5rem;"></i>Try Again</button>
-                        </td></tr>
-                    `;
                 }
             }
 
@@ -389,6 +489,15 @@
                     window.location.href = '../../login.html';
                     return;
                 }
+
+                // Verify superadmin role
+                const userDoc = await getDoc(doc(db, "users", user.uid));
+                if (!userDoc.exists() || userDoc.data().role !== 'superadmin') {
+                    alert('Access Denied. Super Admin privileges required.');
+                    window.location.href = '../../index.html';
+                    return;
+                }
+
                 currentUser = user;
                 document.getElementById('user-email').textContent = user.email;
 

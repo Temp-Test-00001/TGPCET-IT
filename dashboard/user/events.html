@@ -298,6 +298,17 @@
                     }
                     snap.forEach(doc => {
                         const e = doc.data();
+
+                        // Skip events where registration deadline has passed
+                        if (e.registrationDeadline) {
+                            const deadlineDate = new Date(e.registrationDeadline);
+                            const now = new Date();
+                            if (now > deadlineDate) {
+                                console.log("Skipping expired event:", e.title);
+                                return; // Skip this event
+                            }
+                        }
+
                         const card = document.createElement('div');
                         card.className = 'card';
                         card.style.background = 'rgba(255,255,255,0.02)';
@@ -376,6 +387,11 @@
                         `;
                         container.appendChild(card);
                     });
+
+                    // Check if all events were filtered out
+                    if (container.children.length === 0) {
+                        container.innerHTML = '<div style="color: var(--text-muted); text-align: center; padding: 2rem;">No events available for registration at the moment.</div>';
+                    }
                 } catch (err) {
                     console.error(err);
                     throw err; // Propagate to Promise.race

@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity Logs - Super Admin - TGPCET IT</title>
+    <link rel="stylesheet" href="../../css/new-dashboard.css">
+    <link rel="stylesheet" href="../../css/mobile.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .superadmin-badge {
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-left: 0.5rem;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-input {
+            flex: 1;
+            min-width: 200px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-glass);
+            color: white;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+        }
+
+        .filter-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .filter-select {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-glass);
+            color: white;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            min-width: 150px;
+        }
+
+        .log-card {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            transition: all 0.2s ease;
+        }
+
+        .log-card:hover {
+            background: rgba(255, 255, 255, 0.03);
+            border-color: rgba(168, 85, 247, 0.3);
+        }
+
+        .log-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+
+        .log-action {
+            font-weight: 600;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .log-time {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .log-details {
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .log-user {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .action-badge {
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .action-create {
+            background: rgba(34, 197, 94, 0.2);
+            color: #4ade80;
+        }
+
+        .action-update {
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+        }
+
+        .action-delete {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+        }
+
+        .action-approve {
+            background: rgba(168, 85, 247, 0.2);
+            color: #a855f7;
+        }
+
+        .action-reject {
+            background: rgba(249, 115, 22, 0.2);
+            color: #fb923c;
+        }
+
+        .action-login {
+            background: rgba(20, 184, 166, 0.2);
+            color: #2dd4bf;
+        }
+
+        .action-other {
+            background: rgba(148, 163, 184, 0.2);
+            color: #94a3b8;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .pagination button {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-glass);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .pagination button:hover:not(:disabled) {
+            background: var(--primary);
+        }
+
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="brand">
+                <h2>TGPCET IT <span class="superadmin-badge">Super Admin</span></h2>
+            </div>
+
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>Overview</span>
+                </a>
+                <a href="users.html" class="nav-link">
+                    <i class="fas fa-users"></i>
+                    <span>Users</span>
+                </a>
+                <a href="events.html" class="nav-link">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Events</span>
+                </a>
+                <a href="approvals.html" class="nav-link">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Approvals</span>
+                </a>
+                <a href="applicationmanagement.html" class="nav-link">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Applications</span>
+                </a>
+                <a href="notifications.html" class="nav-link">
+                    <i class="fas fa-bell"></i>
+                    <span>Notifications</span>
+                </a>
+                <a href="staff.html" class="nav-link">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    <span>Staff</span>
+                </a>
+                <a href="support.html" class="nav-link">
+                    <i class="fas fa-headset"></i>
+                    <span>Support</span>
+                </a>
+                <a href="activity.html" class="nav-link active">
+                    <i class="fas fa-history"></i>
+                    <span>Activity</span>
+                </a>
+            </nav>
+
+            <div class="user-profile">
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+                    <div
+                        style="width: 32px; height: 32px; background: linear-gradient(135deg, #f59e0b, #ef4444); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
+                        S
+                    </div>
+                    <div style="overflow: hidden;">
+                        <div
+                            style="font-size: 0.875rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            Super Admin</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);" id="user-email">Loading...</div>
+                    </div>
+                </div>
+                <button id="logout-btn" class="btn btn-outline"
+                    style="width: 100%; justify-content: flex-start; gap: 0.5rem; border: none; padding: 0.5rem;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <button class="mobile-toggle" id="mobile-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 style="font-size: 1.25rem; font-weight: 600;">Activity Logs</h1>
+            </header>
+
+            <div class="page-content">
+                <!-- Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-total">-</div>
+                        <div class="stat-label">Total Actions</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-today" style="color: #4ade80;">-</div>
+                        <div class="stat-label">Today</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-week" style="color: #60a5fa;">-</div>
+                        <div class="stat-label">This Week</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-events" style="color: #a855f7;">-</div>
+                        <div class="stat-label">Event Actions</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <!-- Filters -->
+                    <div class="filter-bar">
+                        <input type="text" id="search-input" class="filter-input" placeholder="Search logs...">
+                        <select id="action-filter" class="filter-select">
+                            <option value="">All Actions</option>
+                            <option value="Create">Create</option>
+                            <option value="Update">Update</option>
+                            <option value="Delete">Delete</option>
+                            <option value="Approve">Approve</option>
+                            <option value="Reject">Reject</option>
+                            <option value="Login">Login</option>
+                        </select>
+                        <select id="date-filter" class="filter-select">
+                            <option value="">All Time</option>
+                            <option value="today">Today</option>
+                            <option value="week">This Week</option>
+                            <option value="month">This Month</option>
+                        </select>
+                        <button id="refresh-btn" class="btn btn-primary" style="padding: 0.75rem 1.25rem;">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+
+                    <!-- Logs Container -->
+                    <div id="logs-container">
+                        <div class="empty-state">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <p>Loading activity logs...</p>
+                        </div>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="pagination">
+                        <button id="prev-btn" disabled><i class="fas fa-chevron-left"></i> Previous</button>
+                        <span id="page-info" style="padding: 0.5rem 1rem; color: var(--text-muted);">Page 1</span>
+                        <button id="next-btn">Next <i class="fas fa-chevron-right"></i></button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        import { auth, signOut, db, doc, getDoc, collection, getDocs, query, orderBy, limit, startAfter, where } from '../../js/auth.js';
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        // Sidebar Toggle
+        const sidebar = document.getElementById('sidebar');
+        const mobileToggle = document.getElementById('mobile-toggle');
+        mobileToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            sidebar.classList.toggle('open');
+        });
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 768 && sidebar.classList.contains('open') && !sidebar.contains(e.target) && e.target !== mobileToggle) {
+                sidebar.classList.remove('open');
+            }
+        });
+
+        let allLogs = [];
+        let filteredLogs = [];
+        let currentPage = 1;
+        const logsPerPage = 20;
+
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = '../../login.html';
+                return;
+            }
+
+            // Verify superadmin role
+            const userDoc = await getDoc(doc(db, "users", user.uid));
+            if (!userDoc.exists() || userDoc.data().role !== 'superadmin') {
+                alert('Access Denied. Super Admin privileges required.');
+                window.location.href = '../../index.html';
+                return;
+            }
+
+            document.getElementById('user-email').textContent = user.email;
+            loadLogs();
+        });
+
+        async function loadLogs() {
+            const container = document.getElementById('logs-container');
+            container.innerHTML = '<div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Loading activity logs...</p></div>';
+
+            try {
+                const q = query(collection(db, "activity_logs"), orderBy("timestamp", "desc"));
+                const querySnapshot = await getDocs(q);
+
+                allLogs = [];
+                querySnapshot.forEach((docSnap) => {
+                    allLogs.push({ id: docSnap.id, ...docSnap.data() });
+                });
+
+                updateStats();
+                applyFilters();
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle" style="color: #f87171;"></i><p>Failed to load logs. Please try again.</p></div>';
+            }
+        }
+
+        function updateStats() {
+            const now = new Date();
+            const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+            const weekStart = todayStart - (7 * 24 * 60 * 60 * 1000);
+
+            const todayLogs = allLogs.filter(log => new Date(log.timestamp).getTime() >= todayStart);
+            const weekLogs = allLogs.filter(log => new Date(log.timestamp).getTime() >= weekStart);
+            const eventLogs = allLogs.filter(log => (log.action || '').toLowerCase().includes('event'));
+
+            document.getElementById('stat-total').textContent = allLogs.length;
+            document.getElementById('stat-today').textContent = todayLogs.length;
+            document.getElementById('stat-week').textContent = weekLogs.length;
+            document.getElementById('stat-events').textContent = eventLogs.length;
+        }
+
+        function applyFilters() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const actionFilter = document.getElementById('action-filter').value.toLowerCase();
+            const dateFilter = document.getElementById('date-filter').value;
+
+            const now = new Date();
+            const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+            const weekStart = todayStart - (7 * 24 * 60 * 60 * 1000);
+            const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
+
+            filteredLogs = allLogs.filter(log => {
+                const logTime = new Date(log.timestamp).getTime();
+                const matchesSearch =
+                    (log.action || '').toLowerCase().includes(searchTerm) ||
+                    (log.details || '').toLowerCase().includes(searchTerm) ||
+                    (log.performedBy || '').toLowerCase().includes(searchTerm);
+
+                const matchesAction = !actionFilter || (log.action || '').toLowerCase().includes(actionFilter);
+
+                let matchesDate = true;
+                if (dateFilter === 'today') matchesDate = logTime >= todayStart;
+                else if (dateFilter === 'week') matchesDate = logTime >= weekStart;
+                else if (dateFilter === 'month') matchesDate = logTime >= monthStart;
+
+                return matchesSearch && matchesAction && matchesDate;
+            });
+
+            currentPage = 1;
+            renderLogs();
+        }
+
+        function renderLogs() {
+            const container = document.getElementById('logs-container');
+            const startIdx = (currentPage - 1) * logsPerPage;
+            const endIdx = startIdx + logsPerPage;
+            const pageLogs = filteredLogs.slice(startIdx, endIdx);
+
+            if (pageLogs.length === 0) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>No activity logs found.</p></div>';
+                updatePagination();
+                return;
+            }
+
+            container.innerHTML = pageLogs.map(log => {
+                const actionType = getActionType(log.action);
+                return `
+                    <div class="log-card">
+                        <div class="log-header">
+                            <div class="log-action">
+                                <span class="action-badge action-${actionType}">${log.action || 'Unknown'}</span>
+                            </div>
+                            <div class="log-time">
+                                <i class="fas fa-clock"></i> ${formatTime(log.timestamp)}
+                            </div>
+                        </div>
+                        <div class="log-details">${log.details || 'No details available'}</div>
+                        <div class="log-user">
+                            <i class="fas fa-user"></i> ${log.performedBy || 'Unknown user'}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            updatePagination();
+        }
+
+        function getActionType(action) {
+            if (!action) return 'other';
+            const a = action.toLowerCase();
+            if (a.includes('create') || a.includes('add')) return 'create';
+            if (a.includes('update') || a.includes('edit')) return 'update';
+            if (a.includes('delete') || a.includes('remove')) return 'delete';
+            if (a.includes('approve')) return 'approve';
+            if (a.includes('reject')) return 'reject';
+            if (a.includes('login') || a.includes('logout')) return 'login';
+            return 'other';
+        }
+
+        function formatTime(timestamp) {
+            if (!timestamp) return 'N/A';
+            const date = new Date(timestamp);
+            const now = new Date();
+            const diff = now - date;
+
+            if (diff < 60000) return 'Just now';
+            if (diff < 3600000) return `${Math.floor(diff / 60000)}m ago`;
+            if (diff < 86400000) return `${Math.floor(diff / 3600000)}h ago`;
+            if (diff < 604800000) return `${Math.floor(diff / 86400000)}d ago`;
+
+            return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function updatePagination() {
+            const totalPages = Math.ceil(filteredLogs.length / logsPerPage);
+            document.getElementById('page-info').textContent = `Page ${currentPage} of ${totalPages || 1}`;
+            document.getElementById('prev-btn').disabled = currentPage <= 1;
+            document.getElementById('next-btn').disabled = currentPage >= totalPages;
+        }
+
+        // Event Listeners
+        document.getElementById('search-input').addEventListener('input', applyFilters);
+        document.getElementById('action-filter').addEventListener('change', applyFilters);
+        document.getElementById('date-filter').addEventListener('change', applyFilters);
+        document.getElementById('refresh-btn').addEventListener('click', loadLogs);
+
+        document.getElementById('prev-btn').addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                renderLogs();
+            }
+        });
+
+        document.getElementById('next-btn').addEventListener('click', () => {
+            const totalPages = Math.ceil(filteredLogs.length / logsPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderLogs();
+            }
+        });
+
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            signOut(auth).then(() => window.location.href = '../../index.html');
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Users - Super Admin - TGPCET IT</title>
+    <link rel="stylesheet" href="../../css/new-dashboard.css">
+    <link rel="stylesheet" href="../../css/mobile.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .superadmin-badge {
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-left: 0.5rem;
+        }
+
+        .role-select {
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            border: 1px solid var(--border-glass);
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
+        }
+
+        .role-select:hover {
+            border-color: var(--primary);
+        }
+
+        .role-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.3);
+        }
+
+        .user-row {
+            transition: background 0.2s ease;
+        }
+
+        .user-row:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .search-box {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-input {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-glass);
+            color: white;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .filter-select {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-glass);
+            color: white;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .role-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .role-superadmin {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(239, 68, 68, 0.2));
+            color: #f59e0b;
+        }
+
+        .role-admin {
+            background: rgba(96, 165, 250, 0.2);
+            color: #60a5fa;
+        }
+
+        .role-user {
+            background: rgba(203, 213, 225, 0.2);
+            color: #cbd5e1;
+        }
+
+        /* Profile Modal */
+        .profile-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            z-index: 9999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .profile-modal.active {
+            display: flex;
+        }
+
+        .profile-modal-content {
+            background: #1e293b;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .profile-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .profile-section {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .profile-section h4 {
+            color: var(--primary);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            margin-bottom: 0.75rem;
+        }
+
+        .profile-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-item label {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        .profile-item span {
+            color: white;
+            font-size: 0.95rem;
+        }
+
+        .btn-view {
+            background: rgba(168, 85, 247, 0.2);
+            color: #a855f7;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s ease;
+            margin-right: 0.5rem;
+        }
+
+        .btn-view:hover {
+            background: rgba(168, 85, 247, 0.3);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="brand">
+                <h2>TGPCET IT <span class="superadmin-badge">Super Admin</span></h2>
+            </div>
+
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>Overview</span>
+                </a>
+                <a href="users.html" class="nav-link active">
+                    <i class="fas fa-users"></i>
+                    <span>Users</span>
+                </a>
+                <a href="events.html" class="nav-link">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Events</span>
+                </a>
+                <a href="approvals.html" class="nav-link">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Approvals</span>
+                </a>
+                <a href="applicationmanagement.html" class="nav-link">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Applications</span>
+                </a>
+                <a href="notifications.html" class="nav-link">
+                    <i class="fas fa-bell"></i>
+                    <span>Notifications</span>
+                </a>
+                <a href="staff.html" class="nav-link">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    <span>Staff</span>
+                </a>
+                <a href="support.html" class="nav-link">
+                    <i class="fas fa-headset"></i>
+                    <span>Support</span>
+                </a>
+                <a href="activity.html" class="nav-link">
+                    <i class="fas fa-history"></i>
+                    <span>Activity</span>
+                </a>
+            </nav>
+
+            <div class="user-profile">
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+                    <div
+                        style="width: 32px; height: 32px; background: linear-gradient(135deg, #f59e0b, #ef4444); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
+                        S
+                    </div>
+                    <div style="overflow: hidden;">
+                        <div
+                            style="font-size: 0.875rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            Super Admin</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);" id="user-email">Loading...</div>
+                    </div>
+                </div>
+                <button id="logout-btn" class="btn btn-outline"
+                    style="width: 100%; justify-content: flex-start; gap: 0.5rem; border: none; padding: 0.5rem;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <button class="mobile-toggle" id="mobile-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 style="font-size: 1.25rem; font-weight: 600;">Manage Users</h1>
+            </header>
+
+            <div class="page-content">
+                <!-- Info Banner -->
+                <div
+                    style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(239, 68, 68, 0.1)); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
+                    <i class="fas fa-shield-alt" style="color: #f59e0b; font-size: 1.25rem;"></i>
+                    <div>
+                        <span style="font-weight: 600; color: #f59e0b;">Super Admin Privilege</span>
+                        <span style="color: var(--text-muted); margin-left: 0.5rem;">You can change user roles from this
+                            page.</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <!-- Search and Filter -->
+                    <div class="search-box">
+                        <input type="text" id="search-input" class="search-input"
+                            placeholder="Search by name or email...">
+                        <select id="role-filter" class="filter-select">
+                            <option value="">All Roles</option>
+                            <option value="superadmin">Super Admin</option>
+                            <option value="admin">Admin</option>
+                            <option value="user">User</option>
+                        </select>
+                    </div>
+
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Current Role</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-list">
+                                <tr>
+                                    <td colspan="4" style="text-align: center; color: var(--text-muted);">Loading
+                                        users...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- User Profile Modal -->
+    <div id="profileModal" class="profile-modal">
+        <div class="profile-modal-content">
+            <div class="profile-header">
+                <h3 style="color: var(--primary);"><i class="fas fa-user-circle" style="margin-right: 0.5rem;"></i>User
+                    Profile</h3>
+                <button onclick="closeProfileModal()"
+                    style="background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer;">&times;</button>
+            </div>
+            <div id="profileContent">
+                <div style="text-align: center; padding: 2rem; color: var(--text-muted);">Loading...</div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, collection, getDocs, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAbpCJRXBwORZC1_MVaqTVlMOqVoA0CT5w",
+            authDomain: "tgpcet-5ef68.firebaseapp.com",
+            projectId: "tgpcet-5ef68",
+            storageBucket: "tgpcet-5ef68.firebasestorage.app",
+            messagingSenderId: "63942237118",
+            appId: "1:63942237118:web:d5a181bd04ba0e8ce237ef"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Store all users for filtering
+        let allUsers = [];
+
+        // Sidebar Toggle
+        const sidebar = document.getElementById('sidebar');
+        const mobileToggle = document.getElementById('mobile-toggle');
+        mobileToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            sidebar.classList.toggle('open');
+        });
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 768 && sidebar.classList.contains('open') && !sidebar.contains(e.target) && e.target !== mobileToggle) {
+                sidebar.classList.remove('open');
+            }
+        });
+
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = '../../login.html';
+                return;
+            }
+
+            // Verify superadmin role
+            const userDoc = await getDoc(doc(db, "users", user.uid));
+            if (!userDoc.exists() || userDoc.data().role !== 'superadmin') {
+                alert('Access Denied. Super Admin privileges required.');
+                window.location.href = '../../index.html';
+                return;
+            }
+
+            document.getElementById('user-email').textContent = user.email;
+            await loadUsers();
+        });
+
+        async function loadUsers() {
+            const tbody = document.getElementById('users-list');
+            try {
+                const querySnapshot = await getDocs(collection(db, "users"));
+                allUsers = [];
+                querySnapshot.forEach((docSnap) => {
+                    allUsers.push({ id: docSnap.id, ...docSnap.data() });
+                });
+                renderUsers(allUsers);
+            } catch (err) {
+                console.error(err);
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--danger);">Failed to load users</td></tr>';
+            }
+        }
+
+        function renderUsers(users) {
+            const tbody = document.getElementById('users-list');
+            tbody.innerHTML = '';
+
+            if (users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">No users found</td></tr>';
+                return;
+            }
+
+            users.forEach((user) => {
+                const row = document.createElement('tr');
+                row.classList.add('user-row');
+
+                const role = user.role || 'user';
+                let roleClass = 'role-user';
+                if (role === 'superadmin') roleClass = 'role-superadmin';
+                else if (role === 'admin') roleClass = 'role-admin';
+
+                row.innerHTML = `
+                    <td style="cursor: pointer;" onclick="viewProfile('${user.id}')">${user.profile?.fullName || 'N/A'}</td>
+                    <td style="color: var(--text-muted);">${user.email}</td>
+                    <td><span class="role-badge ${roleClass}">${role}</span></td>
+                    <td>
+                        <button class="btn-view" onclick="viewProfile('${user.id}')"><i class="fas fa-eye"></i> View</button>
+                        <select class="role-select" data-uid="${user.id}" data-current="${role}">
+                            <option value="user" ${role === 'user' ? 'selected' : ''}>User</option>
+                            <option value="admin" ${role === 'admin' ? 'selected' : ''}>Admin</option>
+                            <option value="superadmin" ${role === 'superadmin' ? 'selected' : ''}>Super Admin</option>
+                        </select>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // Attach change listeners
+            document.querySelectorAll('.role-select').forEach(select => {
+                select.addEventListener('change', async (e) => {
+                    const uid = e.target.dataset.uid;
+                    const newRole = e.target.value;
+                    const currentRole = e.target.dataset.current;
+
+                    if (newRole === currentRole) return;
+
+                    const confirmMsg = newRole === 'superadmin'
+                        ? `⚠️ WARNING: You are about to grant SUPER ADMIN privileges to this user. They will have full control. Proceed?`
+                        : `Change role to ${newRole.toUpperCase()}?`;
+
+                    if (!confirm(confirmMsg)) {
+                        e.target.value = currentRole;
+                        return;
+                    }
+
+                    try {
+                        await setDoc(doc(db, "users", uid), { role: newRole }, { merge: true });
+                        e.target.dataset.current = newRole;
+                        await loadUsers(); // Refresh to update badges
+                    } catch (err) {
+                        alert('Error: ' + err.message);
+                        e.target.value = currentRole;
+                    }
+                });
+            });
+        }
+
+        // Search functionality
+        document.getElementById('search-input').addEventListener('input', filterUsers);
+        document.getElementById('role-filter').addEventListener('change', filterUsers);
+
+        function filterUsers() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const roleFilter = document.getElementById('role-filter').value;
+
+            const filtered = allUsers.filter(user => {
+                const name = (user.profile?.fullName || '').toLowerCase();
+                const email = (user.email || '').toLowerCase();
+                const role = user.role || 'user';
+
+                const matchesSearch = name.includes(searchTerm) || email.includes(searchTerm);
+                const matchesRole = !roleFilter || role === roleFilter;
+
+                return matchesSearch && matchesRole;
+            });
+
+            renderUsers(filtered);
+        }
+
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            signOut(auth).then(() => window.location.href = '../../index.html');
+        });
+
+        // Profile Modal Functions
+        window.viewProfile = async (uid) => {
+            const modal = document.getElementById('profileModal');
+            const content = document.getElementById('profileContent');
+            modal.classList.add('active');
+            content.innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--text-muted);">Loading...</div>';
+
+            try {
+                const userDoc = await getDoc(doc(db, "users", uid));
+                if (!userDoc.exists()) {
+                    content.innerHTML = '<div style="color: var(--danger); text-align: center;">User not found</div>';
+                    return;
+                }
+
+                const user = userDoc.data();
+                const profile = user.profile || {};
+                const role = user.role || 'user';
+
+                let roleClass = 'role-user';
+                if (role === 'superadmin') roleClass = 'role-superadmin';
+                else if (role === 'admin') roleClass = 'role-admin';
+
+                content.innerHTML = `
+                    <div class="profile-section">
+                        <h4><i class="fas fa-user" style="margin-right: 0.5rem;"></i>Basic Information</h4>
+                        <div class="profile-row">
+                            <div class="profile-item"><label>Full Name</label><span>${profile.fullName || 'N/A'}</span></div>
+                            <div class="profile-item"><label>Email</label><span>${user.email || 'N/A'}</span></div>
+                        </div>
+                        <div class="profile-row">
+                            <div class="profile-item"><label>Mobile</label><span>${profile.mobile || 'N/A'}</span></div>
+                            <div class="profile-item"><label>Gender</label><span>${profile.gender || 'N/A'}</span></div>
+                        </div>
+                        <div class="profile-row">
+                            <div class="profile-item"><label>Date of Birth</label><span>${profile.dob || 'N/A'}</span></div>
+                            <div class="profile-item"><label>Role</label><span class="role-badge ${roleClass}">${role}</span></div>
+                        </div>
+                    </div>
+
+                    <div class="profile-section">
+                        <h4><i class="fas fa-university" style="margin-right: 0.5rem;"></i>Academic Information</h4>
+                        <div class="profile-row">
+                            <div class="profile-item"><label>College Name</label><span>${profile.collegeName || 'N/A'}</span></div>
+                            <div class="profile-item"><label>College ID / PRN</label><span>${profile.prn || profile.collegeId || 'N/A'}</span></div>
+                        </div>
+                        <div class="profile-row">
+                            <div class="profile-item"><label>Department</label><span>${profile.department || 'N/A'}</span></div>
+                            <div class="profile-item"><label>Year of Study</label><span>${profile.year || 'N/A'}</span></div>
+                        </div>
+                        <div class="profile-row">
+                            <div class="profile-item"><label>Section</label><span>${profile.section || 'N/A'}</span></div>
+                            <div class="profile-item"><label>Roll Number</label><span>${profile.rollNumber || 'N/A'}</span></div>
+                        </div>
+                    </div>
+
+                    <div class="profile-section">
+                        <h4><i class="fas fa-info-circle" style="margin-right: 0.5rem;"></i>Account Details</h4>
+                        <div class="profile-row">
+                            <div class="profile-item"><label>User ID</label><span style="font-family: monospace; font-size: 0.85rem;">${uid}</span></div>
+                            <div class="profile-item"><label>Created At</label><span>${user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}</span></div>
+                        </div>
+                        <div class="profile-row">
+                            <div class="profile-item"><label>Profile Complete</label><span>${profile.fullName && profile.mobile && profile.collegeName ? '✅ Yes' : '❌ No'}</span></div>
+                            <div class="profile-item"><label>Last Updated</label><span>${user.updatedAt ? new Date(user.updatedAt).toLocaleDateString() : 'N/A'}</span></div>
+                        </div>
+                    </div>
+                `;
+            } catch (err) {
+                content.innerHTML = `<div style="color: var(--danger); text-align: center;">Error: ${err.message}</div>`;
+            }
+        };
+
+        window.closeProfileModal = () => {
+            document.getElementById('profileModal').classList.remove('active');
+        };
+
+        // Close modal on backdrop click
+        document.getElementById('profileModal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) {
+                closeProfileModal();
+            }
+        });
+    </script>
+</body>
+
+</html>
